@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart-City-Led.com — 3D Solar Smart City &amp; EV Ecosystem</title>
+  <meta name="description" content="Interactive 3D scroll-driven showcase of a solar-powered smart mini-city, solar EV charging station, and evening residential solar storage ecosystem." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Top Scroll Progress Strip -->
+  <div class="scroll-progress-bar" aria-hidden="true">
+    <div id="scroll-progress-fill"></div>
+  </div>
+
+  <!-- Full-Viewport Fixed 3D WebGL Diorama -->
+  <canvas id="city-canvas" aria-label="Interactive 3D Solar Smart City Scene"></canvas>
+
+  <!-- Fixed Header & Live Telemetry HUD -->
+  <header class="site-header">
+    <div class="header-row">
+      <a href="#top" class="brand" data-jump-stage="stage-1">
+        <span class="brand-icon" aria-hidden="true">☀️</span>
+        <span class="brand-text">
+          <span class="brand-name">Smart-City-Led.com</span>
+          <span class="brand-tag" data-i18n="brandTag">SOLAR · LED · EV</span>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#stage-1" data-jump-stage="stage-1" data-i18n="navCity">Mini-City</a>
+        <a href="#stage-2" data-jump-stage="stage-2" data-i18n="navCharging">EV Station</a>
+        <a href="#stage-3" data-jump-stage="stage-3" data-i18n="navHome">Evening Home</a>
+        <a href="#calculator" data-i18n="navCalc">Calculator</a>
+        <a href="#solutions" data-i18n="navSolutions">Solutions</a>
+      </nav>
+
+      <div class="lang-switcher" role="group" aria-label="Language switcher">
+        <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-btn" data-lang="fr" aria-pressed="false">FR</button>
+        <button type="button" class="lang-btn" data-lang="bg" aria-pressed="false">BG</button>
+        <button type="button" class="lang-btn" data-lang="ro" aria-pressed="false">RO</button>
+      </div>
+    </div>
+
+    <div class="hud-bar" aria-live="polite">
+      <div class="hud-item">
+        <span class="hud-dot amber"></span>
+        <span class="hud-label" data-i18n="hudTimeLabel">Simulation Time</span>
+        <span class="hud-val" id="hud-time">12:30</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-dot cyan"></span>
+        <span class="hud-label" data-i18n="hudSolarLabel">Solar Output</span>
+        <span class="hud-val" id="hud-solar">485 kW</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-dot"></span>
+        <span class="hud-label" data-i18n="hudEvLabel">EV Battery</span>
+        <span class="hud-val" id="hud-ev">42%</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-dot cyan"></span>
+        <span class="hud-label" data-i18n="hudGridLabel">Grid Mode</span>
+        <span class="hud-val" id="hud-grid">Solar Peak → City</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Right-Side Stage Quick-Jump Dots -->
+  <aside class="stage-rail" aria-label="Story chapters">
+    <button type="button" class="stage-dot active" data-start="0" data-end="0.22" data-jump-stage="stage-1" title="Stage 1"></button>
+    <button type="button" class="stage-dot" data-start="0.22" data-end="0.52" data-jump-stage="stage-2" title="Stage 2"></button>
+    <button type="button" class="stage-dot" data-start="0.52" data-end="0.85" data-jump-stage="stage-3" title="Stage 3"></button>
+    <button type="button" class="stage-dot" data-start="0.85" data-end="1.01" data-jump-stage="stage-4" title="Stage 4"></button>
+  </aside>
+
+  <!-- Bottom-Right 3D Viewport Controls -->
+  <div class="viewport-controls">
+    <div id="orbit-hint" class="orbit-hint" hidden data-i18n="orbitHint">
+      Drag to rotate · Scroll to zoom · Right-click to pan
+    </div>
+    <div class="controls-pill">
+      <button type="button" id="btn-mode-story" class="ctrl-btn active" data-i18n="modeStory">Story Scroll</button>
+      <button type="button" id="btn-mode-orbit" class="ctrl-btn" data-i18n="modeOrbit">Free 3D Orbit</button>
+      <button type="button" id="btn-flow-boost" class="ctrl-btn" data-i18n="btnFlowBoost">Energy Flow: Normal</button>
+      <button type="button" id="btn-day-night" class="ctrl-btn" data-i18n="btnDayNight">Day / Night Preview</button>
+    </div>
+  </div>
+
+  <!-- Scroll-Driven 3D Story Chapters -->
+  <main id="top">
+    <section id="story-track" class="story-track">
+      <!-- Stage 1: Solar Mini-City -->
+      <article id="stage-1" class="story-step">
+        <div class="story-card is-active" data-stage="1" data-start="0" data-end="0.22">
+          <span class="stage-badge" data-i18n="stage1Badge">STAGE 01 · DAYLIGHT SOLAR MICROGRID</span>
+          <h1 data-i18n="stage1Title">Solar Panels Powering the Entire Mini-City</h1>
+          <p data-i18n="stage1Desc">
+            High-efficiency photovoltaic arrays and smart sun-tracking rooftop panels capture peak midday radiation. Clean DC power flows straight into the Central Battery Hub and energizes urban towers, parks, and adaptive LED infrastructure.
+          </p>
+          <div class="card-stats">
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage1Stat1Label">Grid Autonomy</span>
+              <span class="stat-val" data-i18n="stage1Stat1Val">96.4%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage1Stat2Label">LED Efficiency</span>
+              <span class="stat-val" data-i18n="stage1Stat2Val">+68%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage1Stat3Label">CO₂ Offset</span>
+              <span class="stat-val" data-i18n="stage1Stat3Val">42.8 t/day</span>
+            </div>
+          </div>
+          <div class="scroll-prompt">
+            <span class="scroll-arrow" aria-hidden="true">↓</span>
+            <span data-i18n="scrollPrompt">Scroll down to guide the solar energy journey</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Stage 2: Electric Car Approaching & Charging at Solar Station -->
+      <article id="stage-2" class="story-step">
+        <div class="story-card" data-stage="2" data-start="0.22" data-end="0.52">
+          <span class="stage-badge emerald" data-i18n="stage2Badge">STAGE 02 · SOLAR EV SUPERCHARGING</span>
+          <h2 data-i18n="stage2Title">Electric Car Arrives at the Solar Charging Hub</h2>
+          <p data-i18n="stage2Desc">
+            Follow the smart boulevard as the electric vehicle pulls into the cantilevered solar canopy station. Concentrated photovoltaic energy streams directly from the station roof into the charging pedestal and rapidly tops up the EV battery with zero fossil grid draw.
+          </p>
+          <div class="card-stats">
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage2Stat1Label">Canopy Peak</span>
+              <span class="stat-val" data-i18n="stage2Stat1Val">180 kW</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage2Stat2Label">Charge Speed</span>
+              <span class="stat-val" data-i18n="stage2Stat2Val">22% → 100%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage2Stat3Label">Clean Origin</span>
+              <span class="stat-val" data-i18n="stage2Stat3Val">100% Solar</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Stage 3: Evening Drive Home & Solar Home Power -->
+      <article id="stage-3" class="story-step">
+        <div class="story-card" data-stage="3" data-start="0.52" data-end="0.85">
+          <span class="stage-badge amber" data-i18n="stage3Badge">STAGE 03 · EVENING RETURN &amp; HOME STORAGE</span>
+          <h2 data-i18n="stage3Title">Dusk Falls: Home Powered by Stored Solar Energy</h2>
+          <p data-i18n="stage3Desc">
+            As sunset turns into deep evening, Smart-City-Led streetlamps and vehicle headlights automatically illuminate. The EV glides smoothly into the residential driveway while stored rooftop solar batteries and Vehicle-to-Home (V2H) power keep the villa warm and glowing.
+          </p>
+          <div class="card-stats">
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage3Stat1Label">Wall Battery</span>
+              <span class="stat-val" data-i18n="stage3Stat1Val">28.5 kWh</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage3Stat2Label">V2H Backup</span>
+              <span class="stat-val" data-i18n="stage3Stat2Val">Active</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage3Stat3Label">Smart LEDs</span>
+              <span class="stat-val" data-i18n="stage3Stat3Val">Auto-Dim</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Stage 4: Full Night Ecosystem -->
+      <article id="stage-4" class="story-step">
+        <div class="story-card" data-stage="4" data-start="0.85" data-end="1.01">
+          <span class="stage-badge" data-i18n="stage4Badge">STAGE 04 · COMPLETE SMART ECOSYSTEM</span>
+          <h2 data-i18n="stage4Title">24/7 Autonomous Solar &amp; Smart LED City</h2>
+          <p data-i18n="stage4Desc">
+            Explore the full illuminated 3D ecosystem. Switch to Free 3D Orbit mode above to inspect every solar roof, LED pole, charging bay, and battery wall — or calculate your own solar and Smart LED savings below.
+          </p>
+          <div class="cta-row">
+            <button type="button" id="btn-enter-3d" class="btn-primary" data-i18n="btnExplore3d">Enter Free 3D Orbit</button>
+            <button type="button" id="btn-back-top" class="btn-secondary" data-i18n="btnBackTop">Replay Journey</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Lower Interactive Content -->
+    <div class="content-sections">
+      <!-- Interactive Solar & LED Savings Calculator -->
+      <section id="calculator" class="section-inner">
+        <div class="section-head">
+          <span class="stage-badge emerald" data-i18n="calcSectionBadge">INTERACTIVE ROI ESTIMATOR</span>
+          <h2 data-i18n="calcSectionTitle">Solar &amp; Smart LED Savings Calculator</h2>
+          <p data-i18n="calcSectionSubtitle">
+            Estimate annual clean energy generation, LED lighting savings, and EV charging autonomy for your building or municipality.
+          </p>
+        </div>
+
+        <div class="calc-grid">
+          <div class="calc-inputs">
+            <div class="input-group">
+              <label for="calc-roof">
+                <span data-i18n="calcRoofLabel">Solar Roof Area (m²)</span>
+                <span class="input-val" id="calc-roof-val">120 m²</span>
+              </label>
+              <input id="calc-roof" type="range" min="20" max="600" step="10" value="120" />
+            </div>
+
+            <div class="input-group">
+              <label for="calc-poles">
+                <span data-i18n="calcPolesLabel">Smart LED Streetlights</span>
+                <span class="input-val" id="calc-poles-val">18</span>
+              </label>
+              <input id="calc-poles" type="range" min="0" max="120" step="2" value="18" />
+            </div>
+
+            <div class="input-group">
+              <label for="calc-ev">
+                <span data-i18n="calcEvLabel">EV Daily Commute (km)</span>
+                <span class="input-val" id="calc-ev-val">45 km</span>
+              </label>
+              <input id="calc-ev" type="range" min="0" max="200" step="5" value="45" />
+            </div>
+
+            <div class="input-group">
+              <label for="calc-sun" data-i18n="calcSunLabel">Region Solar Profile</label>
+              <select id="calc-sun">
+                <option value="1650" data-i18n="calcSunSouth">Southern Europe / High Sun (1,650 kWh/kWp)</option>
+                <option value="1320" selected data-i18n="calcSunCentral">Central / Eastern Europe (1,320 kWh/kWp)</option>
+                <option value="1050" data-i18n="calcSunNorth">Northern Europe (1,050 kWh/kWp)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="calc-outputs">
+            <div class="calc-card">
+              <span class="calc-card-label" data-i18n="calcOutSolar">Annual Solar Generation</span>
+              <span class="calc-card-value" id="calc-res-solar">33,264 kWh</span>
+            </div>
+            <div class="calc-card">
+              <span class="calc-card-label" data-i18n="calcOutSavings">Estimated Annual Savings</span>
+              <span class="calc-card-value" id="calc-res-savings">€9,322</span>
+            </div>
+            <div class="calc-card">
+              <span class="calc-card-label" data-i18n="calcOutCo2">CO₂ Emissions Prevented</span>
+              <span class="calc-card-value" id="calc-res-co2">14.8 t</span>
+            </div>
+            <div class="calc-card">
+              <span class="calc-card-label" data-i18n="calcOutEvKm">Free Solar EV Range / Year</span>
+              <span class="calc-card-value" id="calc-res-evkm">16,425 km</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Solutions Showcase -->
+      <section id="solutions" class="section-inner">
+        <div class="section-head">
+          <span class="stage-badge" data-i18n="solSectionBadge">SMART-CITY-LED.COM ARCHITECTURE</span>
+          <h2 data-i18n="solSectionTitle">Integrated Hardware &amp; Grid Intelligence</h2>
+        </div>
+
+        <div class="solutions-grid">
+          <div class="sol-card">
+            <div class="sol-icon" aria-hidden="true">⚡</div>
+            <h3 data-i18n="sol1Title">Bifacial Solar Microgrids</h3>
+            <p data-i18n="sol1Desc">
+              High-yield rooftop and ground-mount photovoltaic arrays paired with real-time MPPT inverters and district lithium-iron-phosphate storage hubs.
+            </p>
+          </div>
+
+          <div class="sol-card">
+            <div class="sol-icon" aria-hidden="true">💡</div>
+            <h3 data-i18n="sol2Title">Adaptive Smart LED Poles</h3>
+            <p data-i18n="sol2Desc">
+              Motion-aware, twilight-calibrated LED street luminaires with integrated solar top-caps and IoT telemetry that reduce municipal lighting consumption by up to 72%.
+            </p>
+          </div>
+
+          <div class="sol-card">
+            <div class="sol-icon" aria-hidden="true">🚗</div>
+            <h3 data-i18n="sol3Title">Solar EV Canopies &amp; V2H</h3>
+            <p data-i18n="sol3Desc">
+              Modular solar carports delivering fast DC charging during peak daylight and bidirectional Vehicle-to-Home energy sharing throughout the evening.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-left">
+          <strong>Smart-City-Led.com</strong>
+          <p data-i18n="footerTagline">
+            Designing clean solar microgrids, adaptive Smart LED streetscapes, and autonomous EV ecosystems across Europe.
+          </p>
+        </div>
+        <div class="footer-right">
+          <span data-i18n="footerDomain">Smart-City-Led.com · GitHub Pages Ready Static 3D Experience</span>
+          <a href="#top" data-jump-stage="stage-1" data-i18n="footerBackTop">Back to Top ↑</a>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
