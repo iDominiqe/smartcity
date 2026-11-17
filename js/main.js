@@ -31,28 +31,28 @@ function initApp() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 1.04;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#7dd3fc');
-  scene.fog = new THREE.FogExp2('#7dd3fc', 0.0068);
+  scene.background = new THREE.Color('#e3edf8');
+  scene.fog = new THREE.FogExp2('#e3edf8', 0.0035);
 
   const camera = new THREE.PerspectiveCamera(
-    45,
+    30,
     window.innerWidth / window.innerHeight,
     0.5,
-    300
+    350
   );
-  camera.position.set(-26, 20, 26);
+  camera.position.set(-32, 27, 38);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
   controls.maxPolarAngle = Math.PI / 2 - 0.05;
-  controls.minDistance = 8;
-  controls.maxDistance = 85;
+  controls.minDistance = 12;
+  controls.maxDistance = 120;
   controls.enabled = false;
-  controls.target.set(-14, 2, -2);
+  controls.target.set(-16, 2, -1.5);
 
   // Build procedural 3D world
   const world = buildSmartCityWorld(scene);
