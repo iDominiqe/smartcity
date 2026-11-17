@@ -40,21 +40,20 @@
         </span>
       </a>
 
-      <nav class="main-nav" aria-label="Main navigation">
-        <a href="#stage-1" data-jump-stage="stage-1" data-i18n="navCity">Mini-City</a>
-        <a href="#stage-2" data-jump-stage="stage-2" data-i18n="navCharging">EV Station</a>
-        <a href="#stage-3" data-jump-stage="stage-3" data-i18n="navHome">Evening Home</a>
-        <a href="#calculator" data-i18n="navCalc">Calculator</a>
-        <a href="#solutions" data-i18n="navSolutions">Solutions</a>
-      </nav>
+      <nav class="main-nav" id="main-nav-list" aria-label="Main navigation"></nav>
 
-      <div class="lang-switcher" role="group" aria-label="Language switcher">
-        <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
-        <button type="button" class="lang-btn" data-lang="fr" aria-pressed="false">FR</button>
-        <button type="button" class="lang-btn" data-lang="bg" aria-pressed="false">BG</button>
-        <button type="button" class="lang-btn" data-lang="ro" aria-pressed="false">RO</button>
+      <div class="header-actions">
+        <div class="lang-switcher" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang="fr" aria-pressed="false">FR</button>
+          <button type="button" class="lang-btn" data-lang="bg" aria-pressed="false">BG</button>
+          <button type="button" class="lang-btn" data-lang="ro" aria-pressed="false">RO</button>
+        </div>
+        <button type="button" id="btn-mobile-menu" class="mobile-menu-btn" aria-expanded="false" aria-label="Menu">☰</button>
       </div>
     </div>
+
+    <div id="mobile-menu-drawer" class="mobile-menu-drawer" hidden></div>
 
     <div class="hud-bar" aria-live="polite">
       <div class="hud-item">
@@ -101,8 +100,13 @@
     </div>
   </div>
 
+  <!-- Subpage View (Smart-City-Led.com Pages & Category Submenus) -->
+  <section id="subpage-view" class="subpage-view" hidden aria-live="polite">
+    <div id="subpage-content" class="subpage-content"></div>
+  </section>
+
   <!-- Scroll-Driven 3D Story Chapters -->
-  <main id="top">
+  <main id="top" class="homepage-main">
     <section id="story-track" class="story-track">
       <!-- Stage 1: Solar Mini-City -->
       <article id="stage-1" class="story-step">

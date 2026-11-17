@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { I18nManager } from './i18n.js';
 import { buildSmartCityWorld } from './scene-builder.js';
 import { ScrollDirector } from './scroll-director.js';
+import { PagesRouter } from './pages-router.js';
 
 function initApp() {
   const i18n = new I18nManager('en');
@@ -196,6 +197,7 @@ function initApp() {
   document.querySelectorAll('[data-jump-stage]').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
+      pagesRouter.closeSubpage();
       const stageId = el.getAttribute('data-jump-stage');
       if (stageId) {
         scrollToStage(stageId);
@@ -206,14 +208,35 @@ function initApp() {
   document.querySelectorAll('a[href^="#"]:not([data-jump-stage])').forEach((anchor) => {
     anchor.addEventListener('click', (e) => {
       const id = anchor.getAttribute('href');
-      if (!id || id === '#') return;
+      if (!id || id === '#' || id.startsWith('#page/')) return;
       const targetEl = document.querySelector(id);
       if (targetEl) {
         e.preventDefault();
+        pagesRouter.closeSubpage();
         setOrbitMode(false);
         targetEl.scrollIntoView({ behavior: 'smooth' });
       }
     });
+  });
+
+  const pagesRouter = new PagesRouter({
+    i18n,
+    onNavigateHome: (type, target) => {
+      if (type === 'stage') {
+        scrollToStage(target);
+      } else if (type === 'anchor') {
+        setOrbitMode(false);
+        const el = document.querySelector(target);
+        el?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+
+  i18n.onChange(() => {
+    pagesRouter.renderMenus();
+    if (pagesRouter.activeSlug) {
+      pagesRouter.renderSubpage(pagesRouter.activeSlug);
+    }
   });
 
   // ---------------------------------------------------------------------------
