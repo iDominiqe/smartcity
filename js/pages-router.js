@@ -10,10 +10,11 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome, onCategoryTrigger }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
     this.onCategoryTrigger = onCategoryTrigger;
+    this.onOpenAcStudio = onOpenAcStudio;
     this.activeSlug = null;
     this.activeBlogSlug = null;
     this.openDropdownId = null;
@@ -180,6 +181,13 @@ export class PagesRouter {
     this.closeAllDropdowns();
     this.closeMobileDrawer();
 
+    if (type === 'ac-studio') {
+      if (this.onOpenAcStudio) {
+        this.onOpenAcStudio();
+      }
+      return;
+    }
+
     if (type === 'page') {
       this.openPage(target);
     } else {
@@ -336,6 +344,18 @@ export class PagesRouter {
 
     const interactiveHtml = this.buildInteractiveHtml(page);
     const formHtml = page.formType ? this.buildFormHtml(page) : '';
+    const isAcShowcasePage = ['neo-clim-location', 'neo-clim-solaire', 'landing-camp-2027'].includes(slug);
+    const acStudioBannerHtml = isAcShowcasePage
+      ? `
+        <section class="sub-ac-studio-banner">
+          <div>
+            <strong>${escapeHtml(this.ui('openAcStudioBannerTitle'))}</strong>
+            <span>${escapeHtml(this.ui('openAcStudioBannerDesc'))}</span>
+          </div>
+          <button type="button" id="btn-sub-open-ac-studio" class="btn-primary">${escapeHtml(this.ui('openAcStudioBannerBtn'))}</button>
+        </section>
+      `
+      : '';
 
     const actionsHtml = `
       <div class="sub-actions-row">
@@ -387,6 +407,7 @@ export class PagesRouter {
       </div>
 
       ${specsHtml}
+      ${acStudioBannerHtml}
       ${modelsHtml}
       ${highlightsHtml}
       ${interactiveHtml}
@@ -587,6 +608,12 @@ export class PagesRouter {
   bindSubpageEvents(page) {
     document.getElementById('btn-back-to-3d')?.addEventListener('click', () => {
       this.closeSubpage();
+    });
+
+    document.getElementById('btn-sub-open-ac-studio')?.addEventListener('click', () => {
+      if (this.onOpenAcStudio) {
+        this.onOpenAcStudio();
+      }
     });
 
     this.subpageContent.querySelectorAll('[data-open-page]').forEach((btn) => {

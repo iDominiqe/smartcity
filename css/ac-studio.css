@@ -1,0 +1,709 @@
+/* ========================================================================== */
+/* NEO Clim® × TCL MZ 360° 3D Studio Modal & Thermal Airflow Simulator        */
+/* ========================================================================== */
+
+body.ac-studio-open {
+  overflow: hidden;
+}
+
+.ac-studio-modal[hidden] {
+  display: none !important;
+}
+
+.ac-studio-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 14px 18px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.ac-studio-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, rgba(14, 165, 233, 0.22), rgba(5, 9, 19, 0.94) 68%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: background 0.45s ease;
+}
+
+.ac-studio-modal[data-thermal-mode='heat'] .ac-studio-backdrop {
+  background: radial-gradient(circle at 50% 42%, rgba(249, 115, 22, 0.24), rgba(14, 9, 8, 0.94) 68%);
+}
+
+.ac-studio-modal[data-thermal-mode='dry'] .ac-studio-backdrop {
+  background: radial-gradient(circle at 50% 42%, rgba(16, 185, 129, 0.2), rgba(6, 13, 19, 0.94) 68%);
+}
+
+.ac-studio-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1480px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  padding: 14px 18px;
+  background: rgba(9, 16, 32, 0.78);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 22px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  transition: border-color 0.35s ease;
+}
+
+.ac-studio-modal[data-thermal-mode='heat'] .ac-studio-shell {
+  border-color: rgba(251, 146, 60, 0.36);
+}
+
+/* Header */
+.ac-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ac-studio-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ac-studio-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.ac-studio-modal[data-thermal-mode='heat'] .ac-studio-badge {
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.14);
+  border-color: rgba(251, 146, 60, 0.4);
+}
+
+.ac-studio-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.ac-studio-header p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.ac-studio-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ac-btn-primary,
+.ac-btn-secondary,
+.ac-btn-close {
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.ac-btn-primary {
+  border: none;
+  background: linear-gradient(135deg, #0ea5e9, #10b981);
+  color: #031524;
+}
+
+.ac-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.ac-btn-secondary {
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0;
+}
+
+.ac-btn-secondary:hover,
+.ac-btn-secondary.active {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.18);
+  color: #ffffff;
+}
+
+.ac-btn-close {
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(127, 29, 29, 0.35);
+  color: #fecaca;
+}
+
+.ac-btn-close:hover {
+  background: rgba(220, 38, 38, 0.5);
+  color: #ffffff;
+}
+
+.ac-btn-close.small {
+  padding: 5px 11px;
+}
+
+/* Main 3-Column Studio Grid */
+.ac-studio-grid {
+  display: grid;
+  grid-template-columns: minmax(235px, 275px) 1fr minmax(235px, 275px);
+  gap: 14px;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.ac-specs-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.ac-spec-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 10px 13px;
+  color: #e2e8f0;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  animation: acSlideLeft 0.48s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+
+.ac-specs-col.right .ac-spec-card {
+  animation-name: acSlideRight;
+}
+
+@keyframes acSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes acSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ac-spec-card:hover,
+.ac-spec-card.active {
+  border-color: rgba(56, 189, 248, 0.72);
+  background: rgba(14, 116, 144, 0.24);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(14, 165, 233, 0.2);
+}
+
+.ac-studio-modal[data-thermal-mode='heat'] .ac-spec-card.active,
+.ac-studio-modal[data-thermal-mode='heat'] .ac-spec-card:hover {
+  border-color: rgba(251, 146, 60, 0.78);
+  background: rgba(154, 52, 18, 0.25);
+  box-shadow: 0 10px 26px rgba(249, 115, 22, 0.22);
+}
+
+.ac-spec-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ac-spec-icon {
+  font-size: 0.95rem;
+}
+
+.ac-spec-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.ac-spec-val {
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ac-spec-detail {
+  margin: 0;
+  font-size: 0.73rem;
+  line-height: 1.35;
+  color: #cbd5e1;
+}
+
+/* Center 3D Viewport */
+.ac-stage-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: radial-gradient(circle at 50% 52%, rgba(30, 58, 138, 0.24), rgba(5, 10, 22, 0.65) 72%);
+  overflow: hidden;
+  padding: 10px 12px;
+}
+
+.ac-studio-modal[data-thermal-mode='heat'] .ac-stage-center {
+  background: radial-gradient(circle at 50% 52%, rgba(154, 52, 18, 0.28), rgba(16, 10, 8, 0.68) 72%);
+}
+
+.ac-live-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #bae6fd;
+  z-index: 4;
+}
+
+.ac-live-banner.heat {
+  border-color: rgba(251, 146, 60, 0.55);
+  color: #fed7aa;
+}
+
+.ac-live-banner.dry {
+  border-color: rgba(52, 211, 153, 0.55);
+  color: #a7f3d0;
+}
+
+.ac-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.ac-live-banner.heat .ac-live-dot {
+  background: #fb923c;
+  box-shadow: 0 0 10px #fb923c;
+}
+
+.ac-live-temp-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.ac-canvas-wrap {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 220px;
+}
+
+#ac-studio-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#ac-studio-canvas:active {
+  cursor: grabbing;
+}
+
+.ac-hotspot-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ac-hotspot-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  background: rgba(7, 13, 27, 0.84);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.ac-hotspot-pin:hover {
+  border-color: #ffffff;
+  background: rgba(14, 165, 233, 0.9);
+  color: #041220;
+}
+
+.ac-hotspot-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.ac-drag-hint {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.ac-cam-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  z-index: 4;
+}
+
+.ac-cam-btn {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.85);
+  color: #cbd5e1;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ac-cam-btn:hover,
+.ac-cam-btn.active {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+/* Bottom Thermal Control Dock */
+.ac-control-dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.ac-dock-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ac-dock-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.ac-mode-btn,
+.ac-fan-btn,
+.ac-step-btn {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(30, 41, 59, 0.75);
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ac-mode-btn[data-mode='cool'].active {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border-color: #7dd3fc;
+  color: #031320;
+}
+
+.ac-mode-btn[data-mode='heat'].active {
+  background: linear-gradient(135deg, #ea580c, #fb923c);
+  border-color: #fdba74;
+  color: #1f0c03;
+}
+
+.ac-mode-btn[data-mode='dry'].active {
+  background: linear-gradient(135deg, #059669, #34d399);
+  border-color: #6ee7b7;
+  color: #032016;
+}
+
+.ac-mode-btn[data-mode='fan'].active {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.ac-mode-btn.off.active {
+  background: rgba(220, 38, 38, 0.55);
+  border-color: #f87171;
+  color: #ffffff;
+}
+
+.ac-fan-btn.active {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.ac-temp-readout {
+  min-width: 52px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ac-step-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ac-step-btn.wide {
+  width: auto;
+  padding: 6px 12px;
+}
+
+/* Remote Control & Reference Photos Drawer */
+.ac-gallery-drawer {
+  position: absolute;
+  inset: 72px 18px 66px 18px;
+  z-index: 20;
+  border-radius: 18px;
+  background: rgba(8, 14, 28, 0.96);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  backdrop-filter: blur(20px);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.ac-gallery-drawer[hidden] {
+  display: none !important;
+}
+
+.ac-gallery-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ac-gallery-head h3 {
+  margin: 0 0 3px;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.ac-gallery-head p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.ac-gallery-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.ac-remote-interactive {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.ac-remote-interactive img {
+  width: 112px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 4px;
+}
+
+.ac-remote-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+}
+
+.ac-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ac-photo-item {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.ac-photo-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  background: #0b1220;
+  display: block;
+}
+
+.ac-photo-item figcaption {
+  padding: 7px 10px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-align: center;
+}
+
+/* Subpage Launch Banner for Clim Pages */
+.sub-ac-studio-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(16, 185, 129, 0.14));
+  border: 1px solid rgba(56, 189, 248, 0.42);
+}
+
+.sub-ac-studio-banner strong {
+  display: block;
+  font-size: 0.98rem;
+  color: #ffffff;
+  margin-bottom: 3px;
+}
+
+.sub-ac-studio-banner span {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+@media (max-width: 1100px) {
+  .ac-studio-modal {
+    padding: 8px;
+  }
+
+  .ac-studio-shell {
+    overflow-y: auto;
+    grid-template-rows: auto auto auto;
+  }
+
+  .ac-studio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ac-stage-center {
+    order: -1;
+    min-height: 360px;
+  }
+
+  .ac-specs-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: visible;
+  }
+
+  .ac-gallery-body {
+    grid-template-columns: 1fr;
+  }
+
+  .ac-photos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .ac-studio-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ac-specs-col {
+    grid-template-columns: 1fr;
+  }
+
+  .ac-photos-grid {
+    grid-template-columns: 1fr;
+  }
+}

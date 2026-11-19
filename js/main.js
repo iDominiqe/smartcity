@@ -4,6 +4,7 @@ import { I18nManager } from './i18n.js';
 import { buildSmartCityWorld } from './scene-builder.js';
 import { ScrollDirector } from './scroll-director.js';
 import { PagesRouter } from './pages-router.js';
+import { AcStudio3D } from './ac-studio-3d.js';
 
 function initApp() {
   const i18n = new I18nManager('en');
@@ -264,6 +265,8 @@ function initApp() {
     });
   });
 
+  let acStudio = null;
+
   const pagesRouter = new PagesRouter({
     i18n,
     onNavigateHome: (type, target) => {
@@ -281,6 +284,25 @@ function initApp() {
       if (catId === 'climatisation') {
         playDriveHomeToStore();
       }
+    },
+    onOpenAcStudio: () => acStudio?.open()
+  });
+
+  acStudio = new AcStudio3D({
+    i18n,
+    onRequestQuote: () => pagesRouter.openPage('neo-clim-location')
+  });
+
+  document.getElementById('btn-open-ac-studio')?.addEventListener('click', () => {
+    acStudio.open();
+  });
+
+  if (window.location.hash === '#ac-studio') {
+    acStudio.open();
+  }
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#ac-studio') {
+      acStudio.open();
     }
   });
 
@@ -296,6 +318,7 @@ function initApp() {
     if (pagesRouter.activeSlug) {
       pagesRouter.renderSubpage(pagesRouter.activeSlug);
     }
+    acStudio?.syncLanguage();
   });
 
   // ---------------------------------------------------------------------------

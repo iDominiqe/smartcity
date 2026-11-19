@@ -480,9 +480,16 @@ export function createMobileAcUnitMesh(scale = 1) {
   ledDot.position.set(0, 1.88, 0.25);
   unit.add(ledDot);
 
-  // Small front emblem mark
-  const logoBadge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.04), darkPanelMat);
-  logoBadge.position.set(0, 1.45, 0.44);
+  // 7 subtle upper-front horizontal accent ribs matching TCL MZ silhouette
+  for (let r = 0; r < 7; r++) {
+    const rib = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.018, 0.03), trimMat);
+    rib.position.set(0, 1.56 + r * 0.032, 0.432);
+    unit.add(rib);
+  }
+
+  // Dark square IR sensor window on front center
+  const logoBadge = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.085, 0.04), darkPanelMat);
+  logoBadge.position.set(0, 1.38, 0.44);
   unit.add(logoBadge);
 
   // 4 Black Caster Wheels

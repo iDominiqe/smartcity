@@ -43,7 +43,10 @@ export const PAGE_UI_LABELS = {
     campRate: 'Weekly Guest Rental Price (€)',
     campRevGross: 'Estimated Gross Season Revenue',
     campRevCapex: 'Upfront Capex Required',
-    campRevNet: 'Estimated Campsite Margin (40%)'
+    campRevNet: 'Estimated Campsite Margin (40%)',
+    openAcStudioBannerTitle: '360° Interactive 3D Air Conditioner & Thermal Simulator',
+    openAcStudioBannerDesc: 'Rotate the TCL MZ / NEO Clim® unit 360°, inspect rear exhaust & filters, and simulate live Cooling vs. Heating airflow.',
+    openAcStudioBannerBtn: '🧊 Launch 3D AC Studio'
   },
   fr: {
     backToHome3d: '← Retour à la Ville 3D',
@@ -84,7 +87,10 @@ export const PAGE_UI_LABELS = {
     campRate: 'Tarif hebdomadaire vacancier (€)',
     campRevGross: 'Revenu brut saisonnier estimé',
     campRevCapex: 'Investissement initial requis',
-    campRevNet: 'Marge estimée camping (40 %)'
+    campRevNet: 'Marge estimée camping (40 %)',
+    openAcStudioBannerTitle: 'Simulateur 3D 360° Climatiseur Mobile & Flux Froid / Chaud',
+    openAcStudioBannerDesc: 'Faites pivoter le modèle TCL MZ / NEO Clim® à 360°, inspectez ses filtres arrière et animez les flux de refroidissement et chauffage.',
+    openAcStudioBannerBtn: '🧊 Ouvrir le Studio 3D'
   },
   bg: {
     backToHome3d: '← Обратно към 3D Града',
@@ -125,7 +131,10 @@ export const PAGE_UI_LABELS = {
     campRate: 'Седмична цена за гости (€)',
     campRevGross: 'Очакван брутен приход за сезона',
     campRevCapex: 'Необходима първоначална инвестиция',
-    campRevNet: 'Очаквана печалба за къмпинга (40%)'
+    campRevNet: 'Очаквана печалба за къмпинга (40%)',
+    openAcStudioBannerTitle: '360° Интерактивен 3D Климатик и Термо Симулатор',
+    openAcStudioBannerDesc: 'Завъртете модела на 360°, разгледайте задните филтри и вижте анимация на охлаждане и отопление в реално време.',
+    openAcStudioBannerBtn: '🧊 Отвори 3D Студио'
   },
   ro: {
     backToHome3d: '← Înapoi la Orașul 3D',
@@ -166,7 +175,10 @@ export const PAGE_UI_LABELS = {
     campRate: 'Tarif săptămânal turist (€)',
     campRevGross: 'Venit brut estimat pe sezon',
     campRevCapex: 'Investiție inițială necesară',
-    campRevNet: 'Marjă estimată camping (40%)'
+    campRevNet: 'Marjă estimată camping (40%)',
+    openAcStudioBannerTitle: 'Simulator 3D 360° Aer Condiționat & Flux Rece / Cald',
+    openAcStudioBannerDesc: 'Rotiți unitatea la 360°, inspectați filtrele din spate și testați live animația de răcire și încălzire.',
+    openAcStudioBannerBtn: '🧊 Deschide Studioul 3D'
   }
 };
 
@@ -206,6 +218,17 @@ export const MENU_CATEGORIES = [
     badgeKey: 'newBadge',
     label: { en: 'NEO Air Conditioning', fr: 'Neo Climatisation', bg: 'Neo Климатизация', ro: 'Climatizare NEO' },
     items: [
+      {
+        type: 'ac-studio',
+        target: 'ac-studio',
+        highlight: true,
+        label: {
+          en: '🧊 3D Interactive AC Studio (Cool / Heat)',
+          fr: '🧊 Studio 3D Interactif Clim MZ (Froid / Chaud)',
+          bg: '🧊 3D Интерактивен Климатик (Студ / Топло)',
+          ro: '🧊 Studio 3D Interactiv AC (Rece / Cald)'
+        }
+      },
       {
         type: 'clim-drive',
         target: 'stage-4',
