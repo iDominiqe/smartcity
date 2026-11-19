@@ -1,322 +1,27 @@
 import * as THREE from 'three';
+import {
+  createSolarTexture,
+  createMaquetteWindowTextures,
+  createBadgeTexture,
+  createStoreSignTexture,
+  createSolarPanelMesh,
+  createRooftopFanUnit,
+  createAcUnitMesh,
+  createEnergyStream,
+  createStylizedVehicle,
+  createPedestrian
+} from './scene/textures-helpers.js';
 
 /**
- * Creates a crisp procedural photovoltaic solar panel texture with grid cells & silver busbars.
- */
-function createSolarTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-
-  const grad = ctx.createLinearGradient(0, 0, 256, 256);
-  grad.addColorStop(0, '#0a2558');
-  grad.addColorStop(0.5, '#15448f');
-  grad.addColorStop(1, '#0b214a');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 256, 256);
-
-  ctx.strokeStyle = 'rgba(148, 220, 255, 0.5)';
-  ctx.lineWidth = 2;
-  const cols = 4;
-  const rows = 6;
-  const cw = 256 / cols;
-  const ch = 256 / rows;
-
-  for (let c = 0; c <= cols; c++) {
-    ctx.beginPath();
-    ctx.moveTo(c * cw, 0);
-    ctx.lineTo(c * cw, 256);
-    ctx.stroke();
-  }
-  for (let r = 0; r <= rows; r++) {
-    ctx.beginPath();
-    ctx.moveTo(0, r * ch);
-    ctx.lineTo(256, r * ch);
-    ctx.stroke();
-  }
-
-  ctx.strokeStyle = 'rgba(215, 240, 255, 0.22)';
-  ctx.lineWidth = 1;
-  for (let c = 0; c < cols; c++) {
-    ctx.beginPath();
-    ctx.moveTo(c * cw + cw * 0.5, 0);
-    ctx.lineTo(c * cw + cw * 0.5, 256);
-    ctx.stroke();
-  }
-
-  ctx.strokeStyle = '#e2e8f0';
-  ctx.lineWidth = 8;
-  ctx.strokeRect(4, 4, 248, 248);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
-}
-
-/**
- * Creates crisp architectural white-maquette window textures (soft cool slate by day, warm golden glow by night).
- */
-function createMaquetteWindowTextures() {
-  const colorCanvas = document.createElement('canvas');
-  colorCanvas.width = 256;
-  colorCanvas.height = 512;
-  const cCtx = colorCanvas.getContext('2d');
-
-  const emitCanvas = document.createElement('canvas');
-  emitCanvas.width = 256;
-  emitCanvas.height = 512;
-  const eCtx = emitCanvas.getContext('2d');
-
-  cCtx.fillStyle = '#f4f6fa';
-  cCtx.fillRect(0, 0, 256, 512);
-  eCtx.fillStyle = '#000000';
-  eCtx.fillRect(0, 0, 256, 512);
-
-  const cols = 4;
-  const rows = 10;
-  const padX = 14;
-  const padY = 14;
-  const w = (256 - padX * (cols + 1)) / cols;
-  const h = (512 - padY * (rows + 1)) / rows;
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = padX + c * (w + padX);
-      const y = padY + r * (h + padY);
-      const litSeed = Math.sin(r * 17.7 + c * 9.3) * 0.5 + 0.5;
-      const isWarm = (r + c) % 3 !== 1;
-
-      // Subtle architectural recess rim + cool daylight glass
-      cCtx.fillStyle = '#cbd5e1';
-      cCtx.fillRect(x - 2, y - 2, w + 4, h + 4);
-      cCtx.fillStyle = litSeed > 0.25 ? '#9fb3c8' : '#b4c3d4';
-      cCtx.fillRect(x, y, w, h);
-
-      if (litSeed > 0.2) {
-        eCtx.fillStyle = isWarm ? '#ffd27d' : '#9ce8ff';
-        eCtx.fillRect(x, y, w, h);
-      }
-    }
-  }
-
-  const map = new THREE.CanvasTexture(colorCanvas);
-  map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 4;
-  const emissiveMap = new THREE.CanvasTexture(emitCanvas);
-  emissiveMap.colorSpace = THREE.SRGBColorSpace;
-  emissiveMap.anisotropy = 4;
-
-  return { map, emissiveMap };
-}
-
-/**
- * Creates a crisp blue [C] charging/hub badge texture inspired by architectural city signage.
- */
-function createBadgeTexture(letter = 'C', bg = '#2563eb') {
-  const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, 128, 128);
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 8;
-  ctx.strokeRect(8, 8, 112, 112);
-
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 78px Inter, Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(letter, 64, 67);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-/**
- * Helper to create a tilted solar panel assembly.
- */
-function createSolarPanelMesh(width, depth, tiltRad, solarMat, frameMat) {
-  const group = new THREE.Group();
-  const panelGroup = new THREE.Group();
-  panelGroup.rotation.x = tiltRad;
-
-  const frame = new THREE.Mesh(
-    new THREE.BoxGeometry(width + 0.1, 0.08, depth + 0.1),
-    frameMat
-  );
-  frame.castShadow = true;
-  panelGroup.add(frame);
-
-  const surface = new THREE.Mesh(
-    new THREE.BoxGeometry(width, 0.09, depth),
-    solarMat
-  );
-  surface.position.y = 0.015;
-  panelGroup.add(surface);
-
-  group.add(panelGroup);
-  return { group, panelGroup };
-}
-
-/**
- * Creates a circular architectural rooftop HVAC fan unit (signature maquette detail).
- */
-function createRooftopFanUnit(whiteMat, rimMat, radius = 0.52) {
-  const fan = new THREE.Group();
-  const housing = new THREE.Mesh(
-    new THREE.BoxGeometry(radius * 2.2, 0.28, radius * 2.2),
-    whiteMat
-  );
-  housing.position.y = 0.14;
-  housing.castShadow = true;
-  fan.add(housing);
-
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(radius * 0.72, 0.07, 8, 20),
-    rimMat
-  );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.y = 0.3;
-  fan.add(ring);
-
-  const hub = new THREE.Mesh(
-    new THREE.CylinderGeometry(radius * 0.24, radius * 0.24, 0.12, 12),
-    rimMat
-  );
-  hub.position.y = 0.28;
-  fan.add(hub);
-
-  return fan;
-}
-
-/**
- * Helper to create an animated energy conduit (glowing tube + moving energy pulse beads).
- */
-function createEnergyStream(points, colorHex, beadCount = 6, tubeRadius = 0.055) {
-  const curve = new THREE.CatmullRomCurve3(points);
-  const tubeGeo = new THREE.TubeGeometry(curve, 36, tubeRadius, 8, false);
-  const tubeMat = new THREE.MeshBasicMaterial({
-    color: colorHex,
-    transparent: true,
-    opacity: 0.28
-  });
-  const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-
-  const group = new THREE.Group();
-  group.add(tubeMesh);
-
-  const beadGeo = new THREE.SphereGeometry(tubeRadius * 2.15, 10, 10);
-  const beadMat = new THREE.MeshBasicMaterial({
-    color: colorHex,
-    transparent: true,
-    opacity: 0.95
-  });
-
-  const beads = [];
-  for (let i = 0; i < beadCount; i++) {
-    const bead = new THREE.Mesh(beadGeo, beadMat);
-    group.add(bead);
-    beads.push({
-      mesh: bead,
-      offset: i / beadCount
-    });
-  }
-
-  return { group, curve, tubeMat, beadMat, beads };
-}
-
-/**
- * Builds a stylized maquette car or electric bus (local front is +Z).
- */
-function createStylizedVehicle(bodyColor, isBus = false) {
-  const group = new THREE.Group();
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: bodyColor,
-    roughness: 0.28,
-    metalness: 0.35
-  });
-  const glassMat = new THREE.MeshStandardMaterial({
-    color: '#1e293b',
-    roughness: 0.15,
-    metalness: 0.75
-  });
-  const tireMat = new THREE.MeshStandardMaterial({ color: '#1e293b', roughness: 0.85 });
-
-  const w = isBus ? 1.55 : 1.38;
-  const len = isBus ? 4.35 : 2.95;
-  const h = isBus ? 1.48 : 0.46;
-
-  const chassis = new THREE.Mesh(new THREE.BoxGeometry(w, h, len), bodyMat);
-  chassis.position.y = isBus ? 0.96 : 0.42;
-  chassis.castShadow = true;
-  group.add(chassis);
-
-  if (isBus) {
-    const windowBand = new THREE.Mesh(new THREE.BoxGeometry(w + 0.03, 0.56, len * 0.84), glassMat);
-    windowBand.position.set(0, 1.18, 0.06);
-    group.add(windowBand);
-  } else {
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(w * 0.82, 0.42, len * 0.54), glassMat);
-    cabin.position.set(0, 0.82, -0.1);
-    cabin.castShadow = true;
-    group.add(cabin);
-  }
-
-  const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.2, 12);
-  wheelGeo.rotateZ(Math.PI / 2);
-  const zOff = len * 0.31;
-  [
-    [-w * 0.48, 0.24, zOff],
-    [w * 0.48, 0.24, zOff],
-    [-w * 0.48, 0.24, -zOff],
-    [w * 0.48, 0.24, -zOff]
-  ].forEach(([wx, wy, wz]) => {
-    const tire = new THREE.Mesh(wheelGeo, tireMat);
-    tire.position.set(wx, wy, wz);
-    group.add(tire);
-  });
-
-  return group;
-}
-
-/**
- * Builds a miniature colorful pedestrian for lively maquette sidewalks.
- */
-function createPedestrian(shirtColor) {
-  const ped = new THREE.Group();
-  const bodyMat = new THREE.MeshStandardMaterial({ color: shirtColor, roughness: 0.65 });
-  const headMat = new THREE.MeshStandardMaterial({ color: '#f3d2b3', roughness: 0.7 });
-  const legsMat = new THREE.MeshStandardMaterial({ color: '#334155', roughness: 0.8 });
-
-  const legs = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.12, 0.36, 8), legsMat);
-  legs.position.y = 0.18;
-  ped.add(legs);
-
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.36, 8), bodyMat);
-  torso.position.y = 0.52;
-  torso.castShadow = true;
-  ped.add(torso);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 10), headMat);
-  head.position.y = 0.81;
-  ped.add(head);
-
-  return ped;
-}
-
-/**
- * Builds the V2 Architectural White Maquette Smart-City-Led.com 3D world.
+ * Builds the Modular V3 Architectural White Maquette Smart-City-Led.com 3D world
+ * including Zone 4: Smart-City-Led.com · NEO CLIM® Flagship Store.
  */
 export function buildSmartCityWorld(scene) {
   const world = {
     solarTex: createSolarTexture(),
     windowTex: createMaquetteWindowTextures(),
     badgeTex: createBadgeTexture('C', '#2563eb'),
+    storeSignTex: createStoreSignTexture(),
     trackingPanels: [],
     streetLamps: [],
     buildingMaterials: [],
@@ -324,6 +29,13 @@ export function buildSmartCityWorld(scene) {
     cityFlows: [],
     stationFlows: [],
     homeFlows: [],
+    storeFlows: [],
+    storeFans: [],
+    storeWindowMat: null,
+    storeSignMat: null,
+    storeBayRingMat: null,
+    storeInteriorLight: null,
+    acPickupBox: null,
     trafficVehicles: [],
     pedestrians: [],
     stationBayRingMat: null,
@@ -491,14 +203,14 @@ export function buildSmartCityWorld(scene) {
   groundDeck.receiveShadow = true;
   islandGroup.add(groundDeck);
 
-  // Raised sidewalks flanking the main boulevard and crossroad
+  // Raised sidewalks
   const sidewalkBlocks = [
     { x: -27.5, z: -13.0, w: 16.5, d: 20.5 },
     { x: -5.5, z: -13.0, w: 18.5, d: 20.5 },
     { x: -27.5, z: 13.0, w: 16.5, d: 20.5 },
     { x: -5.5, z: 13.0, w: 18.5, d: 20.5 },
-    { x: 16.0, z: 13.0, w: 19.5, d: 20.5 },
-    { x: 32.0, z: 13.0, w: 11.0, d: 20.5 }
+    { x: 19.0, z: 13.8, w: 22.0, d: 19.5 },
+    { x: 33.5, z: 13.8, w: 7.5, d: 19.5 }
   ];
   sidewalkBlocks.forEach((b) => {
     const block = new THREE.Mesh(new THREE.BoxGeometry(b.w, 0.12, b.d), sidewalkMat);
@@ -510,9 +222,8 @@ export function buildSmartCityWorld(scene) {
   // Soft Mint-Green Park Lawns
   const parks = [
     { x: -26.5, z: 13.2, w: 12.5, d: 13.0 },
-    { x: 14.5, z: 11.5, w: 14.0, d: 14.0 },
     { x: 29.0, z: -10.8, w: 18.5, d: 16.5 },
-    { x: 30.5, z: 11.5, w: 13.5, d: 13.5 }
+    { x: 31.5, z: 12.0, w: 10.5, d: 13.0 }
   ];
   parks.forEach((p) => {
     const patch = new THREE.Mesh(new THREE.BoxGeometry(p.w, 0.09, p.d), grassMat);
@@ -631,10 +342,10 @@ export function buildSmartCityWorld(scene) {
 
   const treeCoords = [
     [-31.5, 8.5, 1.0, true], [-31.5, 16.5, 0.9, false], [-21.5, 8.8, 1.1, true],
-    [-13.0, -8.5, 0.95, false], [-8.5, -16.2, 1.05, true], [10.0, 6.8, 1.0, true],
-    [13.5, 15.0, 1.1, false], [19.5, 8.2, 0.95, true], [23.0, -15.5, 1.05, true],
-    [35.2, -14.8, 1.1, false], [35.2, -5.2, 0.95, true], [26.0, 14.0, 1.0, true],
-    [33.5, 9.2, 1.05, false], [16.5, -8.8, 0.9, false]
+    [-13.0, -8.5, 0.95, false], [-8.5, -16.2, 1.05, true], [10.0, 7.0, 0.95, true],
+    [11.5, 16.5, 1.05, false], [26.8, 15.2, 1.0, true], [23.0, -15.5, 1.05, true],
+    [35.2, -14.8, 1.1, false], [35.2, -5.2, 0.95, true], [28.0, 9.2, 1.0, true],
+    [34.5, 12.2, 1.05, false], [16.5, -8.8, 0.9, false]
   ];
   treeCoords.forEach(([tx, tz, sc, mint]) => addMaquetteTree(tx, tz, sc, mint));
 
@@ -645,11 +356,7 @@ export function buildSmartCityWorld(scene) {
   // ---------------------------------------------------------------------------
   const cityGroup = new THREE.Group();
 
-  // Ground Solar Farm (-32..-22, -17..-8)
-  const solarFarmPad = new THREE.Mesh(
-    new THREE.BoxGeometry(11.6, 0.14, 11.4),
-    whiteMaquetteMat
-  );
+  const solarFarmPad = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.14, 11.4), whiteMaquetteMat);
   solarFarmPad.position.set(-27.2, 0.09, -12.6);
   solarFarmPad.receiveShadow = true;
   cityGroup.add(solarFarmPad);
@@ -659,10 +366,7 @@ export function buildSmartCityWorld(scene) {
       const px = -31.1 + col * 2.6;
       const pz = -16.0 + row * 3.4;
 
-      const pedestal = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.1, 0.14, 0.75, 8),
-        frameMat
-      );
+      const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.75, 8), frameMat);
       pedestal.position.set(px, 0.48, pz);
       cityGroup.add(pedestal);
 
@@ -677,10 +381,7 @@ export function buildSmartCityWorld(scene) {
   const hubGroup = new THREE.Group();
   hubGroup.position.set(-9.5, 0.1, -12.5);
 
-  const hubBase = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.5, 2.8, 0.55, 18),
-    whiteMaquetteMat
-  );
+  const hubBase = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.8, 0.55, 18), whiteMaquetteMat);
   hubBase.position.y = 0.28;
   hubGroup.add(hubBase);
 
@@ -710,18 +411,12 @@ export function buildSmartCityWorld(scene) {
   hubGroup.add(hubRoofSolar.group);
   cityGroup.add(hubGroup);
 
-  // Architectural Maquette City Buildings (including pop-color awnings & pitched-roof townhouses)
   const buildingSpecs = [
-    // Commercial Pavilion A (Orange awning + Blue [C] badge)
     { x: -23.0, z: -5.4, w: 4.0, d: 3.6, h: 4.4, awning: '#f59e0b', badge: true, hvac: true, pitched: false },
-    // Commercial Pavilion B (Pink awning + HVAC)
     { x: -11.4, z: -5.4, w: 3.8, d: 3.6, h: 4.0, awning: '#ec4899', badge: false, hvac: true, pitched: false },
-    // Commercial Pavilion C (Emerald awning + HVAC)
     { x: -11.4, z: 5.4, w: 3.8, d: 3.4, h: 4.2, awning: '#10b981', badge: false, hvac: true, pitched: false },
-    // Gabled Foreground Townhouses
     { x: -22.6, z: 5.8, w: 3.6, d: 3.8, h: 5.4, awning: null, badge: false, hvac: false, pitched: true },
     { x: -29.2, z: 5.4, w: 3.4, d: 3.8, h: 4.8, awning: null, badge: false, hvac: false, pitched: true },
-    // Taller Architectural Towers with Rooftop Solar + HVAC
     { x: -29.8, z: -5.2, w: 3.6, d: 3.6, h: 8.6, awning: null, badge: false, hvac: true, pitched: false },
     { x: -19.5, z: -13.5, w: 3.8, d: 3.8, h: 11.2, awning: null, badge: false, hvac: true, pitched: false },
     { x: -4.8, z: -5.6, w: 4.0, d: 3.8, h: 9.2, awning: null, badge: false, hvac: true, pitched: false },
@@ -748,11 +443,7 @@ export function buildSmartCityWorld(scene) {
     cityGroup.add(mesh);
 
     if (b.pitched) {
-      // Crisp white pitched gable roof + solar panels on south slope
-      const gable = new THREE.Mesh(
-        new THREE.ConeGeometry(b.w * 0.74, 1.9, 4),
-        whiteMaquetteMat
-      );
+      const gable = new THREE.Mesh(new THREE.ConeGeometry(b.w * 0.74, 1.9, 4), whiteMaquetteMat);
       gable.position.set(b.x, b.h + 1.05, b.z);
       gable.rotation.y = Math.PI / 4;
       gable.castShadow = true;
@@ -762,21 +453,15 @@ export function buildSmartCityWorld(scene) {
       roofSolar.group.position.set(b.x, b.h + 0.92, b.z + 0.96);
       cityGroup.add(roofSolar.group);
     } else {
-      // Crisp parapet rim
-      const parapet = new THREE.Mesh(
-        new THREE.BoxGeometry(b.w + 0.24, 0.26, b.d + 0.24),
-        whiteMaquetteMat
-      );
+      const parapet = new THREE.Mesh(new THREE.BoxGeometry(b.w + 0.24, 0.26, b.d + 0.24), whiteMaquetteMat);
       parapet.position.set(b.x, b.h + 0.22, b.z);
       cityGroup.add(parapet);
 
-      // Rooftop solar panel bank
       const roofSolar = createSolarPanelMesh(b.w * 0.64, b.d * 0.42, 0.34, solarMat, frameMat);
       roofSolar.group.position.set(b.x - (b.hvac ? 0.35 : 0), b.h + 0.58, b.z - 0.35);
       cityGroup.add(roofSolar.group);
       world.trackingPanels.push({ panelGroup: roofSolar.panelGroup, baseTilt: 0.34, phase: idx * 0.6 });
 
-      // Signature rooftop circular HVAC fan unit
       if (b.hvac) {
         const fan = createRooftopFanUnit(whiteMaquetteMat, frameMat, 0.42);
         fan.position.set(b.x + b.w * 0.22, b.h + 0.34, b.z + b.d * 0.2);
@@ -784,7 +469,6 @@ export function buildSmartCityWorld(scene) {
       }
     }
 
-    // Pop-color commercial awning & optional [C] badge
     if (b.awning) {
       const awningMesh = new THREE.Mesh(
         new THREE.BoxGeometry(b.w * 0.86, 0.22, 0.95),
@@ -810,7 +494,7 @@ export function buildSmartCityWorld(scene) {
   scene.add(cityGroup);
 
   // ---------------------------------------------------------------------------
-  // 4. SMART-CITY-LED STREETLAMPS (White Architectural Poles + Solar Caps)
+  // 4. SMART-CITY-LED STREETLAMPS
   // ---------------------------------------------------------------------------
   const lampGroup = new THREE.Group();
   const coneGeo = new THREE.ConeGeometry(1.75, 4.3, 16, 1, true);
@@ -820,10 +504,7 @@ export function buildSmartCityWorld(scene) {
     const poleUnit = new THREE.Group();
     poleUnit.position.set(x, 0.08, z);
 
-    const mast = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.09, 4.3, 8),
-      whiteMaquetteMat
-    );
+    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 4.3, 8), whiteMaquetteMat);
     mast.position.y = 2.15;
     mast.castShadow = true;
     poleUnit.add(mast);
@@ -861,9 +542,9 @@ export function buildSmartCityWorld(scene) {
     world.streetLamps.push({ bulbMat, coneMat });
   }
 
-  const lampXPositions = [-30, -22, -12.5, -5, 3, 12, 20, 28, 34];
+  const lampXPositions = [-30, -22, -12.5, -5, 3, 12, 24, 34];
   lampXPositions.forEach((lx, i) => {
-    addStreetLamp(lx, 2.8, -1);
+    if (lx !== 24) addStreetLamp(lx, 2.8, -1);
     if (i % 2 === 0 && lx !== 3 && lx !== 28) {
       addStreetLamp(lx, -2.8, 1);
     }
@@ -871,7 +552,7 @@ export function buildSmartCityWorld(scene) {
   scene.add(lampGroup);
 
   // ---------------------------------------------------------------------------
-  // 5. ZONE 2: SOLAR EV CHARGING HUB (3 Bays with Companion Parked Cars)
+  // 5. ZONE 2: SOLAR EV CHARGING HUB (x = 4, z = -6.0)
   // ---------------------------------------------------------------------------
   const stationGroup = new THREE.Group();
   stationGroup.position.set(4, 0.04, -6.0);
@@ -881,20 +562,15 @@ export function buildSmartCityWorld(scene) {
   stationApron.receiveShadow = true;
   stationGroup.add(stationApron);
 
-  // Center EV Bay highlight pad at world (4.0, -5.2)
   world.stationBayRingMat = new THREE.MeshBasicMaterial({
     color: '#10b981',
     transparent: true,
     opacity: 0.35
   });
-  const bayOutline = new THREE.Mesh(
-    new THREE.BoxGeometry(4.6, 0.03, 2.7),
-    world.stationBayRingMat
-  );
+  const bayOutline = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.03, 2.7), world.stationBayRingMat);
   bayOutline.position.set(0, 0.045, 0.8);
   stationGroup.add(bayOutline);
 
-  // Clean white cantilevered canopy pillars
   [-4.2, 4.2].forEach((px) => {
     const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.4, 0.45), whiteMaquetteMat);
     pillar.position.set(px, 2.2, -1.5);
@@ -925,7 +601,6 @@ export function buildSmartCityWorld(scene) {
   canopySolarR.group.position.set(2.9, 0.16, 0);
   canopyRoof.add(canopySolarR.group);
 
-  // Blue [C] charging station badge on right canopy corner
   const stationBadge = new THREE.Mesh(
     new THREE.BoxGeometry(0.95, 0.95, 0.16),
     new THREE.MeshStandardMaterial({ map: world.badgeTex, roughness: 0.3 })
@@ -935,7 +610,6 @@ export function buildSmartCityWorld(scene) {
 
   stationGroup.add(canopyRoof);
 
-  // 3 Charging Pedestals + 2 Parked Companion Vehicles on Left & Right Bays
   [-3.8, 0.0, 3.8].forEach((cx) => {
     const ped = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.85, 0.48), whiteMaquetteMat);
     ped.position.set(cx, 0.92, -1.2);
@@ -949,7 +623,6 @@ export function buildSmartCityWorld(scene) {
     stationGroup.add(screen);
   });
 
-  // Companion parked vehicles in outer bays (leaving center bay open for hero EV)
   const parkedCarL = createStylizedVehicle('#334155', false);
   parkedCarL.position.set(-3.8, 0.03, 0.85);
   stationGroup.add(parkedCarL);
@@ -958,16 +631,12 @@ export function buildSmartCityWorld(scene) {
   parkedCarR.position.set(3.8, 0.03, 0.85);
   stationGroup.add(parkedCarR);
 
-  // Charging cable
   const cableCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0.25, 1.2, -1.0),
     new THREE.Vector3(0.7, 0.7, -0.3),
     new THREE.Vector3(0.5, 0.65, 0.45)
   ]);
-  const cableMesh = new THREE.Mesh(
-    new THREE.TubeGeometry(cableCurve, 16, 0.045, 8, false),
-    darkMetalMat
-  );
+  const cableMesh = new THREE.Mesh(new THREE.TubeGeometry(cableCurve, 16, 0.045, 8, false), darkMetalMat);
   stationGroup.add(cableMesh);
 
   world.stationLight = new THREE.PointLight('#7dd3fc', 0.5, 16);
@@ -977,7 +646,7 @@ export function buildSmartCityWorld(scene) {
   scene.add(stationGroup);
 
   // ---------------------------------------------------------------------------
-  // 6. ZONE 3: SUBURBAN SMART HOME / VILLA (White Architectural + Warm Wood)
+  // 6. ZONE 3: SUBURBAN SMART HOME / VILLA (x = 29, z = -10.5)
   // ---------------------------------------------------------------------------
   const homeGroup = new THREE.Group();
   homeGroup.position.set(29.0, 0.05, -10.5);
@@ -1030,13 +699,12 @@ export function buildSmartCityWorld(scene) {
     metalness: 0.25
   });
 
-  const windowSpecs = [
+  [
     { x: -2.2, y: 1.5, z: 2.33, w: 2.4, h: 1.7, d: 0.1 },
     { x: 1.8, y: 1.5, z: 2.33, w: 2.0, h: 1.7, d: 0.1 },
     { x: -1.4, y: 3.95, z: 1.93, w: 3.4, h: 1.35, d: 0.1 },
     { x: 4.23, y: 1.55, z: -0.5, w: 0.1, h: 1.6, d: 2.2 }
-  ];
-  windowSpecs.forEach((ws) => {
+  ].forEach((ws) => {
     const win = new THREE.Mesh(new THREE.BoxGeometry(ws.w, ws.h, ws.d), world.homeWindowMat);
     win.position.set(ws.x, ws.y, ws.z);
     homeGroup.add(win);
@@ -1060,10 +728,7 @@ export function buildSmartCityWorld(scene) {
 
   [-2.5, 2.5].forEach((gx) => {
     [3.0, 5.2, 7.4].forEach((gz) => {
-      const bollard = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.1, 0.65, 8),
-        whiteMaquetteMat
-      );
+      const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.65, 8), whiteMaquetteMat);
       bollard.position.set(gx, 0.35, gz);
       homeGroup.add(bollard);
 
@@ -1086,7 +751,115 @@ export function buildSmartCityWorld(scene) {
   scene.add(homeGroup);
 
   // ---------------------------------------------------------------------------
-  // 7. ANIMATED HERO ELECTRIC VEHICLE (EV) — Local Front is +Z
+  // 7. ZONE 4: FLAGSHIP "SMART-CITY-LED.COM · NEO CLIM®" STORE (x=19, z=12.2)
+  // ---------------------------------------------------------------------------
+  const storeGroup = new THREE.Group();
+  storeGroup.position.set(19.0, 0.05, 12.2);
+
+  // Customer pickup plaza connecting z=0 boulevard down to showroom front
+  const storeApron = new THREE.Mesh(new THREE.BoxGeometry(10.5, 0.07, 10.0), roadMat);
+  storeApron.position.set(0, 0.02, -6.2);
+  storeApron.receiveShadow = true;
+  storeGroup.add(storeApron);
+
+  // Glowing Icy-Cyan Pickup Bay at world (19.0, 0.05, 5.2) -> local (0, 0.06, -7.0)
+  world.storeBayRingMat = new THREE.MeshBasicMaterial({
+    color: '#00e5ff',
+    transparent: true,
+    opacity: 0.35
+  });
+  const storeBayPad = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.03, 5.0), world.storeBayRingMat);
+  storeBayPad.position.set(0, 0.06, -7.0);
+  storeGroup.add(storeBayPad);
+
+  // Store 2-Story Architectural White Building Body
+  const storeMain = new THREE.Mesh(new THREE.BoxGeometry(11.4, 4.8, 5.8), whiteMaquetteMat);
+  storeMain.position.set(0, 2.45, 0);
+  storeMain.castShadow = true;
+  storeMain.receiveShadow = true;
+  storeGroup.add(storeMain);
+
+  // Store Rooftop Solar Array powering showroom & AC systems
+  const storeSolarL = createSolarPanelMesh(4.6, 3.8, 0.25, solarMat, frameMat);
+  storeSolarL.group.position.set(-2.7, 5.15, 0.5);
+  storeGroup.add(storeSolarL.group);
+
+  const storeSolarR = createSolarPanelMesh(4.6, 3.8, 0.25, solarMat, frameMat);
+  storeSolarR.group.position.set(2.7, 5.15, 0.5);
+  storeGroup.add(storeSolarR.group);
+
+  // Cantilevered Showroom Canopy over entrance + glowing icy-cyan trim
+  const storeCanopy = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.25, 3.0), darkMetalMat);
+  storeCanopy.position.set(0, 3.45, -3.6);
+  storeCanopy.castShadow = true;
+  storeGroup.add(storeCanopy);
+
+  const storeCanopyTrim = new THREE.Mesh(
+    new THREE.BoxGeometry(10.9, 0.09, 3.08),
+    new THREE.MeshBasicMaterial({ color: '#00e5ff' })
+  );
+  storeCanopyTrim.position.set(0, 3.31, -3.6);
+  storeGroup.add(storeCanopyTrim);
+
+  // Glowing Panoramic Showroom Glass Windows facing boulevard (-Z)
+  world.storeWindowMat = new THREE.MeshStandardMaterial({
+    color: '#9ee8ff',
+    emissive: new THREE.Color('#38bdf8'),
+    emissiveIntensity: 0.45,
+    roughness: 0.12,
+    metalness: 0.35
+  });
+  const storeGlass = new THREE.Mesh(new THREE.BoxGeometry(8.8, 2.6, 0.14), world.storeWindowMat);
+  storeGlass.position.set(0, 1.55, -2.92);
+  storeGroup.add(storeGlass);
+
+  // Illuminated Roof Billboard: "SMART-CITY-LED.COM / NEO CLIM® SOLAR AC A+++"
+  world.storeSignMat = new THREE.MeshStandardMaterial({
+    map: world.storeSignTex,
+    emissiveMap: world.storeSignTex,
+    emissive: new THREE.Color('#ffffff'),
+    emissiveIntensity: 0.55,
+    roughness: 0.25
+  });
+  const signHousing = new THREE.Mesh(new THREE.BoxGeometry(9.6, 2.35, 0.35), darkMetalMat);
+  signHousing.position.set(0, 6.2, -2.5);
+  signHousing.castShadow = true;
+  storeGroup.add(signHousing);
+
+  const signFace = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 2.1), world.storeSignMat);
+  signFace.position.set(0, 6.2, -2.69);
+  signFace.rotation.y = Math.PI; // Faces -Z toward boulevard & camera
+  storeGroup.add(signFace);
+
+  // Outdoor Display Podium with oversized 3D NEO Clim® A+++ Unit & Spinning Fans
+  const podium = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.65, 1.8), whiteMaquetteMat);
+  podium.position.set(-4.3, 0.35, -4.8);
+  podium.castShadow = true;
+  storeGroup.add(podium);
+
+  const acDisplay = createAcUnitMesh(1.05);
+  acDisplay.unit.position.set(-4.3, 0.68, -4.8);
+  acDisplay.unit.rotation.y = Math.PI;
+  storeGroup.add(acDisplay.unit);
+  world.storeFans.push(...acDisplay.fans);
+
+  // Animated NEO Clim® Pickup Package Box (glides from showroom to EV when docked)
+  const acPickup = createAcUnitMesh(0.58);
+  acPickup.unit.position.set(0, 0.85, -3.5);
+  acPickup.unit.rotation.y = Math.PI;
+  storeGroup.add(acPickup.unit);
+  world.acPickupBox = acPickup.unit;
+  world.storeFans.push(...acPickup.fans);
+
+  // Storefront LED Lighting
+  world.storeInteriorLight = new THREE.PointLight('#00e5ff', 1.2, 22);
+  world.storeInteriorLight.position.set(0, 3.0, -5.2);
+  storeGroup.add(world.storeInteriorLight);
+
+  scene.add(storeGroup);
+
+  // ---------------------------------------------------------------------------
+  // 8. ANIMATED HERO ELECTRIC VEHICLE (EV) — Local Front is +Z
   // ---------------------------------------------------------------------------
   const evCar = new THREE.Group();
 
@@ -1123,10 +896,7 @@ export function buildSmartCityWorld(scene) {
     transparent: true,
     opacity: 0.0
   });
-  const chargeRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.45, 0.045, 8, 24),
-    world.evChargeRingMat
-  );
+  const chargeRing = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.045, 8, 24), world.evChargeRingMat);
   chargeRing.rotation.x = Math.PI / 2;
   chargeRing.position.set(0, 1.24, -0.18);
   evCar.add(chargeRing);
@@ -1193,21 +963,21 @@ export function buildSmartCityWorld(scene) {
   tailBar.position.set(0, 0.62, -1.94);
   evCar.add(tailBar);
 
-  evCar.position.set(-26, 0.05, 1.0);
+  evCar.position.set(-26, 0.05, 1.15);
   evCar.rotation.y = Math.PI / 2;
   scene.add(evCar);
   world.evCar = evCar;
 
   // ---------------------------------------------------------------------------
-  // 8. AMBIENT CITY TRAFFIC (Coral-Pink Bus + Colorful Cars) & PEDESTRIANS
+  // 9. AMBIENT CITY TRAFFIC & PEDESTRIANS
   // ---------------------------------------------------------------------------
   const trafficSpecs = [
     { color: '#f4607a', isBus: true, axis: 'z', lane: -18.1, dir: 1, min: -22, max: 22, pos: -12, speed: 3.6 },
     { color: '#facc15', isBus: false, axis: 'z', lane: -15.9, dir: -1, min: -22, max: 22, pos: 14, speed: 4.5 },
     { color: '#38bdf8', isBus: false, axis: 'z', lane: -18.1, dir: 1, min: -22, max: 22, pos: 6, speed: 4.1 },
     { color: '#ef4444', isBus: false, axis: 'z', lane: -15.9, dir: -1, min: -22, max: 22, pos: -5, speed: 4.3 },
-    { color: '#38bdf8', isBus: false, axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: 16, speed: 4.8 },
-    { color: '#facc15', isBus: false, axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: -8, speed: 4.8 }
+    { color: '#38bdf8', isBus: false, axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: 14, speed: 4.6 },
+    { color: '#facc15', isBus: false, axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: -8, speed: 4.6 }
   ];
 
   trafficSpecs.forEach((spec) => {
@@ -1232,7 +1002,7 @@ export function buildSmartCityWorld(scene) {
     { x0: -14.2, z0: -3.3, x1: -6, z1: -3.3, speed: 0.19 },
     { x0: -19.8, z0: -14, x1: -19.8, z1: -4.2, speed: 0.14 },
     { x0: -14.2, z0: 4.2, x1: -14.2, z1: 14, speed: 0.15 },
-    { x0: 10, z0: 3.3, x1: 19, z1: 3.3, speed: 0.17 },
+    { x0: 13.5, z0: 8.2, x1: 23.5, z1: 8.2, speed: 0.14 },
     { x0: -19.8, z0: 4.2, x1: -19.8, z1: 13, speed: 0.16 },
     { x0: -14.2, z0: -13, x1: -14.2, z1: -4.2, speed: 0.14 },
     { x0: -3.5, z0: 3.3, x1: 4.0, z1: 3.3, speed: 0.15 }
@@ -1246,90 +1016,55 @@ export function buildSmartCityWorld(scene) {
   });
 
   // ---------------------------------------------------------------------------
-  // 9. ANIMATED 3D ENERGY CONDUITS & PARTICLE STREAMS
+  // 10. ANIMATED 3D ENERGY CONDUITS & PARTICLE STREAMS
   // ---------------------------------------------------------------------------
   const energyGroup = new THREE.Group();
 
-  const cityPaths = [
-    [
-      new THREE.Vector3(-27.2, 1.3, -12.6),
-      new THREE.Vector3(-18.5, 2.5, -12.8),
-      new THREE.Vector3(-9.5, 2.1, -12.5)
-    ],
-    [
-      new THREE.Vector3(-9.5, 2.1, -12.5),
-      new THREE.Vector3(-16.0, 3.2, -9.0),
-      new THREE.Vector3(-23.0, 4.6, -5.4)
-    ],
-    [
-      new THREE.Vector3(-9.5, 2.1, -12.5),
-      new THREE.Vector3(-10.5, 3.0, -9.0),
-      new THREE.Vector3(-11.4, 4.2, -5.4)
-    ],
-    [
-      new THREE.Vector3(-9.5, 2.1, -12.5),
-      new THREE.Vector3(-10.5, 3.4, -2.0),
-      new THREE.Vector3(-11.4, 4.4, 5.4)
-    ],
-    [
-      new THREE.Vector3(-9.5, 2.1, -12.5),
-      new THREE.Vector3(-17.0, 2.9, -2.5),
-      new THREE.Vector3(-22.6, 5.2, 5.8)
-    ],
-    [
-      new THREE.Vector3(-9.5, 2.1, -12.5),
-      new THREE.Vector3(-7.5, 3.4, -3.0),
-      new THREE.Vector3(-5.5, 5.2, 6.4)
-    ]
-  ];
-
-  cityPaths.forEach((pts) => {
+  // Stage 1: City Flows
+  [
+    [new THREE.Vector3(-27.2, 1.3, -12.6), new THREE.Vector3(-18.5, 2.5, -12.8), new THREE.Vector3(-9.5, 2.1, -12.5)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-16.0, 3.2, -9.0), new THREE.Vector3(-23.0, 4.6, -5.4)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.5, 3.0, -9.0), new THREE.Vector3(-11.4, 4.2, -5.4)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.5, 3.4, -2.0), new THREE.Vector3(-11.4, 4.4, 5.4)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-17.0, 2.9, -2.5), new THREE.Vector3(-22.6, 5.2, 5.8)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-7.5, 3.4, -3.0), new THREE.Vector3(-5.5, 5.2, 6.4)]
+  ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#0ea5e9', 7, 0.06);
     energyGroup.add(stream.group);
     world.cityFlows.push(stream);
   });
 
-  const stationPaths = [
-    [
-      new THREE.Vector3(1.5, 4.7, -5.8),
-      new THREE.Vector3(3.2, 3.6, -7.0),
-      new THREE.Vector3(4.0, 1.8, -7.2),
-      new THREE.Vector3(4.0, 0.8, -5.2)
-    ],
-    [
-      new THREE.Vector3(6.5, 4.7, -5.8),
-      new THREE.Vector3(4.8, 3.6, -7.0),
-      new THREE.Vector3(4.0, 1.8, -7.2),
-      new THREE.Vector3(4.0, 0.8, -5.2)
-    ]
-  ];
-  stationPaths.forEach((pts) => {
+  // Stage 2: Solar EV Station Flows
+  [
+    [new THREE.Vector3(1.5, 4.7, -5.8), new THREE.Vector3(3.2, 3.6, -7.0), new THREE.Vector3(4.0, 1.8, -7.2), new THREE.Vector3(4.0, 0.8, -5.2)],
+    [new THREE.Vector3(6.5, 4.7, -5.8), new THREE.Vector3(4.8, 3.6, -7.0), new THREE.Vector3(4.0, 1.8, -7.2), new THREE.Vector3(4.0, 0.8, -5.2)]
+  ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#10b981', 9, 0.075);
     energyGroup.add(stream.group);
     world.stationFlows.push(stream);
   });
 
-  const homePaths = [
-    [
-      new THREE.Vector3(29.8, 5.6, -10.8),
-      new THREE.Vector3(32.5, 4.0, -9.2),
-      new THREE.Vector3(31.8, 1.6, -8.0)
-    ],
-    [
-      new THREE.Vector3(31.8, 1.5, -8.0),
-      new THREE.Vector3(30.2, 1.8, -8.2),
-      new THREE.Vector3(28.5, 2.2, -9.5)
-    ],
-    [
-      new THREE.Vector3(29.0, 0.7, -5.4),
-      new THREE.Vector3(30.8, 1.1, -6.5),
-      new THREE.Vector3(31.8, 1.4, -8.0)
-    ]
-  ];
-  homePaths.forEach((pts) => {
+  // Stage 3: Smart Home Evening Flows
+  [
+    [new THREE.Vector3(29.8, 5.6, -10.8), new THREE.Vector3(32.5, 4.0, -9.2), new THREE.Vector3(31.8, 1.6, -8.0)],
+    [new THREE.Vector3(31.8, 1.5, -8.0), new THREE.Vector3(30.2, 1.8, -8.2), new THREE.Vector3(28.5, 2.2, -9.5)],
+    [new THREE.Vector3(29.0, 0.7, -5.4), new THREE.Vector3(30.8, 1.1, -6.5), new THREE.Vector3(31.8, 1.4, -8.0)]
+  ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#fbbf24', 8, 0.065);
     energyGroup.add(stream.group);
     world.homeFlows.push(stream);
+  });
+
+  // Stage 4: Flagship Smart-City-Led.com · NEO CLIM® Store Solar Cooling Streams
+  [
+    // Store solar roof -> AC Display Podium
+    [new THREE.Vector3(16.3, 5.2, 12.7), new THREE.Vector3(14.7, 3.6, 9.6), new THREE.Vector3(14.7, 1.6, 7.4)],
+    // Store solar roof -> Showroom & Pickup Bay
+    [new THREE.Vector3(21.7, 5.2, 12.7), new THREE.Vector3(19.5, 3.8, 9.6), new THREE.Vector3(19.0, 1.8, 8.2), new THREE.Vector3(19.0, 1.1, 5.2)]
+  ].forEach((pts) => {
+    const stream = createEnergyStream(pts, '#00e5ff', 9, 0.07);
+    energyGroup.add(stream.group);
+    world.storeFlows.push(stream);
   });
 
   scene.add(energyGroup);

@@ -76,21 +76,21 @@ function sampleCameraKeyframes(keyframes, p, outPos, outTarget) {
   );
 }
 
-// Tuned for FOV=30 telephoto-isometric miniature maquette perspective
+// Tuned for FOV=30 telephoto-isometric miniature maquette perspective across all 4 stages
 const CAMERA_KEYFRAMES = [
   { p: 0.0, pos: [-32, 27, 38], target: [-18, 2.2, -1.5] },
-  { p: 0.14, pos: [-22, 19.5, 29], target: [-15.5, 2.0, -1.0] },
-  { p: 0.24, pos: [-8, 10.5, 19], target: [-3.0, 1.2, -1.5] },
-  { p: 0.34, pos: [0.5, 7.6, 10.6], target: [3.6, 1.6, -5.2] },
-  { p: 0.50, pos: [14.2, 8.0, 8.2], target: [3.8, 1.6, -5.2] },
-  { p: 0.59, pos: [19.5, 10.2, 17.5], target: [17.0, 1.4, -1.2] },
-  { p: 0.66, pos: [21.5, 8.8, 12.6], target: [28.4, 2.0, -7.2] },
-  { p: 0.80, pos: [36.2, 7.6, 9.8], target: [28.8, 2.2, -8.2] },
-  { p: 0.90, pos: [24, 25, 42], target: [3, 1.5, -2] },
-  { p: 1.0, pos: [10, 34, 52], target: [0, 1.5, -2] }
+  { p: 0.13, pos: [-22, 19.5, 29], target: [-15.5, 2.0, -1.0] },
+  { p: 0.22, pos: [-8, 10.5, 19], target: [-3.0, 1.2, -1.5] },
+  { p: 0.30, pos: [0.5, 7.6, 10.6], target: [3.6, 1.6, -5.2] },
+  { p: 0.44, pos: [14.2, 8.0, 8.2], target: [3.8, 1.6, -5.2] },
+  { p: 0.52, pos: [19.5, 10.2, 17.5], target: [17.0, 1.4, -1.2] },
+  { p: 0.58, pos: [21.5, 8.8, 12.6], target: [28.4, 2.0, -7.2] },
+  { p: 0.72, pos: [36.2, 7.6, 9.8], target: [28.8, 2.2, -8.2] },
+  { p: 0.79, pos: [17.0, 11.8, -14.5], target: [23.0, 3.0, 1.5] },
+  { p: 0.87, pos: [2.5, 12.2, -10.5], target: [20.5, 3.8, 7.2] },
+  { p: 1.0, pos: [6.8, 12.6, -11.8], target: [20.2, 3.8, 7.6] }
 ];
 
-// 5-Stop Atmospheric Lighting Curve: Night (0.0) -> Blue Hour (0.22) -> Sunset (0.45) -> Afternoon (0.72) -> Bright Sunny Day (1.0)
 const ATMOSPHERE_STOPS = [
   {
     d: 0.0,
@@ -160,7 +160,7 @@ export class ScrollDirector {
     this.smoothProgress = 0;
     this.freeOrbitMode = false;
     this.flowBoost = false;
-    this.previewMode = 'auto'; // 'auto' | 'night' | 'day' | 'sunset'
+    this.previewMode = 'auto';
 
     this.flowClock = 0;
     this.wheelSpin = 0;
@@ -176,7 +176,7 @@ export class ScrollDirector {
     this._hemiSkyCur = new THREE.Color('#ffffff');
     this._hemiGroundCur = new THREE.Color('#dce3ed');
 
-    // Driving Curve 1: City Core Eastbound Lane (z = +1.15) -> Center Charging Station Bay (4, -5.2)
+    // Leg 1: City Core -> Solar EV Charging Bay
     this.driveToStationCurve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(-26.0, 0.05, 1.15),
       new THREE.Vector3(-17.0, 0.05, 1.15),
@@ -187,7 +187,7 @@ export class ScrollDirector {
       new THREE.Vector3(4.0, 0.05, -5.2)
     ]);
 
-    // Driving Curve 2: Charging Station Bay -> Eastbound Lane (z = +1.15) -> Evening Smart Home Driveway
+    // Leg 2: Solar EV Station -> Evening Smart Home Driveway
     this.driveToHomeCurve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(4.0, 0.05, -5.2),
       new THREE.Vector3(6.8, 0.05, -4.6),
@@ -197,6 +197,16 @@ export class ScrollDirector {
       new THREE.Vector3(26.6, 0.05, 0.1),
       new THREE.Vector3(28.6, 0.05, -2.6),
       new THREE.Vector3(29.0, 0.05, -5.4)
+    ]);
+
+    // Leg 3: Evening Smart Home -> Smart-City-Led.com NEO Clim® Flagship Store Pickup Bay
+    this.driveToStoreCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(29.0, 0.05, -5.4),
+      new THREE.Vector3(27.8, 0.05, -2.8),
+      new THREE.Vector3(25.2, 0.05, -1.15),
+      new THREE.Vector3(21.2, 0.05, -1.15),
+      new THREE.Vector3(19.3, 0.05, 1.6),
+      new THREE.Vector3(19.0, 0.05, 5.2)
     ]);
 
     this.hudTime = document.getElementById('hud-time');
@@ -274,60 +284,84 @@ export class ScrollDirector {
     }
 
     // -------------------------------------------------------------------------
-    // 2. HERO ELECTRIC VEHICLE JOURNEY
+    // 2. HERO ELECTRIC VEHICLE 3-LEG JOURNEY
     // -------------------------------------------------------------------------
     let evChargingFactor = 0;
     let evHomeV2hFactor = 0;
+    let storePickupFactor = 0;
     let evBatteryPct = 42;
 
-    if (p < 0.34) {
-      const t = clamp(p / 0.34, 0, 1);
+    if (p < 0.30) {
+      const t = clamp(p / 0.30, 0, 1);
       const easedT = t < 0.85 ? t : lerp(0.85, 1.0, smoothstep(0.85, 1.0, t));
       this.driveToStationCurve.getPointAt(easedT, this._evPos);
       this.world.evCar.position.copy(this._evPos);
 
       if (easedT < 0.98) {
         this.driveToStationCurve.getPointAt(Math.min(1, easedT + 0.012), this._evNext);
-        const angle = Math.atan2(
+        this.world.evCar.rotation.y = Math.atan2(
           this._evNext.x - this._evPos.x,
           this._evNext.z - this._evPos.z
         );
-        this.world.evCar.rotation.y = angle;
       } else {
         this.world.evCar.rotation.y = Math.PI / 2;
       }
       evBatteryPct = Math.round(lerp(42, 22, t));
-    } else if (p <= 0.52) {
+    } else if (p <= 0.45) {
       this._evPos.set(4.0, 0.05, -5.2);
       this.world.evCar.position.copy(this._evPos);
       this.world.evCar.rotation.y = Math.PI / 2;
 
-      const chargeT = clamp((p - 0.34) / 0.18, 0, 1);
+      const chargeT = clamp((p - 0.30) / 0.15, 0, 1);
       evChargingFactor = Math.max(0.68, Math.sin(chargeT * Math.PI));
       evBatteryPct = Math.round(lerp(22, 100, chargeT));
-    } else if (p <= 0.65) {
-      const t = clamp((p - 0.52) / 0.13, 0, 1);
+    } else if (p <= 0.58) {
+      const t = clamp((p - 0.45) / 0.13, 0, 1);
       this.driveToHomeCurve.getPointAt(t, this._evPos);
       this.world.evCar.position.copy(this._evPos);
 
       if (t < 0.96) {
         this.driveToHomeCurve.getPointAt(Math.min(1, t + 0.012), this._evNext);
-        const angle = Math.atan2(
+        this.world.evCar.rotation.y = Math.atan2(
           this._evNext.x - this._evPos.x,
           this._evNext.z - this._evPos.z
         );
-        this.world.evCar.rotation.y = angle;
       } else {
         this.world.evCar.rotation.y = Math.PI;
       }
       evBatteryPct = Math.round(lerp(100, 91, t));
-    } else {
+    } else if (p <= 0.73) {
+      // Stage 3: Evening Home powered by Solar Storage
       this._evPos.set(29.0, 0.05, -5.4);
       this.world.evCar.position.copy(this._evPos);
       this.world.evCar.rotation.y = Math.PI;
 
-      evHomeV2hFactor = smoothstep(0.65, 0.70, p);
-      evBatteryPct = Math.round(lerp(91, 84, clamp((p - 0.65) / 0.35, 0, 1)));
+      evHomeV2hFactor = smoothstep(0.58, 0.64, p);
+      evBatteryPct = Math.round(lerp(91, 86, clamp((p - 0.58) / 0.15, 0, 1)));
+    } else if (p <= 0.86) {
+      // Leg 3: Drives from Smart Home to Smart-City-Led.com · NEO CLIM® Store
+      const t = clamp((p - 0.73) / 0.13, 0, 1);
+      this.driveToStoreCurve.getPointAt(t, this._evPos);
+      this.world.evCar.position.copy(this._evPos);
+
+      if (t < 0.96) {
+        this.driveToStoreCurve.getPointAt(Math.min(1, t + 0.012), this._evNext);
+        this.world.evCar.rotation.y = Math.atan2(
+          this._evNext.x - this._evPos.x,
+          this._evNext.z - this._evPos.z
+        );
+      } else {
+        this.world.evCar.rotation.y = 0; // Facing South (+Z) toward Storefront
+      }
+      evBatteryPct = Math.round(lerp(86, 81, t));
+    } else {
+      // Stage 4: Parked at Smart-City-Led.com · NEO CLIM® Flagship Store Pickup Bay
+      this._evPos.set(19.0, 0.05, 5.2);
+      this.world.evCar.position.copy(this._evPos);
+      this.world.evCar.rotation.y = 0;
+
+      storePickupFactor = smoothstep(0.86, 0.91, p);
+      evBatteryPct = 81;
     }
 
     const movedDist = this._evPos.distanceTo(this.prevEvPos);
@@ -341,7 +375,7 @@ export class ScrollDirector {
     this.prevEvPos.copy(this._evPos);
 
     // -------------------------------------------------------------------------
-    // 3. AMBIENT CITY TRAFFIC & PEDESTRIANS (Yields smoothly to Hero EV)
+    // 3. AMBIENT CITY TRAFFIC & PEDESTRIANS
     // -------------------------------------------------------------------------
     if (this.world.trafficVehicles) {
       this.world.trafficVehicles.forEach((v) => {
@@ -349,8 +383,8 @@ export class ScrollDirector {
         const vz = v.axis === 'z' ? v.pos : v.lane;
         const distToHero = Math.hypot(vx - this._evPos.x, vz - this._evPos.z);
 
-        // Yield at intersection or nearby hero EV to prevent clipping
-        const nearCrossroad = v.axis === 'z' && Math.abs(vz) < 6.0 && Math.abs(this._evPos.x - -17) < 7.0;
+        const nearCrossroad =
+          v.axis === 'z' && Math.abs(vz) < 6.0 && Math.abs(this._evPos.x - -17) < 7.0;
         if (distToHero > 4.6 && !nearCrossroad) {
           v.pos += v.dir * v.speed * safeDt;
           if (v.pos > v.max) v.pos = v.min;
@@ -379,7 +413,7 @@ export class ScrollDirector {
     // -------------------------------------------------------------------------
     // 4. NATURAL 5-STOP DAY -> SUNSET -> TWILIGHT -> NIGHT LIGHTING
     // -------------------------------------------------------------------------
-    let daylight = 1.0 - smoothstep(0.46, 0.67, p);
+    let daylight = 1.0 - smoothstep(0.42, 0.62, p);
     if (this.previewMode === 'night') daylight = 0.0;
     else if (this.previewMode === 'sunset') daylight = 0.44;
     else if (this.previewMode === 'day') daylight = 1.0;
@@ -420,7 +454,7 @@ export class ScrollDirector {
     this.world.starsMat.opacity = clamp((nightness - 0.35) / 0.55, 0, 0.9);
 
     // -------------------------------------------------------------------------
-    // 5. SMART-CITY-LED LIGHTS, WINDOWS, EV HEADLIGHTS & VILLA
+    // 5. SMART-CITY-LED LIGHTS, WINDOWS, EV & NEO CLIM® FLAGSHIP STORE
     // -------------------------------------------------------------------------
     const ledGlow = smoothstep(0.32, 0.78, nightness);
 
@@ -472,6 +506,38 @@ export class ScrollDirector {
       );
     });
 
+    // Zone 4: Smart-City-Led.com · NEO Clim® Flagship Store Animations
+    const storeActiveGlow = Math.max(ledGlow, storePickupFactor);
+    if (this.world.storeWindowMat) {
+      this.world.storeWindowMat.emissiveIntensity = lerp(0.35, 1.45, storeActiveGlow);
+    }
+    if (this.world.storeSignMat) {
+      this.world.storeSignMat.emissiveIntensity = lerp(0.45, 1.25, storeActiveGlow);
+    }
+    if (this.world.storeBayRingMat) {
+      this.world.storeBayRingMat.opacity =
+        0.3 + storePickupFactor * (0.55 + 0.2 * Math.sin(elapsed * 5));
+    }
+    if (this.world.storeInteriorLight) {
+      this.world.storeInteriorLight.intensity = lerp(0.9, 3.8, storeActiveGlow);
+    }
+    if (this.world.storeFans) {
+      const fanSpeed = 6.0 + storePickupFactor * 8.0;
+      this.world.storeFans.forEach((fan) => {
+        fan.rotation.z += safeDt * fanSpeed;
+      });
+    }
+    if (this.world.acPickupBox) {
+      // Glides smoothly from showroom counter (-3.5) out over the EV bay (-7.0) when docked
+      const loadT = smoothstep(0.84, 0.94, p);
+      const bobY = storePickupFactor * Math.sin(elapsed * 3.5) * 0.1;
+      this.world.acPickupBox.position.set(
+        0,
+        lerp(0.85, 1.52, loadT) + bobY,
+        lerp(-3.5, -7.0, loadT)
+      );
+    }
+
     // -------------------------------------------------------------------------
     // 6. SOLAR TRACKING, HUB RINGS & ENERGY FLOW PARTICLES
     // -------------------------------------------------------------------------
@@ -521,6 +587,18 @@ export class ScrollDirector {
       });
     });
 
+    const storeStrength = Math.max(0.3, storePickupFactor);
+    this.world.storeFlows.forEach((stream, sIdx) => {
+      stream.tubeMat.opacity = 0.16 + storeStrength * 0.48;
+      stream.beadMat.opacity = 0.35 + storeStrength * 0.65;
+      stream.beads.forEach((b) => {
+        const rate = 0.32 + storePickupFactor * 0.6;
+        const u = wrap01(this.flowClock * rate + b.offset + sIdx * 0.19);
+        stream.curve.getPointAt(u, b.mesh.position);
+        b.mesh.scale.setScalar(0.7 + storeStrength * 0.6);
+      });
+    });
+
     // -------------------------------------------------------------------------
     // 7. UPDATE LIVE TELEMETRY HUD
     // -------------------------------------------------------------------------
@@ -535,10 +613,10 @@ export class ScrollDirector {
       totalMinutes = 18 * 60 + 40;
     } else if (this.previewMode === 'day') {
       totalMinutes = 12 * 60 + 30;
-    } else if (p < 0.45) {
-      totalMinutes = lerp(12 * 60 + 30, 16 * 60 + 0, p / 0.45);
+    } else if (p < 0.42) {
+      totalMinutes = lerp(12 * 60 + 30, 16 * 60 + 0, p / 0.42);
     } else {
-      totalMinutes = lerp(16 * 60 + 0, 22 * 60 + 15, (p - 0.45) / 0.55);
+      totalMinutes = lerp(16 * 60 + 0, 21 * 60 + 45, (p - 0.42) / 0.58);
     }
     const hrs = Math.floor(totalMinutes / 60) % 24;
     const mins = Math.floor(totalMinutes % 60);
@@ -565,14 +643,16 @@ export class ScrollDirector {
         key = 'gridEveningDrive';
       } else if (this.previewMode === 'day') {
         key = 'gridDayCity';
-      } else if (p >= 0.33 && p <= 0.52) {
+      } else if (p >= 0.30 && p <= 0.45) {
         key = 'gridCharging';
-      } else if (p > 0.52 && p < 0.65) {
+      } else if (p > 0.45 && p < 0.58) {
         key = 'gridEveningDrive';
-      } else if (p >= 0.65 && p < 0.85) {
+      } else if (p >= 0.58 && p <= 0.73) {
         key = 'gridEveningHome';
-      } else if (p >= 0.85) {
-        key = 'gridNightEco';
+      } else if (p > 0.73 && p < 0.86) {
+        key = 'gridDriveToStore';
+      } else if (p >= 0.86) {
+        key = 'gridNeoClimStore';
       }
       this.hudGrid.textContent = this.i18n.get(key);
     }

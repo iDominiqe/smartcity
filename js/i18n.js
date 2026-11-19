@@ -62,10 +62,18 @@ export const TRANSLATIONS = {
     stage3Stat3Label: 'Smart LEDs',
     stage3Stat3Val: 'Auto-Dim',
 
-    stage4Badge: 'STAGE 04 · COMPLETE SMART ECOSYSTEM',
-    stage4Title: '24/7 Autonomous Solar & Smart LED City',
+    stage4Badge: 'STAGE 04 · NEO CLIM® AT SMART-CITY-LED.COM STORE',
+    stage4Title: 'Drive to Smart-City-Led.com Store for NEO Clim® Solar AC',
     stage4Desc:
-      'Explore the full illuminated 3D ecosystem. Switch to Free 3D Orbit mode above to inspect every solar roof, LED pole, charging bay, and battery wall — or calculate your own solar and Smart LED savings below.',
+      'From the powered Smart Home, the EV cruises across the lit boulevard into the illuminated Smart-City-Led.com · NEO CLIM® Flagship Store pickup bay. Discover A+++ solar reversible air conditioning, mobile rentals, and ZEPHYR cooling with icy-cyan solar power.',
+    stage4Stat1Label: 'Solar HVAC',
+    stage4Stat1Val: 'Inverter A+++',
+    stage4Stat2Label: 'Energy Savings',
+    stage4Stat2Val: '-80% to -90%',
+    stage4Stat3Label: 'ZEPHYR Cooler',
+    stage4Stat3Val: '-5° to -15°C',
+    btnOpenNeoClim: 'Explore NEO Clim®',
+    btnOpenZephyr: 'ZEPHYR Sun Cooler®',
     btnExplore3d: 'Enter Free 3D Orbit',
     btnBackTop: 'Replay Journey',
 
@@ -106,6 +114,8 @@ export const TRANSLATIONS = {
     gridCharging: 'Canopy → EV Fast Charge',
     gridEveningDrive: 'Dusk Transition · LEDs On',
     gridEveningHome: 'Battery + V2H → Home',
+    gridDriveToStore: 'Home → NEO Clim® Store',
+    gridNeoClimStore: 'Smart-City-Led.com · NEO Clim® Pickup',
     gridNightEco: 'Night Storage Autonomous'
   },
 
@@ -165,10 +175,18 @@ export const TRANSLATIONS = {
     stage3Stat3Label: 'LED Intelligentes',
     stage3Stat3Val: 'Auto-Régulées',
 
-    stage4Badge: 'ÉTAPE 04 · ÉCOSYSTÈME INTELLIGENT COMPLET',
-    stage4Title: 'Ville Autonome Solaire & LED Intelligentes 24h/24',
+    stage4Badge: 'ÉTAPE 04 · BOUTIQUE SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Départ vers la Boutique Smart-City-Led.com pour votre NEO Clim®',
     stage4Desc:
-      'Explorez l’ensemble de la maquette nocturne illuminée. Passez en mode Orbite 3D Libre ci-dessus pour inspecter chaque panneau, lampadaire LED et batterie — ou estimez vos économies ci-dessous.',
+      'Depuis la maison alimentée au solaire, la voiture traverse le boulevard illuminé jusqu’à la boutique officielle Smart-City-Led.com · NEO CLIM® pour récupérer une climatisation solaire réversible A+++ ou un store thermique ZEPHYR.',
+    stage4Stat1Label: 'Clim Solaire',
+    stage4Stat1Val: 'Inverter A+++',
+    stage4Stat2Label: 'Économies',
+    stage4Stat2Val: '-80 % à -90 %',
+    stage4Stat3Label: 'ZEPHYR Cooler',
+    stage4Stat3Val: '-5° à -15°C',
+    btnOpenNeoClim: 'Découvrir NEO Clim®',
+    btnOpenZephyr: 'ZEPHYR Sun Cooler®',
     btnExplore3d: 'Activer l’Orbite 3D Libre',
     btnBackTop: 'Rejouer le Parcours',
 
@@ -208,6 +226,8 @@ export const TRANSLATIONS = {
     gridCharging: 'Ombrière → Charge Rapide VE',
     gridEveningDrive: 'Crépuscule · LED Activées',
     gridEveningHome: 'Batterie + V2H → Maison',
+    gridDriveToStore: 'Maison → Boutique NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Retrait NEO Clim®',
     gridNightEco: 'Stockage Nocturne Autonome'
   },
 
@@ -267,10 +287,18 @@ export const TRANSLATIONS = {
     stage3Stat3Label: 'Смарт LED',
     stage3Stat3Val: 'Авто-Режим',
 
-    stage4Badge: 'ЕТАП 04 · ПЪЛНА ИНТЕЛИГЕНТНА ЕКОСИСТЕМА',
-    stage4Title: '24/7 Автономен Соларен и Смарт LED Град',
+    stage4Badge: 'ЕТАП 04 · ФИРМЕН МАГАЗИН SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Път от Дома към Магазин Smart-City-Led.com за NEO Clim®',
     stage4Desc:
-      'Разгледайте цялата осветена нощна екосистема. Превключете към Свободна 3D Орбита отгоре, за да инспектирате всеки соларен покрив, LED стълб и зарядна станция — или изчислете вашите спестявания по-долу.',
+      'От захранения със соларна енергия дом автомобилът тръгва по осветения булевард към официалния шоурум Smart-City-Led.com · NEO CLIM®, за да вземе соларен климатик A+++ или термо-щора ZEPHYR.',
+    stage4Stat1Label: 'Соларна Клима',
+    stage4Stat1Val: 'Inverter A+++',
+    stage4Stat2Label: 'Спестяване',
+    stage4Stat2Val: '-80% до -90%',
+    stage4Stat3Label: 'ZEPHYR Cooler',
+    stage4Stat3Val: '-5° до -15°C',
+    btnOpenNeoClim: 'Отвори NEO Clim®',
+    btnOpenZephyr: 'ZEPHYR Sun Cooler®',
     btnExplore3d: 'Влез в Свободна 3D Орбита',
     btnBackTop: 'Повтори Пътуването',
 
@@ -310,6 +338,8 @@ export const TRANSLATIONS = {
     gridCharging: 'Навес → Бързо Зареждане ЕМ',
     gridEveningDrive: 'Здрач · LED Включени',
     gridEveningHome: 'Батерия + V2H → Дом',
+    gridDriveToStore: 'Дом → Магазин NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Получаване NEO Clim®',
     gridNightEco: 'Нощно Автономно Съхранение'
   },
 
@@ -369,10 +399,18 @@ export const TRANSLATIONS = {
     stage3Stat3Label: 'LED-uri Smart',
     stage3Stat3Val: 'Auto-Reglate',
 
-    stage4Badge: 'ETAPA 04 · ECOSISTEM SMART COMPLET',
-    stage4Title: 'Oraș Autonom Solar & LED Inteligent 24/7',
+    stage4Badge: 'ETAPA 04 · MAGAZIN SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Drum spre Magazinul Smart-City-Led.com pentru NEO Clim® Solar',
     stage4Desc:
-      'Explorați întregul ecosistem nocturn iluminat. Activați modul Orbită 3D Liberă de mai sus pentru a inspecta fiecare panou, stâlp LED și baterie — sau calculați economiile dumneavoastră mai jos.',
+      'De la casa alimentată solar, mașina traversează bulevardul iluminat până la showroom-ul oficial Smart-City-Led.com · NEO CLIM® pentru a ridica sistemul de climatizare solară A+++ sau jaluzeaua ZEPHYR.',
+    stage4Stat1Label: 'Climă Solară',
+    stage4Stat1Val: 'Inverter A+++',
+    stage4Stat2Label: 'Economii',
+    stage4Stat2Val: '-80% la -90%',
+    stage4Stat3Label: 'ZEPHYR Cooler',
+    stage4Stat3Val: '-5° la -15°C',
+    btnOpenNeoClim: 'Explorează NEO Clim®',
+    btnOpenZephyr: 'ZEPHYR Sun Cooler®',
     btnExplore3d: 'Intră în Orbită 3D Liberă',
     btnBackTop: 'Reia Călătoria',
 
@@ -412,6 +450,8 @@ export const TRANSLATIONS = {
     gridCharging: 'Copertină → Încărcare Rapidă EV',
     gridEveningDrive: 'Amurg · LED-uri Aprinse',
     gridEveningHome: 'Baterie + V2H → Casă',
+    gridDriveToStore: 'Casă → Magazin NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Ridicare NEO Clim®',
     gridNightEco: 'Stocare Nocturnă Autonomă'
   }
 };

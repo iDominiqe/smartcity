@@ -10,9 +10,10 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
+    this.onCategoryTrigger = onCategoryTrigger;
     this.activeSlug = null;
     this.activeBlogSlug = null;
     this.openDropdownId = null;
@@ -103,7 +104,8 @@ export class PagesRouter {
         const itemsHtml = cat.items
           .map((item) => {
             const isActiveItem = item.type === 'page' && item.slug === this.activeSlug;
-            return `<button type="button" class="submenu-item${isActiveItem ? ' active' : ''}" data-nav-type="${item.type}" data-nav-target="${escapeHtml(item.slug || item.target)}">${escapeHtml(this.t(item.label))}</button>`;
+            const hlClass = item.highlight ? ' highlight' : '';
+            return `<button type="button" class="submenu-item${hlClass}${isActiveItem ? ' active' : ''}" data-nav-type="${item.type}" data-nav-target="${escapeHtml(item.slug || item.target)}">${escapeHtml(this.t(item.label))}</button>`;
           })
           .join('');
 
@@ -132,6 +134,9 @@ export class PagesRouter {
             btn.setAttribute('aria-expanded', 'true');
             this.openDropdownId = parent.dataset.catId;
           }
+          if (parent.dataset.catId === 'climatisation' && !this.activeSlug && this.onCategoryTrigger) {
+            this.onCategoryTrigger('climatisation');
+          }
         });
       });
 
@@ -150,7 +155,8 @@ export class PagesRouter {
         const itemsHtml = cat.items
           .map((item) => {
             const isActiveItem = item.type === 'page' && item.slug === this.activeSlug;
-            return `<button type="button" class="mobile-submenu-item${isActiveItem ? ' active' : ''}" data-nav-type="${item.type}" data-nav-target="${escapeHtml(item.slug || item.target)}">${escapeHtml(this.t(item.label))}</button>`;
+            const hlClass = item.highlight ? ' highlight' : '';
+            return `<button type="button" class="mobile-submenu-item${hlClass}${isActiveItem ? ' active' : ''}" data-nav-type="${item.type}" data-nav-target="${escapeHtml(item.slug || item.target)}">${escapeHtml(this.t(item.label))}</button>`;
           })
           .join('');
 

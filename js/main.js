@@ -173,25 +173,70 @@ function initApp() {
     btnDayNight.classList.toggle('active', isNight);
   });
 
-  // Smooth Jump Links for Chapters & Navbar
-  function scrollToStage(stageId) {
-    setOrbitMode(false);
-    if (stageId === 'stage-1') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+  function getStageScrollY(stageId) {
+    if (stageId === 'stage-1') return 0;
     const stageEl = document.getElementById(stageId);
-    if (!stageEl) return;
+    if (!stageEl) return 0;
     const card = stageEl.querySelector('.story-card');
     if (card) {
       const cardRect = card.getBoundingClientRect();
       const cardDocCenter = window.scrollY + cardRect.top + cardRect.height / 2;
       const openViewportCenter = (window.innerHeight + 110) / 2;
-      const targetY = Math.max(0, cardDocCenter - openViewportCenter);
-      window.scrollTo({ top: targetY, behavior: 'smooth' });
-    } else {
-      stageEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return Math.max(0, cardDocCenter - openViewportCenter);
     }
+    return Math.max(0, stageEl.offsetTop - 110);
+  }
+
+  // Smooth Jump Links for Chapters & Navbar
+  function scrollToStage(stageId) {
+    setOrbitMode(false);
+    window.scrollTo({ top: getStageScrollY(stageId), behavior: 'smooth' });
+  }
+
+  let driveAnimId = null;
+  function cancelDriveAnim() {
+    if (driveAnimId !== null) {
+      cancelAnimationFrame(driveAnimId);
+      driveAnimId = null;
+    }
+  }
+  window.addEventListener('wheel', cancelDriveAnim, { passive: true });
+  window.addEventListener('touchstart', cancelDriveAnim, { passive: true });
+
+  function playDriveHomeToStore() {
+    cancelDriveAnim();
+    setOrbitMode(false);
+    const yStage3 = getStageScrollY('stage-3');
+    const yStage4 = getStageScrollY('stage-4');
+    const startFromHome = computeStoryProgress() < 0.54;
+    const startY = startFromHome ? yStage3 : window.scrollY;
+
+    if (startFromHome) {
+      window.scrollTo({ top: yStage3, behavior: 'auto' });
+      director.smoothProgress = 0.64;
+      director.setScrollProgress(0.64);
+    }
+
+    const duration = 2200;
+    const delay = startFromHome ? 320 : 0;
+    const startTime = performance.now() + delay;
+
+    function step(now) {
+      if (now < startTime) {
+        driveAnimId = requestAnimationFrame(step);
+        return;
+      }
+      const t = Math.min(1, (now - startTime) / duration);
+      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      window.scrollTo({ top: startY + (yStage4 - startY) * ease, behavior: 'auto' });
+      if (t < 1) {
+        driveAnimId = requestAnimationFrame(step);
+      } else {
+        driveAnimId = null;
+      }
+    }
+
+    driveAnimId = requestAnimationFrame(step);
   }
 
   document.querySelectorAll('[data-jump-stage]').forEach((el) => {
@@ -222,14 +267,28 @@ function initApp() {
   const pagesRouter = new PagesRouter({
     i18n,
     onNavigateHome: (type, target) => {
-      if (type === 'stage') {
+      if (type === 'clim-drive') {
+        playDriveHomeToStore();
+      } else if (type === 'stage') {
         scrollToStage(target);
       } else if (type === 'anchor') {
         setOrbitMode(false);
         const el = document.querySelector(target);
         el?.scrollIntoView({ behavior: 'smooth' });
       }
+    },
+    onCategoryTrigger: (catId) => {
+      if (catId === 'climatisation') {
+        playDriveHomeToStore();
+      }
     }
+  });
+
+  document.getElementById('btn-open-neoclim')?.addEventListener('click', () => {
+    pagesRouter.openPage('neo-clim-solaire');
+  });
+  document.getElementById('btn-open-zephyr')?.addEventListener('click', () => {
+    pagesRouter.openPage('zephyr-cooler');
   });
 
   i18n.onChange(() => {

@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/subpages.css" />
 
   <script type="importmap">
     {
@@ -82,9 +83,9 @@
   <!-- Right-Side Stage Quick-Jump Dots -->
   <aside class="stage-rail" aria-label="Story chapters">
     <button type="button" class="stage-dot active" data-start="0" data-end="0.22" data-jump-stage="stage-1" title="Stage 1"></button>
-    <button type="button" class="stage-dot" data-start="0.22" data-end="0.52" data-jump-stage="stage-2" title="Stage 2"></button>
-    <button type="button" class="stage-dot" data-start="0.52" data-end="0.85" data-jump-stage="stage-3" title="Stage 3"></button>
-    <button type="button" class="stage-dot" data-start="0.85" data-end="1.01" data-jump-stage="stage-4" title="Stage 4"></button>
+    <button type="button" class="stage-dot" data-start="0.22" data-end="0.48" data-jump-stage="stage-2" title="Stage 2"></button>
+    <button type="button" class="stage-dot" data-start="0.48" data-end="0.74" data-jump-stage="stage-3" title="Stage 3"></button>
+    <button type="button" class="stage-dot" data-start="0.74" data-end="1.01" data-jump-stage="stage-4" title="Stage 4"></button>
   </aside>
 
   <!-- Bottom-Right 3D Viewport Controls -->
@@ -139,7 +140,7 @@
 
       <!-- Stage 2: Electric Car Approaching & Charging at Solar Station -->
       <article id="stage-2" class="story-step">
-        <div class="story-card" data-stage="2" data-start="0.22" data-end="0.52">
+        <div class="story-card" data-stage="2" data-start="0.22" data-end="0.48">
           <span class="stage-badge emerald" data-i18n="stage2Badge">STAGE 02 · SOLAR EV SUPERCHARGING</span>
           <h2 data-i18n="stage2Title">Electric Car Arrives at the Solar Charging Hub</h2>
           <p data-i18n="stage2Desc">
@@ -164,7 +165,7 @@
 
       <!-- Stage 3: Evening Drive Home & Solar Home Power -->
       <article id="stage-3" class="story-step">
-        <div class="story-card" data-stage="3" data-start="0.52" data-end="0.85">
+        <div class="story-card" data-stage="3" data-start="0.48" data-end="0.74">
           <span class="stage-badge amber" data-i18n="stage3Badge">STAGE 03 · EVENING RETURN &amp; HOME STORAGE</span>
           <h2 data-i18n="stage3Title">Dusk Falls: Home Powered by Stored Solar Energy</h2>
           <p data-i18n="stage3Desc">
@@ -187,16 +188,32 @@
         </div>
       </article>
 
-      <!-- Stage 4: Full Night Ecosystem -->
+      <!-- Stage 4: EV Drives from Home to Smart-City-Led.com NEO Clim® Flagship Store -->
       <article id="stage-4" class="story-step">
-        <div class="story-card" data-stage="4" data-start="0.85" data-end="1.01">
-          <span class="stage-badge" data-i18n="stage4Badge">STAGE 04 · COMPLETE SMART ECOSYSTEM</span>
-          <h2 data-i18n="stage4Title">24/7 Autonomous Solar &amp; Smart LED City</h2>
+        <div class="story-card" data-stage="4" data-start="0.74" data-end="1.01">
+          <span class="stage-badge icy" data-i18n="stage4Badge">STAGE 04 · NEO CLIM® AT SMART-CITY-LED.COM STORE</span>
+          <h2 data-i18n="stage4Title">Drive to Smart-City-Led.com Store for NEO Clim® Solar AC</h2>
           <p data-i18n="stage4Desc">
-            Explore the full illuminated 3D ecosystem. Switch to Free 3D Orbit mode above to inspect every solar roof, LED pole, charging bay, and battery wall — or calculate your own solar and Smart LED savings below.
+            From the powered Smart Home, the EV cruises across the lit boulevard into the illuminated Smart-City-Led.com · NEO CLIM® Flagship Store pickup bay. Discover A+++ solar reversible air conditioning, mobile rentals, and ZEPHYR cooling with icy-cyan solar power.
           </p>
+          <div class="card-stats">
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage4Stat1Label">Solar HVAC</span>
+              <span class="stat-val" data-i18n="stage4Stat1Val">Inverter A+++</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage4Stat2Label">Energy Savings</span>
+              <span class="stat-val" data-i18n="stage4Stat2Val">-80% to -90%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label" data-i18n="stage4Stat3Label">ZEPHYR Cooler</span>
+              <span class="stat-val" data-i18n="stage4Stat3Val">-5° to -15°C</span>
+            </div>
+          </div>
           <div class="cta-row">
-            <button type="button" id="btn-enter-3d" class="btn-primary" data-i18n="btnExplore3d">Enter Free 3D Orbit</button>
+            <button type="button" id="btn-open-neoclim" class="btn-primary" data-i18n="btnOpenNeoClim">Explore NEO Clim®</button>
+            <button type="button" id="btn-open-zephyr" class="btn-secondary" data-i18n="btnOpenZephyr">ZEPHYR Sun Cooler®</button>
+            <button type="button" id="btn-enter-3d" class="btn-secondary" data-i18n="btnExplore3d">Enter Free 3D Orbit</button>
             <button type="button" id="btn-back-top" class="btn-secondary" data-i18n="btnBackTop">Replay Journey</button>
           </div>
         </div>
