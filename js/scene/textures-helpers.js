@@ -137,6 +137,71 @@ export function createBadgeTexture(letter = 'C', bg = '#2563eb') {
 }
 
 /**
+ * Creates the illuminated fascia sign texture for the Solar EV Charging Station ("Neo Bornes de recharge").
+ */
+export function createStationSignTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 220;
+  const ctx = canvas.getContext('2d');
+
+  const bgGrad = ctx.createLinearGradient(0, 0, 1024, 220);
+  bgGrad.addColorStop(0, '#06182c');
+  bgGrad.addColorStop(0.5, '#0c2d48');
+  bgGrad.addColorStop(1, '#06182c');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1024, 220);
+
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(8, 8, 1008, 204);
+
+  // Circular EV charging badge on left
+  const cx = 112;
+  const cy = 110;
+  ctx.fillStyle = '#10b981';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 64, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#06182c';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 46, 0, Math.PI * 2);
+  ctx.fill();
+
+  // White lightning bolt polygon
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(cx + 6, cy - 30);
+  ctx.lineTo(cx - 18, cy + 4);
+  ctx.lineTo(cx - 2, cy + 4);
+  ctx.lineTo(cx - 8, cy + 30);
+  ctx.lineTo(cx + 18, cy - 4);
+  ctx.lineTo(cx + 2, cy - 4);
+  ctx.closePath();
+  ctx.fill();
+
+  // Main headline: Neo Bornes de recharge
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 60px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Neo Bornes de recharge', 575, 76);
+
+  // Highlighted emerald subtitle pill
+  ctx.fillStyle = '#10b981';
+  ctx.fillRect(250, 128, 650, 56);
+  ctx.fillStyle = '#031810';
+  ctx.font = '800 30px Inter, Arial, sans-serif';
+  ctx.fillText('SMART-CITY-LED.COM · SOLAR EV HUB', 575, 157);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+/**
  * Helper to draw the NEO Clim snowflake-pin logo onto any Canvas 2D context.
  */
 function drawNeoClimPinLogo(ctx, cx, cy, r) {

@@ -80,13 +80,14 @@ function sampleCameraKeyframes(keyframes, p, outPos, outTarget) {
 const CAMERA_KEYFRAMES = [
   { p: 0.0, pos: [-32, 27, 38], target: [-18, 2.2, -1.5] },
   { p: 0.13, pos: [-22, 19.5, 29], target: [-15.5, 2.0, -1.0] },
-  { p: 0.22, pos: [-8, 10.5, 19], target: [-3.0, 1.2, -1.5] },
-  { p: 0.30, pos: [0.5, 7.6, 10.6], target: [3.6, 1.6, -5.2] },
-  { p: 0.44, pos: [14.2, 8.0, 8.2], target: [3.8, 1.6, -5.2] },
-  { p: 0.52, pos: [19.5, 10.2, 17.5], target: [17.0, 1.4, -1.2] },
-  { p: 0.58, pos: [21.5, 8.8, 12.6], target: [28.4, 2.0, -7.2] },
-  { p: 0.72, pos: [36.2, 7.6, 9.8], target: [28.8, 2.2, -8.2] },
-  { p: 0.79, pos: [17.0, 11.8, -14.5], target: [23.0, 3.0, 1.5] },
+  { p: 0.22, pos: [-8, 10.5, 19], target: [-3.0, 1.4, -1.5] },
+  { p: 0.30, pos: [-0.8, 8.6, 13.2], target: [1.4, 2.0, -5.2] },
+  { p: 0.42, pos: [3.2, 8.4, 11.2], target: [2.0, 2.0, -5.2] },
+  { p: 0.51, pos: [6.0, 8.6, 7.4], target: [16.5, 1.3, -1.0] },
+  { p: 0.58, pos: [25.2, 7.8, 6.4], target: [27.8, 2.2, -7.8] },
+  { p: 0.70, pos: [33.8, 7.6, 6.8], target: [28.2, 2.2, -8.2] },
+  { p: 0.74, pos: [34.2, 8.6, 3.8], target: [27.5, 2.2, -6.0] },
+  { p: 0.80, pos: [16.5, 11.8, -14.2], target: [21.5, 2.8, 2.0] },
   { p: 0.87, pos: [0.5, 11.8, -14.2], target: [18.0, 3.1, 6.0] },
   { p: 1.0, pos: [2.2, 12.1, -14.6], target: [18.2, 3.1, 6.4] }
 ];
@@ -490,6 +491,9 @@ export class ScrollDirector {
 
     this.world.stationBayRingMat.opacity = 0.28 + evChargingFactor * 0.65;
     this.world.stationLight.intensity = 0.35 + evChargingFactor * 2.2 + ledGlow * 1.4;
+    if (this.world.stationSignMat) {
+      this.world.stationSignMat.emissiveIntensity = 0.5 + 0.35 * Math.max(ledGlow, evChargingFactor);
+    }
     this.world.stationStatusMats.forEach((sm, idx) => {
       const pulse = 0.5 + 0.5 * Math.sin(elapsed * 5 + idx);
       sm.color.setHex(

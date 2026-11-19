@@ -3,6 +3,7 @@ import {
   createSolarTexture,
   createMaquetteWindowTextures,
   createBadgeTexture,
+  createStationSignTexture,
   createStoreSignTexture,
   createNeoClimPosterTexture,
   createSolarPanelMesh,
@@ -22,6 +23,7 @@ export function buildSmartCityWorld(scene) {
     solarTex: createSolarTexture(),
     windowTex: createMaquetteWindowTextures(),
     badgeTex: createBadgeTexture('C', '#2563eb'),
+    stationSignTex: createStationSignTexture(),
     storeSignTex: createStoreSignTexture(),
     storePosterTex: createNeoClimPosterTexture(),
     trackingPanels: [],
@@ -35,6 +37,7 @@ export function buildSmartCityWorld(scene) {
     storeAcWaves: [],
     storeShopper: null,
     storeWindowMat: null,
+    stationSignMat: null,
     storeSignMat: null,
     storeBayRingMat: null,
     storeInteriorLight: null,
@@ -344,7 +347,7 @@ export function buildSmartCityWorld(scene) {
 
   const treeCoords = [
     [-31.5, 8.5, 1.0, true], [-31.5, 16.5, 0.9, false], [-21.5, 8.8, 1.1, true],
-    [-13.0, -8.5, 0.95, false], [-8.5, -16.2, 1.05, true], [10.0, 7.0, 0.95, true],
+    [-13.0, -8.5, 0.95, false], [-8.5, -16.2, 1.05, true], [10.0, 11.2, 0.95, true],
     [11.5, 16.5, 1.05, false], [26.8, 15.2, 1.0, true], [23.0, -15.5, 1.05, true],
     [35.2, -14.8, 1.1, false], [35.2, -5.2, 0.95, true], [28.0, 9.2, 1.0, true],
     [34.5, 12.2, 1.05, false], [16.5, -8.8, 0.9, false]
@@ -544,7 +547,7 @@ export function buildSmartCityWorld(scene) {
     world.streetLamps.push({ bulbMat, coneMat });
   }
 
-  const lampXPositions = [-30, -22, -12.5, -5, 3, 28, 34];
+  const lampXPositions = [-30, -22, -12.5, -5, 28, 34];
   lampXPositions.forEach((lx, i) => {
     if (lx !== 24) addStreetLamp(lx, 2.8, -1);
     if (i % 2 === 0 && lx !== 3 && lx !== 28) {
@@ -603,14 +606,38 @@ export function buildSmartCityWorld(scene) {
   canopySolarR.group.position.set(2.9, 0.16, 0);
   canopyRoof.add(canopySolarR.group);
 
-  const stationBadge = new THREE.Mesh(
-    new THREE.BoxGeometry(0.95, 0.95, 0.16),
-    new THREE.MeshStandardMaterial({ map: world.badgeTex, roughness: 0.3 })
-  );
-  stationBadge.position.set(4.9, 0.3, 2.9);
-  canopyRoof.add(stationBadge);
-
   stationGroup.add(canopyRoof);
+
+  // Illuminated Fascia Sign: "Neo Bornes de recharge"
+  world.stationSignMat = new THREE.MeshStandardMaterial({
+    map: world.stationSignTex,
+    emissiveMap: world.stationSignTex,
+    emissive: new THREE.Color('#ffffff'),
+    emissiveIntensity: 0.55,
+    roughness: 0.25
+  });
+  const stationSignHousing = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2, 1.18, 0.24),
+    darkMetalMat
+  );
+  stationSignHousing.position.set(0, 4.22, 3.12);
+  stationSignHousing.castShadow = true;
+  stationGroup.add(stationSignHousing);
+
+  const stationSignFront = new THREE.Mesh(
+    new THREE.PlaneGeometry(6.95, 0.98),
+    world.stationSignMat
+  );
+  stationSignFront.position.set(0, 4.22, 3.25);
+  stationGroup.add(stationSignFront);
+
+  const stationSignBack = new THREE.Mesh(
+    new THREE.PlaneGeometry(6.95, 0.98),
+    world.stationSignMat
+  );
+  stationSignBack.position.set(0, 4.22, 2.99);
+  stationSignBack.rotation.y = Math.PI;
+  stationGroup.add(stationSignBack);
 
   [-3.8, 0.0, 3.8].forEach((cx) => {
     const ped = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.85, 0.48), whiteMaquetteMat);
