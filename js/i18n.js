@@ -51,21 +51,21 @@ export const TRANSLATIONS = {
     stage2Stat3Label: 'Clean Origin',
     stage2Stat3Val: '100% Solar',
 
-    stage3Badge: 'STAGE 03 · EVENING RETURN & HOME STORAGE',
-    stage3Title: 'Dusk Falls: Home Powered by Stored Solar Energy',
+    stage3Badge: 'STAGE 03 · EVENING RETURN & SOLAR CHARGING',
+    stage3Title: 'Dusk Falls: Solar Storage Powers Home & Charges EV',
     stage3Desc:
-      'As sunset turns into deep evening, Smart-City-Led streetlamps and vehicle headlights automatically illuminate. The EV glides smoothly into the residential driveway while stored rooftop solar batteries and Vehicle-to-Home (V2H) power keep the villa warm and glowing.',
+      'As sunset turns into deep evening, Smart-City-Led streetlamps and headlights illuminate automatically. The EV parks in the driveway and receives clean stored solar power directly from the home rooftop array and wall battery.',
     stage3Stat1Label: 'Wall Battery',
     stage3Stat1Val: '28.5 kWh',
-    stage3Stat2Label: 'V2H Backup',
-    stage3Stat2Val: 'Active',
+    stage3Stat2Label: 'Home → EV Charge',
+    stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'Smart LEDs',
     stage3Stat3Val: 'Auto-Dim',
 
     stage4Badge: 'STAGE 04 · NEO CLIM® AT SMART-CITY-LED.COM STORE',
-    stage4Title: 'Drive to Smart-City-Led.com Store for NEO Clim® Solar AC',
+    stage4Title: 'Arriving at Smart-City-Led.com Storefront & NEO Clim® Vitrine',
     stage4Desc:
-      'From the powered Smart Home, the EV cruises across the lit boulevard into the illuminated Smart-City-Led.com · NEO CLIM® Flagship Store pickup bay. Discover A+++ solar reversible air conditioning, mobile rentals, and ZEPHYR cooling with icy-cyan solar power.',
+      'From the solar-charged home, the EV parks outside the illuminated Smart-City-Led.com · NEO CLIM® boutique. Step up to the glowing glass vitrine displaying the vertical white NEO Clim® Premium mobile AC unit and rental showcase.',
     stage4Stat1Label: 'Solar HVAC',
     stage4Stat1Val: 'Inverter A+++',
     stage4Stat2Label: 'Energy Savings',
@@ -113,9 +113,9 @@ export const TRANSLATIONS = {
     gridDayCity: 'Solar Peak → City',
     gridCharging: 'Canopy → EV Fast Charge',
     gridEveningDrive: 'Dusk Transition · LEDs On',
-    gridEveningHome: 'Battery + V2H → Home',
+    gridEveningHome: 'Solar → Home & EV Charge',
     gridDriveToStore: 'Home → NEO Clim® Store',
-    gridNeoClimStore: 'Smart-City-Led.com · NEO Clim® Pickup',
+    gridNeoClimStore: 'Smart-City-Led.com · NEO Clim® Vitrine',
     gridNightEco: 'Night Storage Autonomous'
   },
 
@@ -164,21 +164,21 @@ export const TRANSLATIONS = {
     stage2Stat3Label: 'Source Propre',
     stage2Stat3Val: '100 % Solaire',
 
-    stage3Badge: 'ÉTAPE 03 · RETOUR EN SOIRÉE & STOCKAGE MAISON',
-    stage3Title: 'Le Soir Tombe : La Maison Vit sur l’Énergie Solaire Stockée',
+    stage3Badge: 'ÉTAPE 03 · RETOUR SOIRÉE & RECHARGE SOLAIRE MAISON',
+    stage3Title: 'Le Soir Tombe : Le Solaire Alimente la Maison et Recharge le VE',
     stage3Desc:
-      'À la tombée du jour, les lampadaires Smart-City-Led et les phares du véhicule s’allument automatiquement. La voiture rentre dans l’allée résidentielle pendant que la batterie murale solaire et le système V2H éclairent et chauffent la maison.',
+      'À la tombée du jour, les lampadaires Smart-City-Led et les phares s’allument automatiquement. La voiture se gare dans l’allée et reçoit l’énergie solaire stockée dans la batterie murale pour recharger sa batterie durant la soirée.',
     stage3Stat1Label: 'Batterie Murale',
     stage3Stat1Val: '28,5 kWh',
-    stage3Stat2Label: 'Secours V2H',
-    stage3Stat2Val: 'Actif',
+    stage3Stat2Label: 'Charge Maison→VE',
+    stage3Stat2Val: '82 % → 100 %',
     stage3Stat3Label: 'LED Intelligentes',
     stage3Stat3Val: 'Auto-Régulées',
 
-    stage4Badge: 'ÉTAPE 04 · BOUTIQUE SMART-CITY-LED.COM · NEO CLIM®',
-    stage4Title: 'Départ vers la Boutique Smart-City-Led.com pour votre NEO Clim®',
+    stage4Badge: 'ÉTAPE 04 · VITRINE SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Arrivée devant la Vitrine Smart-City-Led.com & NEO Clim®',
     stage4Desc:
-      'Depuis la maison alimentée au solaire, la voiture traverse le boulevard illuminé jusqu’à la boutique officielle Smart-City-Led.com · NEO CLIM® pour récupérer une climatisation solaire réversible A+++ ou un store thermique ZEPHYR.',
+      'Depuis la maison rechargée au solaire, le véhicule se gare devant la boutique illuminée Smart-City-Led.com · NEO CLIM®. Devant la grande vitrine vitrée, le visiteur admire la climatisation mobile blanche NEO Clim® Location.',
     stage4Stat1Label: 'Clim Solaire',
     stage4Stat1Val: 'Inverter A+++',
     stage4Stat2Label: 'Économies',
@@ -225,9 +225,9 @@ export const TRANSLATIONS = {
     gridDayCity: 'Pic Solaire → Ville',
     gridCharging: 'Ombrière → Charge Rapide VE',
     gridEveningDrive: 'Crépuscule · LED Activées',
-    gridEveningHome: 'Batterie + V2H → Maison',
+    gridEveningHome: 'Solaire → Maison & Charge VE',
     gridDriveToStore: 'Maison → Boutique NEO Clim®',
-    gridNeoClimStore: 'Smart-City-Led.com · Retrait NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Vitrine NEO Clim®',
     gridNightEco: 'Stockage Nocturne Autonome'
   },
 
@@ -276,21 +276,21 @@ export const TRANSLATIONS = {
     stage2Stat3Label: 'Чист Произход',
     stage2Stat3Val: '100% Солар',
 
-    stage3Badge: 'ЕТАП 03 · ВЕЧЕРНО ПРИБИРАНЕ И ДОМАШНА БАТЕРИЯ',
-    stage3Title: 'Пада Мрак: Домът се Захранва от Съхранена Соларна Енергия',
+    stage3Badge: 'ЕТАП 03 · ВЕЧЕРНО ПРИБИРАНЕ И СОЛАРНО ЗАРЕЖДАНЕ',
+    stage3Title: 'Пада Мрак: Соларната Батерия Захранва Дома и Зарежда Колата',
     stage3Desc:
-      'С настъпването на вечерта уличните лампи Smart-City-Led и фаровете на колата се включват автоматично. Автомобилът паркира пред дома, докато домашната батерия и V2H системата поддържат уюта и осветлението през нощта.',
+      'С настъпването на вечерта уличните лампи Smart-City-Led и фаровете се включват автоматично. Автомобилът паркира у дома и приема чиста соларна енергия от покривните панели и домашната батерия.',
     stage3Stat1Label: 'Домашна Батерия',
     stage3Stat1Val: '28,5 kWh',
-    stage3Stat2Label: 'V2H Резерв',
-    stage3Stat2Val: 'Активен',
+    stage3Stat2Label: 'Заряд Дом → ЕМ',
+    stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'Смарт LED',
     stage3Stat3Val: 'Авто-Режим',
 
-    stage4Badge: 'ЕТАП 04 · ФИРМЕН МАГАЗИН SMART-CITY-LED.COM · NEO CLIM®',
-    stage4Title: 'Път от Дома към Магазин Smart-City-Led.com за NEO Clim®',
+    stage4Badge: 'ЕТАП 04 · ВИТРИНА SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Пристигане пред Витрината на Smart-City-Led.com · NEO Clim®',
     stage4Desc:
-      'От захранения със соларна енергия дом автомобилът тръгва по осветения булевард към официалния шоурум Smart-City-Led.com · NEO CLIM®, за да вземе соларен климатик A+++ или термо-щора ZEPHYR.',
+      'От соларния дом автомобилът спира пред осветения магазин Smart-City-Led.com · NEO CLIM®. Пред стъклената витрина клиент разглежда белия мобилен климатик NEO Clim® Location и соларните решения.',
     stage4Stat1Label: 'Соларна Клима',
     stage4Stat1Val: 'Inverter A+++',
     stage4Stat2Label: 'Спестяване',
@@ -337,9 +337,9 @@ export const TRANSLATIONS = {
     gridDayCity: 'Соларен Пик → Град',
     gridCharging: 'Навес → Бързо Зареждане ЕМ',
     gridEveningDrive: 'Здрач · LED Включени',
-    gridEveningHome: 'Батерия + V2H → Дом',
+    gridEveningHome: 'Солар → Дом и Заряд ЕМ',
     gridDriveToStore: 'Дом → Магазин NEO Clim®',
-    gridNeoClimStore: 'Smart-City-Led.com · Получаване NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Витрина NEO Clim®',
     gridNightEco: 'Нощно Автономно Съхранение'
   },
 
@@ -388,21 +388,21 @@ export const TRANSLATIONS = {
     stage2Stat3Label: 'Sursă Curată',
     stage2Stat3Val: '100% Solar',
 
-    stage3Badge: 'ETAPA 03 · DRUMUL SPRE CASĂ & STOCARE DE SEARĂ',
-    stage3Title: 'Se Lasă Seara: Casa Este Alimentată din Stocarea Solară',
+    stage3Badge: 'ETAPA 03 · ÎNTOARCEREA ACASĂ & ÎNCĂRCARE SOLARĂ',
+    stage3Title: 'Se Lasă Seara: Panourile Solare Alimentează Casa și Încarcă Mașina',
     stage3Desc:
-      'Pe măsură ce amurgul trece în noapte, stâlpii LED Smart-City-Led și farurile mașinii se aprind automat. Vehiculul intră pe aleea casei inteligente, iar bateria solară de perete împreună cu sistemul V2H alimentează locuința.',
+      'Pe măsură ce amurgul trece în noapte, stâlpii LED Smart-City-Led și farurile mașinii se aprind automat. Vehiculul parchează acasă și primește energie curată direct de la panourile solare și bateria de perete.',
     stage3Stat1Label: 'Baterie Perete',
     stage3Stat1Val: '28,5 kWh',
-    stage3Stat2Label: 'Rezervă V2H',
-    stage3Stat2Val: 'Activă',
+    stage3Stat2Label: 'Încărcare Casă→EV',
+    stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'LED-uri Smart',
     stage3Stat3Val: 'Auto-Reglate',
 
-    stage4Badge: 'ETAPA 04 · MAGAZIN SMART-CITY-LED.COM · NEO CLIM®',
-    stage4Title: 'Drum spre Magazinul Smart-City-Led.com pentru NEO Clim® Solar',
+    stage4Badge: 'ETAPA 04 · VITRINA SMART-CITY-LED.COM · NEO CLIM®',
+    stage4Title: 'Sosire la Vitrina Smart-City-Led.com · NEO Clim®',
     stage4Desc:
-      'De la casa alimentată solar, mașina traversează bulevardul iluminat până la showroom-ul oficial Smart-City-Led.com · NEO CLIM® pentru a ridica sistemul de climatizare solară A+++ sau jaluzeaua ZEPHYR.',
+      'De la casa alimentată solar, mașina parchează în fața boutique-ului iluminat Smart-City-Led.com · NEO CLIM®. În fața vitrinei de sticlă, un vizitator admiră aparatul de climatizare mobil alb NEO Clim® Location.',
     stage4Stat1Label: 'Climă Solară',
     stage4Stat1Val: 'Inverter A+++',
     stage4Stat2Label: 'Economii',
@@ -449,9 +449,9 @@ export const TRANSLATIONS = {
     gridDayCity: 'Vârf Solar → Oraș',
     gridCharging: 'Copertină → Încărcare Rapidă EV',
     gridEveningDrive: 'Amurg · LED-uri Aprinse',
-    gridEveningHome: 'Baterie + V2H → Casă',
+    gridEveningHome: 'Solar → Casă & Încărcare EV',
     gridDriveToStore: 'Casă → Magazin NEO Clim®',
-    gridNeoClimStore: 'Smart-City-Led.com · Ridicare NEO Clim®',
+    gridNeoClimStore: 'Smart-City-Led.com · Vitrină NEO Clim®',
     gridNightEco: 'Stocare Nocturnă Autonomă'
   }
 };

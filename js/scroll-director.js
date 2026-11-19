@@ -87,8 +87,8 @@ const CAMERA_KEYFRAMES = [
   { p: 0.58, pos: [21.5, 8.8, 12.6], target: [28.4, 2.0, -7.2] },
   { p: 0.72, pos: [36.2, 7.6, 9.8], target: [28.8, 2.2, -8.2] },
   { p: 0.79, pos: [17.0, 11.8, -14.5], target: [23.0, 3.0, 1.5] },
-  { p: 0.87, pos: [2.5, 12.2, -10.5], target: [20.5, 3.8, 7.2] },
-  { p: 1.0, pos: [6.8, 12.6, -11.8], target: [20.2, 3.8, 7.6] }
+  { p: 0.87, pos: [0.5, 11.8, -14.2], target: [18.0, 3.1, 6.0] },
+  { p: 1.0, pos: [2.2, 12.1, -14.6], target: [18.2, 3.1, 6.4] }
 ];
 
 const ATMOSPHERE_STOPS = [
@@ -199,14 +199,14 @@ export class ScrollDirector {
       new THREE.Vector3(29.0, 0.05, -5.4)
     ]);
 
-    // Leg 3: Evening Smart Home -> Smart-City-Led.com NEO Clim® Flagship Store Pickup Bay
+    // Leg 3: Evening Smart Home -> Smart-City-Led.com Store Left Customer Parking Bay (14.2, 5.4)
     this.driveToStoreCurve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(29.0, 0.05, -5.4),
-      new THREE.Vector3(27.8, 0.05, -2.8),
-      new THREE.Vector3(25.2, 0.05, -1.15),
-      new THREE.Vector3(21.2, 0.05, -1.15),
-      new THREE.Vector3(19.3, 0.05, 1.6),
-      new THREE.Vector3(19.0, 0.05, 5.2)
+      new THREE.Vector3(27.5, 0.05, -2.8),
+      new THREE.Vector3(23.5, 0.05, -1.15),
+      new THREE.Vector3(17.5, 0.05, -1.15),
+      new THREE.Vector3(14.5, 0.05, 1.6),
+      new THREE.Vector3(14.2, 0.05, 5.4)
     ]);
 
     this.hudTime = document.getElementById('hud-time');
@@ -331,15 +331,17 @@ export class ScrollDirector {
       }
       evBatteryPct = Math.round(lerp(100, 91, t));
     } else if (p <= 0.73) {
-      // Stage 3: Evening Home powered by Solar Storage
+      // Stage 3: Evening Home — Solar Storage & Wall Battery Charge BOTH Home & EV!
       this._evPos.set(29.0, 0.05, -5.4);
       this.world.evCar.position.copy(this._evPos);
       this.world.evCar.rotation.y = Math.PI;
 
       evHomeV2hFactor = smoothstep(0.58, 0.64, p);
-      evBatteryPct = Math.round(lerp(91, 86, clamp((p - 0.58) / 0.15, 0, 1)));
+      const homeChargeT = clamp((p - 0.58) / 0.15, 0, 1);
+      evChargingFactor = Math.max(evChargingFactor, 0.8 * smoothstep(0.58, 0.62, p));
+      evBatteryPct = Math.round(lerp(82, 100, homeChargeT));
     } else if (p <= 0.86) {
-      // Leg 3: Drives from Smart Home to Smart-City-Led.com · NEO CLIM® Store
+      // Leg 3: Drives from Smart Home to Smart-City-Led.com · NEO CLIM® Store Parking Bay
       const t = clamp((p - 0.73) / 0.13, 0, 1);
       this.driveToStoreCurve.getPointAt(t, this._evPos);
       this.world.evCar.position.copy(this._evPos);
@@ -351,17 +353,17 @@ export class ScrollDirector {
           this._evNext.z - this._evPos.z
         );
       } else {
-        this.world.evCar.rotation.y = 0; // Facing South (+Z) toward Storefront
+        this.world.evCar.rotation.y = 0; // Parked facing South (+Z) beside storefront
       }
-      evBatteryPct = Math.round(lerp(86, 81, t));
+      evBatteryPct = Math.round(lerp(100, 95, t));
     } else {
-      // Stage 4: Parked at Smart-City-Led.com · NEO CLIM® Flagship Store Pickup Bay
-      this._evPos.set(19.0, 0.05, 5.2);
+      // Stage 4: Parked cleanly in Customer Bay beside Smart-City-Led.com Store Vitrine
+      this._evPos.set(14.2, 0.05, 5.4);
       this.world.evCar.position.copy(this._evPos);
       this.world.evCar.rotation.y = 0;
 
       storePickupFactor = smoothstep(0.86, 0.91, p);
-      evBatteryPct = 81;
+      evBatteryPct = 95;
     }
 
     const movedDist = this._evPos.distanceTo(this.prevEvPos);
@@ -506,10 +508,11 @@ export class ScrollDirector {
       );
     });
 
-    // Zone 4: Smart-City-Led.com · NEO Clim® Flagship Store Animations
+    // Zone 4: Smart-City-Led.com · NEO Clim® Boutique Vitrine Animations
     const storeActiveGlow = Math.max(ledGlow, storePickupFactor);
     if (this.world.storeWindowMat) {
-      this.world.storeWindowMat.emissiveIntensity = lerp(0.35, 1.45, storeActiveGlow);
+      this.world.storeWindowMat.opacity = lerp(0.24, 0.16, storeActiveGlow);
+      this.world.storeWindowMat.emissiveIntensity = lerp(0.08, 0.22, storeActiveGlow);
     }
     if (this.world.storeSignMat) {
       this.world.storeSignMat.emissiveIntensity = lerp(0.45, 1.25, storeActiveGlow);
@@ -519,23 +522,25 @@ export class ScrollDirector {
         0.3 + storePickupFactor * (0.55 + 0.2 * Math.sin(elapsed * 5));
     }
     if (this.world.storeInteriorLight) {
-      this.world.storeInteriorLight.intensity = lerp(0.9, 3.8, storeActiveGlow);
+      this.world.storeInteriorLight.intensity = lerp(1.5, 4.2, storeActiveGlow);
     }
-    if (this.world.storeFans) {
-      const fanSpeed = 6.0 + storePickupFactor * 8.0;
-      this.world.storeFans.forEach((fan) => {
-        fan.rotation.z += safeDt * fanSpeed;
+    if (this.world.storeAcWaves) {
+      this.world.storeAcWaves.forEach((w) => {
+        const pulse = 0.5 + 0.5 * Math.sin(elapsed * 4.2 - w.phase * 2.0);
+        w.mat.opacity = 0.25 + pulse * (0.4 + storePickupFactor * 0.35);
       });
     }
-    if (this.world.acPickupBox) {
-      // Glides smoothly from showroom counter (-3.5) out over the EV bay (-7.0) when docked
-      const loadT = smoothstep(0.84, 0.94, p);
-      const bobY = storePickupFactor * Math.sin(elapsed * 3.5) * 0.1;
-      this.world.acPickupBox.position.set(
-        0,
-        lerp(0.85, 1.52, loadT) + bobY,
-        lerp(-3.5, -7.0, loadT)
+    if (this.world.storeShopper) {
+      // Shopper walks from parking side toward center glass vitrine & admires the portable AC & poster
+      const walkT = smoothstep(0.84, 0.94, p);
+      const bob = Math.sin(elapsed * 2.5) * 0.025;
+      this.world.storeShopper.position.set(
+        lerp(-3.2, -0.7, walkT),
+        0.12 + bob,
+        -4.55
       );
+      // Slight gentle head/body look left-right between the 3D AC unit (-2.2) and poster (+2.3)
+      this.world.storeShopper.rotation.y = Math.sin(elapsed * 0.9) * 0.28;
     }
 
     // -------------------------------------------------------------------------

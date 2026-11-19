@@ -4,9 +4,10 @@ import {
   createMaquetteWindowTextures,
   createBadgeTexture,
   createStoreSignTexture,
+  createNeoClimPosterTexture,
   createSolarPanelMesh,
   createRooftopFanUnit,
-  createAcUnitMesh,
+  createMobileAcUnitMesh,
   createEnergyStream,
   createStylizedVehicle,
   createPedestrian
@@ -14,7 +15,7 @@ import {
 
 /**
  * Builds the Modular V3 Architectural White Maquette Smart-City-Led.com 3D world
- * including Zone 4: Smart-City-Led.com · NEO CLIM® Flagship Store.
+ * including Zone 4: Smart-City-Led.com · NEO CLIM® Flagship Store Vitrine.
  */
 export function buildSmartCityWorld(scene) {
   const world = {
@@ -22,6 +23,7 @@ export function buildSmartCityWorld(scene) {
     windowTex: createMaquetteWindowTextures(),
     badgeTex: createBadgeTexture('C', '#2563eb'),
     storeSignTex: createStoreSignTexture(),
+    storePosterTex: createNeoClimPosterTexture(),
     trackingPanels: [],
     streetLamps: [],
     buildingMaterials: [],
@@ -30,12 +32,12 @@ export function buildSmartCityWorld(scene) {
     stationFlows: [],
     homeFlows: [],
     storeFlows: [],
-    storeFans: [],
+    storeAcWaves: [],
+    storeShopper: null,
     storeWindowMat: null,
     storeSignMat: null,
     storeBayRingMat: null,
     storeInteriorLight: null,
-    acPickupBox: null,
     trafficVehicles: [],
     pedestrians: [],
     stationBayRingMat: null,
@@ -542,7 +544,7 @@ export function buildSmartCityWorld(scene) {
     world.streetLamps.push({ bulbMat, coneMat });
   }
 
-  const lampXPositions = [-30, -22, -12.5, -5, 3, 12, 24, 34];
+  const lampXPositions = [-30, -22, -12.5, -5, 3, 28, 34];
   lampXPositions.forEach((lx, i) => {
     if (lx !== 24) addStreetLamp(lx, 2.8, -1);
     if (i % 2 === 0 && lx !== 3 && lx !== 28) {
@@ -751,109 +753,168 @@ export function buildSmartCityWorld(scene) {
   scene.add(homeGroup);
 
   // ---------------------------------------------------------------------------
-  // 7. ZONE 4: FLAGSHIP "SMART-CITY-LED.COM · NEO CLIM®" STORE (x=19, z=12.2)
+  // 7. ZONE 4: FLAGSHIP "SMART-CITY-LED.COM · NEO CLIM®" BOUTIQUE VITRINE
   // ---------------------------------------------------------------------------
   const storeGroup = new THREE.Group();
-  storeGroup.position.set(19.0, 0.05, 12.2);
+  storeGroup.position.set(19.5, 0.05, 12.2);
 
-  // Customer pickup plaza connecting z=0 boulevard down to showroom front
-  const storeApron = new THREE.Mesh(new THREE.BoxGeometry(10.5, 0.07, 10.0), roadMat);
-  storeApron.position.set(0, 0.02, -6.2);
+  // Customer driveway & plaza connecting z=0 boulevard to left parking & showroom sidewalk
+  const storeApron = new THREE.Mesh(new THREE.BoxGeometry(15.5, 0.07, 10.2), roadMat);
+  storeApron.position.set(-1.5, 0.02, -6.2);
   storeApron.receiveShadow = true;
   storeGroup.add(storeApron);
 
-  // Glowing Icy-Cyan Pickup Bay at world (19.0, 0.05, 5.2) -> local (0, 0.06, -7.0)
+  // Raised crisp storefront sidewalk apron in front of the glass vitrine
+  const storeSidewalk = new THREE.Mesh(new THREE.BoxGeometry(12.4, 0.12, 3.2), sidewalkMat);
+  storeSidewalk.position.set(0, 0.06, -4.4);
+  storeSidewalk.receiveShadow = true;
+  storeGroup.add(storeSidewalk);
+
+  // Glowing Icy-Cyan Customer Parking Bay on left side at world (14.2, 0.05, 5.4) -> local (-5.3, 0.06, -6.8)
   world.storeBayRingMat = new THREE.MeshBasicMaterial({
-    color: '#00e5ff',
+    color: '#38bdf8',
     transparent: true,
     opacity: 0.35
   });
-  const storeBayPad = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.03, 5.0), world.storeBayRingMat);
-  storeBayPad.position.set(0, 0.06, -7.0);
+  const storeBayPad = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.03, 4.8), world.storeBayRingMat);
+  storeBayPad.position.set(-5.3, 0.06, -6.8);
   storeGroup.add(storeBayPad);
 
-  // Store 2-Story Architectural White Building Body
-  const storeMain = new THREE.Mesh(new THREE.BoxGeometry(11.4, 4.8, 5.8), whiteMaquetteMat);
-  storeMain.position.set(0, 2.45, 0);
-  storeMain.castShadow = true;
-  storeMain.receiveShadow = true;
-  storeGroup.add(storeMain);
+  // Recessed Illuminated Showroom Interior Shell (Back Wall + Left/Right Walls + Roof)
+  const interiorMat = new THREE.MeshStandardMaterial({
+    color: '#f8fbff',
+    emissive: new THREE.Color('#ccecff'),
+    emissiveIntensity: 0.35,
+    roughness: 0.5
+  });
 
-  // Store Rooftop Solar Array powering showroom & AC systems
-  const storeSolarL = createSolarPanelMesh(4.6, 3.8, 0.25, solarMat, frameMat);
-  storeSolarL.group.position.set(-2.7, 5.15, 0.5);
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(11.6, 4.9, 0.5), whiteMaquetteMat);
+  backWall.position.set(0, 2.5, 2.75);
+  backWall.castShadow = true;
+  storeGroup.add(backWall);
+
+  const innerBackdrop = new THREE.Mesh(new THREE.BoxGeometry(10.6, 4.0, 0.15), interiorMat);
+  innerBackdrop.position.set(0, 2.15, 2.38);
+  storeGroup.add(innerBackdrop);
+
+  const innerFloor = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.14, 5.4), interiorMat);
+  innerFloor.position.set(0, 0.12, 0.0);
+  storeGroup.add(innerFloor);
+
+  [-5.6, 5.6].forEach((sx) => {
+    const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.9, 5.8), whiteMaquetteMat);
+    sideWall.position.set(sx, 2.5, 0.0);
+    sideWall.castShadow = true;
+    storeGroup.add(sideWall);
+  });
+
+  // Architectural roof slab
+  const storeRoof = new THREE.Mesh(new THREE.BoxGeometry(11.8, 0.65, 6.0), whiteMaquetteMat);
+  storeRoof.position.set(0, 4.75, 0.0);
+  storeRoof.castShadow = true;
+  storeGroup.add(storeRoof);
+
+  // Store Rooftop Solar Array powering showroom & AC display
+  const storeSolarL = createSolarPanelMesh(4.6, 3.4, 0.25, solarMat, frameMat);
+  storeSolarL.group.position.set(-2.7, 5.35, 0.8);
   storeGroup.add(storeSolarL.group);
 
-  const storeSolarR = createSolarPanelMesh(4.6, 3.8, 0.25, solarMat, frameMat);
-  storeSolarR.group.position.set(2.7, 5.15, 0.5);
+  const storeSolarR = createSolarPanelMesh(4.6, 3.4, 0.25, solarMat, frameMat);
+  storeSolarR.group.position.set(2.7, 5.35, 0.8);
   storeGroup.add(storeSolarR.group);
 
-  // Cantilevered Showroom Canopy over entrance + glowing icy-cyan trim
-  const storeCanopy = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.25, 3.0), darkMetalMat);
-  storeCanopy.position.set(0, 3.45, -3.6);
+  // Slim white architectural cornice canopy above vitrine (keeps entire glass display 100% open)
+  const storeCanopy = new THREE.Mesh(new THREE.BoxGeometry(11.8, 0.22, 1.15), whiteMaquetteMat);
+  storeCanopy.position.set(0, 4.38, -3.35);
   storeCanopy.castShadow = true;
   storeGroup.add(storeCanopy);
 
   const storeCanopyTrim = new THREE.Mesh(
-    new THREE.BoxGeometry(10.9, 0.09, 3.08),
-    new THREE.MeshBasicMaterial({ color: '#00e5ff' })
+    new THREE.BoxGeometry(11.86, 0.08, 1.2),
+    new THREE.MeshBasicMaterial({ color: '#38bdf8' })
   );
-  storeCanopyTrim.position.set(0, 3.31, -3.6);
+  storeCanopyTrim.position.set(0, 4.25, -3.35);
   storeGroup.add(storeCanopyTrim);
 
-  // Glowing Panoramic Showroom Glass Windows facing boulevard (-Z)
-  world.storeWindowMat = new THREE.MeshStandardMaterial({
-    color: '#9ee8ff',
-    emissive: new THREE.Color('#38bdf8'),
-    emissiveIntensity: 0.45,
-    roughness: 0.12,
-    metalness: 0.35
+  // Architectural window mullions framing the tall glass vitrine
+  [-5.2, 0.0, 5.2].forEach((mx) => {
+    const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.16, 4.15, 0.16), darkMetalMat);
+    mullion.position.set(mx, 2.2, -2.8);
+    storeGroup.add(mullion);
   });
-  const storeGlass = new THREE.Mesh(new THREE.BoxGeometry(8.8, 2.6, 0.14), world.storeWindowMat);
-  storeGlass.position.set(0, 1.55, -2.92);
+
+  // Crystal-Clear See-Through Glass Vitrine Pane
+  world.storeWindowMat = new THREE.MeshStandardMaterial({
+    color: '#e0f4ff',
+    emissive: new THREE.Color('#38bdf8'),
+    emissiveIntensity: 0.08,
+    transparent: true,
+    opacity: 0.14,
+    roughness: 0.05,
+    metalness: 0.25,
+    depthWrite: false
+  });
+  const storeGlass = new THREE.Mesh(new THREE.BoxGeometry(10.5, 4.1, 0.06), world.storeWindowMat);
+  storeGlass.position.set(0, 2.2, -2.82);
   storeGroup.add(storeGlass);
 
-  // Illuminated Roof Billboard: "SMART-CITY-LED.COM / NEO CLIM® SOLAR AC A+++"
+  // INSIDE VITRINE (Left-Center): Display Plinth + 3D Vertical White Portable NEO Clim® AC
+  const acPlinth = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.3, 1.8), whiteMaquetteMat);
+  acPlinth.position.set(-2.2, 0.3, -0.75);
+  storeGroup.add(acPlinth);
+
+  const mobileAc = createMobileAcUnitMesh(1.52);
+  mobileAc.unit.position.set(-2.2, 0.45, -0.75);
+  mobileAc.unit.rotation.y = Math.PI - 0.24; // Angled slightly toward shopper & camera
+  storeGroup.add(mobileAc.unit);
+  world.storeAcWaves.push(...mobileAc.waves);
+
+  // INSIDE VITRINE (Right-Center): Full-Height Illuminated NEO Clim Location Poster
+  const posterFrame = new THREE.Mesh(new THREE.BoxGeometry(2.5, 3.65, 0.14), darkMetalMat);
+  posterFrame.position.set(2.2, 2.02, -0.55);
+  storeGroup.add(posterFrame);
+
+  const posterMat = new THREE.MeshStandardMaterial({
+    map: world.storePosterTex,
+    emissiveMap: world.storePosterTex,
+    emissive: new THREE.Color('#ffffff'),
+    emissiveIntensity: 0.72,
+    roughness: 0.2
+  });
+  const posterFace = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 3.45), posterMat);
+  posterFace.position.set(2.2, 2.02, -0.63);
+  posterFace.rotation.y = Math.PI; // Faces -Z directly out the vitrine!
+  storeGroup.add(posterFace);
+
+  // OUTSIDE VITRINE ON SIDEWALK: 3D Shopper Character admiring the vitrine & NEO Clim AC!
+  const shopper = createPedestrian('#0ea5e9');
+  shopper.scale.setScalar(1.62);
+  shopper.position.set(-0.6, 0.12, -4.45);
+  shopper.rotation.y = 0; // Local +Z faces toward store (+Z in storeGroup)!
+  storeGroup.add(shopper);
+  world.storeShopper = shopper;
+
+  // Illuminated Roof Billboard: "SMART-CITY-LED.COM / NEO CLIM® · SOLAR & MOBILE AC"
   world.storeSignMat = new THREE.MeshStandardMaterial({
     map: world.storeSignTex,
     emissiveMap: world.storeSignTex,
     emissive: new THREE.Color('#ffffff'),
-    emissiveIntensity: 0.55,
+    emissiveIntensity: 0.6,
     roughness: 0.25
   });
-  const signHousing = new THREE.Mesh(new THREE.BoxGeometry(9.6, 2.35, 0.35), darkMetalMat);
-  signHousing.position.set(0, 6.2, -2.5);
+  const signHousing = new THREE.Mesh(new THREE.BoxGeometry(10.4, 2.45, 0.35), darkMetalMat);
+  signHousing.position.set(0, 6.45, -2.55);
   signHousing.castShadow = true;
   storeGroup.add(signHousing);
 
-  const signFace = new THREE.Mesh(new THREE.PlaneGeometry(9.2, 2.1), world.storeSignMat);
-  signFace.position.set(0, 6.2, -2.69);
-  signFace.rotation.y = Math.PI; // Faces -Z toward boulevard & camera
+  const signFace = new THREE.Mesh(new THREE.PlaneGeometry(10.0, 2.2), world.storeSignMat);
+  signFace.position.set(0, 6.45, -2.74);
+  signFace.rotation.y = Math.PI;
   storeGroup.add(signFace);
 
-  // Outdoor Display Podium with oversized 3D NEO Clim® A+++ Unit & Spinning Fans
-  const podium = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.65, 1.8), whiteMaquetteMat);
-  podium.position.set(-4.3, 0.35, -4.8);
-  podium.castShadow = true;
-  storeGroup.add(podium);
-
-  const acDisplay = createAcUnitMesh(1.05);
-  acDisplay.unit.position.set(-4.3, 0.68, -4.8);
-  acDisplay.unit.rotation.y = Math.PI;
-  storeGroup.add(acDisplay.unit);
-  world.storeFans.push(...acDisplay.fans);
-
-  // Animated NEO Clim® Pickup Package Box (glides from showroom to EV when docked)
-  const acPickup = createAcUnitMesh(0.58);
-  acPickup.unit.position.set(0, 0.85, -3.5);
-  acPickup.unit.rotation.y = Math.PI;
-  storeGroup.add(acPickup.unit);
-  world.acPickupBox = acPickup.unit;
-  world.storeFans.push(...acPickup.fans);
-
-  // Storefront LED Lighting
-  world.storeInteriorLight = new THREE.PointLight('#00e5ff', 1.2, 22);
-  world.storeInteriorLight.position.set(0, 3.0, -5.2);
+  // Bright Interior Showroom Spot Light illuminating AC unit, poster & glass
+  world.storeInteriorLight = new THREE.PointLight('#f0faff', 3.2, 26);
+  world.storeInteriorLight.position.set(-1.2, 3.6, -1.6);
   storeGroup.add(world.storeInteriorLight);
 
   scene.add(storeGroup);
@@ -1002,7 +1063,7 @@ export function buildSmartCityWorld(scene) {
     { x0: -14.2, z0: -3.3, x1: -6, z1: -3.3, speed: 0.19 },
     { x0: -19.8, z0: -14, x1: -19.8, z1: -4.2, speed: 0.14 },
     { x0: -14.2, z0: 4.2, x1: -14.2, z1: 14, speed: 0.15 },
-    { x0: 13.5, z0: 8.2, x1: 23.5, z1: 8.2, speed: 0.14 },
+    { x0: 27.5, z0: 8.5, x1: 35.0, z1: 8.5, speed: 0.14 },
     { x0: -19.8, z0: 4.2, x1: -19.8, z1: 13, speed: 0.16 },
     { x0: -14.2, z0: -13, x1: -14.2, z1: -4.2, speed: 0.14 },
     { x0: -3.5, z0: 3.3, x1: 4.0, z1: 3.3, speed: 0.15 }
@@ -1044,11 +1105,12 @@ export function buildSmartCityWorld(scene) {
     world.stationFlows.push(stream);
   });
 
-  // Stage 3: Smart Home Evening Flows
+  // Stage 3: Smart Home Evening Flows (Solar Roof -> Wall Battery -> Home & Charges EV!)
   [
     [new THREE.Vector3(29.8, 5.6, -10.8), new THREE.Vector3(32.5, 4.0, -9.2), new THREE.Vector3(31.8, 1.6, -8.0)],
     [new THREE.Vector3(31.8, 1.5, -8.0), new THREE.Vector3(30.2, 1.8, -8.2), new THREE.Vector3(28.5, 2.2, -9.5)],
-    [new THREE.Vector3(29.0, 0.7, -5.4), new THREE.Vector3(30.8, 1.1, -6.5), new THREE.Vector3(31.8, 1.4, -8.0)]
+    // Wall Battery & Solar Storage -> Charges Parked EV in Driveway!
+    [new THREE.Vector3(31.8, 1.4, -8.0), new THREE.Vector3(30.8, 1.1, -6.5), new THREE.Vector3(29.0, 0.7, -5.4)]
   ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#fbbf24', 8, 0.065);
     energyGroup.add(stream.group);
@@ -1057,10 +1119,10 @@ export function buildSmartCityWorld(scene) {
 
   // Stage 4: Flagship Smart-City-Led.com · NEO CLIM® Store Solar Cooling Streams
   [
-    // Store solar roof -> AC Display Podium
-    [new THREE.Vector3(16.3, 5.2, 12.7), new THREE.Vector3(14.7, 3.6, 9.6), new THREE.Vector3(14.7, 1.6, 7.4)],
-    // Store solar roof -> Showroom & Pickup Bay
-    [new THREE.Vector3(21.7, 5.2, 12.7), new THREE.Vector3(19.5, 3.8, 9.6), new THREE.Vector3(19.0, 1.8, 8.2), new THREE.Vector3(19.0, 1.1, 5.2)]
+    // Store solar roof -> Vertical Portable NEO Clim AC inside Vitrine
+    [new THREE.Vector3(16.8, 5.4, 13.0), new THREE.Vector3(17.1, 3.6, 11.8), new THREE.Vector3(17.3, 1.9, 11.3)],
+    // Store solar roof -> Showroom Poster & Left Customer Parking Bay
+    [new THREE.Vector3(22.2, 5.4, 13.0), new THREE.Vector3(21.8, 3.6, 11.8), new THREE.Vector3(18.5, 2.2, 9.6), new THREE.Vector3(14.2, 1.1, 5.4)]
   ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#00e5ff', 9, 0.07);
     energyGroup.add(stream.group);

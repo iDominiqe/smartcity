@@ -137,6 +137,50 @@ export function createBadgeTexture(letter = 'C', bg = '#2563eb') {
 }
 
 /**
+ * Helper to draw the NEO Clim snowflake-pin logo onto any Canvas 2D context.
+ */
+function drawNeoClimPinLogo(ctx, cx, cy, r) {
+  // Navy outer circle pin
+  ctx.fillStyle = '#0e2847';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  // White inner circle
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.68, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Snowflake spokes
+  ctx.strokeStyle = '#0e2847';
+  ctx.lineWidth = Math.max(2, r * 0.085);
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI) / 3;
+    const x1 = cx + Math.cos(a) * r * 0.5;
+    const y1 = cy + Math.sin(a) * r * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+
+  // Curved cyan arrow arc around bottom-right
+  ctx.strokeStyle = '#0ea5e9';
+  ctx.lineWidth = Math.max(3, r * 0.14);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.94, 0.18 * Math.PI, 0.85 * Math.PI);
+  ctx.stroke();
+
+  // Orange dot at bottom tip
+  ctx.fillStyle = '#f97316';
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.98, r * 0.16, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/**
  * Creates the illuminated billboard texture for the Smart-City-Led.com · NEO CLIM® Flagship Store.
  */
 export function createStoreSignTexture() {
@@ -147,29 +191,134 @@ export function createStoreSignTexture() {
 
   const bgGrad = ctx.createLinearGradient(0, 0, 1024, 256);
   bgGrad.addColorStop(0, '#07152b');
-  bgGrad.addColorStop(0.5, '#0c2347');
+  bgGrad.addColorStop(0.5, '#0d264c');
   bgGrad.addColorStop(1, '#07152b');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, 1024, 256);
 
-  // Neon cyan border
-  ctx.strokeStyle = '#00e5ff';
+  ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 10;
   ctx.strokeRect(10, 10, 1004, 236);
 
+  // Draw NEO Clim snowflake pin badge on left
+  drawNeoClimPinLogo(ctx, 132, 128, 68);
+
   // Top headline: SMART-CITY-LED.COM
   ctx.fillStyle = '#ffffff';
-  ctx.font = '800 72px Inter, Arial, sans-serif';
+  ctx.font = '800 64px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('SMART-CITY-LED.COM', 512, 88);
+  ctx.fillText('SMART-CITY-LED.COM', 585, 86);
 
-  // Highlighted pill for NEO CLIM® SOLAR A+++
-  ctx.fillStyle = '#00e5ff';
-  ctx.fillRect(180, 146, 664, 72);
+  // Highlighted pill: NEO CLIM® · LOCATION & SOLAIRE A+++
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(265, 146, 650, 68);
   ctx.fillStyle = '#041426';
-  ctx.font = '800 42px Inter, Arial, sans-serif';
-  ctx.fillText('NEO CLIM®  ·  SOLAR AC A+++', 512, 184);
+  ctx.font = '800 35px Inter, Arial, sans-serif';
+  ctx.fillText('NEO CLIM® · SOLAR & MOBILE AC', 590, 181);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+/**
+ * Creates the showroom window poster matching the user's NEO Clim Location graphic.
+ */
+export function createNeoClimPosterTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 768;
+  const ctx = canvas.getContext('2d');
+
+  // Clean frosty-white background gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, 768);
+  bg.addColorStop(0, '#ffffff');
+  bg.addColorStop(0.75, '#f0f7fc');
+  bg.addColorStop(1, '#dfeff9');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 512, 768);
+
+  // Soft cyan border
+  ctx.strokeStyle = '#bae6fd';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(8, 8, 496, 752);
+
+  // Top snowflake pin logo
+  drawNeoClimPinLogo(ctx, 256, 86, 52);
+
+  // Brand title: NEO / Clim Location
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#0e2847';
+  ctx.font = '900 44px Inter, Arial, sans-serif';
+  ctx.fillText('NEO', 256, 168);
+
+  ctx.font = '800 26px Inter, Arial, sans-serif';
+  ctx.fillStyle = '#0ea5e9';
+  ctx.fillText('Clim', 188, 202);
+  ctx.fillStyle = '#0e2847';
+  ctx.fillText('Location', 284, 202);
+
+  // ICI point location climatisation Premium mobile
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '900 46px Inter, Arial, sans-serif';
+  ctx.fillText('ICI', 256, 256);
+
+  ctx.fillStyle = '#0e2847';
+  ctx.font = '800 32px Inter, Arial, sans-serif';
+  ctx.fillText('point location', 256, 302);
+  ctx.fillText('climatisation', 256, 342);
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '900 34px Inter, Arial, sans-serif';
+  ctx.fillText('Premium mobile', 256, 386);
+
+  // Cool blue side airflow waves behind AC unit
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+  ctx.lineWidth = 14;
+  ctx.lineCap = 'round';
+  [-1, 1].forEach((dir) => {
+    for (let w = 0; w < 2; w++) {
+      ctx.beginPath();
+      ctx.moveTo(256 + dir * 70, 520 + w * 44);
+      ctx.quadraticCurveTo(256 + dir * 150, 490 + w * 44, 256 + dir * 215, 530 + w * 44);
+      ctx.stroke();
+    }
+  });
+
+  // Portable White Vertical AC Illustration
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillRect(178, 434, 156, 232);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(182, 438, 148, 224);
+  // Top black digital vent panel
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(186, 442, 140, 26);
+  // Subtle front emblem
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(250, 496, 12, 8);
+  // 4 black caster wheels
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(194, 666, 16, 12);
+  ctx.fillRect(302, 666, 16, 12);
+
+  // Cozy cat silhouette on right (faithful nod to uploaded graphic)
+  ctx.fillStyle = '#d6c7b2';
+  ctx.beginPath();
+  ctx.ellipse(412, 650, 38, 20, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(388, 624, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Bottom bar: Demander à la réception
+  ctx.fillStyle = 'rgba(186, 230, 253, 0.8)';
+  ctx.fillRect(46, 696, 420, 44);
+  ctx.fillStyle = '#0e2847';
+  ctx.font = '700 22px Inter, Arial, sans-serif';
+  ctx.fillText('Demander à la réception', 256, 719);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -235,47 +384,78 @@ export function createRooftopFanUnit(whiteMat, rimMat, radius = 0.52) {
 }
 
 /**
- * Creates a sculptural 3D NEO Clim® A+++ Air Conditioner display unit with spinning fans.
+ * Creates a sleek vertical white portable NEO Clim® mobile air conditioner
+ * matching the uploaded poster (4 caster wheels, black top vent/panel, icy-blue air waves).
  */
-export function createAcUnitMesh(scale = 1) {
+export function createMobileAcUnitMesh(scale = 1) {
   const unit = new THREE.Group();
-  const caseMat = new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.32, metalness: 0.25 });
-  const grilleMat = new THREE.MeshStandardMaterial({ color: '#1e293b', roughness: 0.5 });
-  const bladeMat = new THREE.MeshStandardMaterial({ color: '#00e5ff', emissive: '#0284c7', emissiveIntensity: 0.5 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.28, metalness: 0.12 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: '#e2e8f0', roughness: 0.35 });
+  const darkPanelMat = new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.3, metalness: 0.4 });
+  const ledMat = new THREE.MeshBasicMaterial({ color: '#38bdf8' });
 
-  const body = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.35, 0.82), caseMat);
-  body.position.y = 0.68;
+  // Vertical rounded-profile white cabinet
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.08, 1.72, 0.86), bodyMat);
+  body.position.y = 0.98;
   body.castShadow = true;
   unit.add(body);
 
-  // Cyan NEO CLIM eco trim stripe
-  const stripe = new THREE.Mesh(
-    new THREE.BoxGeometry(2.14, 0.12, 0.85),
-    new THREE.MeshBasicMaterial({ color: '#00e5ff' })
-  );
-  stripe.position.y = 1.24;
-  unit.add(stripe);
+  // Side bevel shadow reveal
+  const sideRecess = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.45, 0.7), trimMat);
+  sideRecess.position.y = 0.96;
+  unit.add(sideRecess);
 
-  const fans = [];
-  [-0.5, 0.5].forEach((fx) => {
-    const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.08, 18), grilleMat);
-    ring.rotation.x = Math.PI / 2;
-    ring.position.set(fx, 0.66, 0.41);
-    unit.add(ring);
+  // Black recessed top digital display + air louver vent
+  const topPanel = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.14, 0.74), darkPanelMat);
+  topPanel.position.set(0, 1.82, 0.02);
+  unit.add(topPanel);
 
-    const fanRotor = new THREE.Group();
-    fanRotor.position.set(fx, 0.66, 0.46);
-    for (let b = 0; b < 3; b++) {
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.62, 0.03), bladeMat);
-      blade.rotation.z = (b * Math.PI) / 3;
-      fanRotor.add(blade);
-    }
-    unit.add(fanRotor);
-    fans.push(fanRotor);
+  // Glowing cyan digital indicator dots on top panel
+  const ledDot = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.08), ledMat);
+  ledDot.position.set(0, 1.88, 0.25);
+  unit.add(ledDot);
+
+  // Small front emblem mark
+  const logoBadge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.04), darkPanelMat);
+  logoBadge.position.set(0, 1.45, 0.44);
+  unit.add(logoBadge);
+
+  // 4 Black Caster Wheels
+  const wheelGeo = new THREE.CylinderGeometry(0.085, 0.085, 0.09, 12);
+  wheelGeo.rotateZ(Math.PI / 2);
+  [
+    [-0.4, 0.085, 0.3],
+    [0.4, 0.085, 0.3],
+    [-0.4, 0.085, -0.3],
+    [0.4, 0.085, -0.3]
+  ].forEach(([wx, wy, wz]) => {
+    const wheel = new THREE.Mesh(wheelGeo, darkPanelMat);
+    wheel.position.set(wx, wy, wz);
+    unit.add(wheel);
+  });
+
+  // Animated icy-blue cool airflow ribbons streaming to both sides
+  const waves = [];
+  [-1, 1].forEach((dir) => {
+    [0.95, 1.32].forEach((wy) => {
+      const waveCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(dir * 0.56, wy, 0.1),
+        new THREE.Vector3(dir * 1.15, wy + 0.14, 0.15),
+        new THREE.Vector3(dir * 1.75, wy - 0.08, 0.1)
+      ]);
+      const waveMat = new THREE.MeshBasicMaterial({
+        color: '#38bdf8',
+        transparent: true,
+        opacity: 0.65
+      });
+      const waveMesh = new THREE.Mesh(new THREE.TubeGeometry(waveCurve, 18, 0.045, 6, false), waveMat);
+      unit.add(waveMesh);
+      waves.push({ mesh: waveMesh, mat: waveMat, phase: wy + dir });
+    });
   });
 
   unit.scale.setScalar(scale);
-  return { unit, fans };
+  return { unit, waves };
 }
 
 /**
