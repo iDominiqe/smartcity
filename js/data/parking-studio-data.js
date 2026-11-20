@@ -129,21 +129,21 @@ export const PARKING_STUDIO_TEXT = {
 
 export const PARKING_MODE_TELEMETRY = {
   sunny: {
-    solar: '64.2 kW',
-    wind: '5.4 kW',
-    ev: '28 kW (3 EV)',
+    solar: '96.4 kW',
+    wind: '8.2 kW',
+    ev: '44 kW (4 EV)',
     eco: '35% PV / 65% Bio'
   },
   windy: {
     solar: '0.0 kW',
-    wind: '18.6 kW',
-    ev: '22 kW (LFP)',
+    wind: '30.0 kW',
+    ev: '36 kW (LFP)',
     eco: '100% Renew.'
   },
   hybrid: {
-    solar: '46.8 kW',
-    wind: '13.5 kW',
-    ev: '24 kW (3 EV)',
+    solar: '72.5 kW',
+    wind: '21.4 kW',
+    ev: '38 kW (4 EV)',
     eco: '-6°C Bio-Cool'
   }
 };
@@ -154,12 +154,12 @@ export const PARKING_LEFT_SPECS = [
     icon: '⚡',
     focusCam: 'canopy',
     label: { en: 'SOLAR EV CANOPY', fr: 'OMBRIÈRE SOLAIRE VE', bg: 'СОЛАРЕН НАВЕС ЕМ', ro: 'COPERTINĂ SOLARĂ EV' },
-    value: '35% PV · 4× 22 kW',
+    value: '35% PV · 6× 150 kW',
     detail: {
-      en: 'Cantilevered steel & timber carport with bifacial PV roof and integrated DC/AC EV charging pedestals',
-      fr: 'Ombrière acier/bois à panneaux bifaciaux alimentant directement 4 bornes de recharge VE',
-      bg: 'Конзолен стоманено-дървен навес с двулицеви панели и 4 зарядни колонки за електромобили',
-      ro: 'Copertină modulară cu panouri bifaciale și 4 stații integrate de încărcare EV'
+      en: 'Cantilevered steel & timber carport with bifacial PV roof and 6 integrated DC/AC EV charging pedestals',
+      fr: 'Ombrière acier/bois à panneaux bifaciaux alimentant directement 6 bornes de recharge VE',
+      bg: 'Конзолен стоманено-дървен навес с двулицеви панели и 6 зарядни колонки за електромобили',
+      ro: 'Copertină modulară cu panouri bifaciale și 6 stații integrate de încărcare EV'
     }
   },
   {
@@ -169,10 +169,10 @@ export const PARKING_LEFT_SPECS = [
     label: { en: 'VEGETATED BIO-PARKING', fr: 'PARKING VÉGÉTALISÉ', bg: 'БИО-ПАРКИНГ И ЦВЕТЯ', ro: 'BIO-PARCARE & FLORI' },
     value: '65% Trees & Flowers',
     detail: {
-      en: 'Permeable eco-pavers, climbing evergreen pergolas, shade trees, and wildflower median beds',
+      en: 'Permeable eco-pavers, climbing evergreen pergolas, ornamental blossom trees, and wildflower medians',
       fr: 'Pavés perméables, pergolas grimpantes persistantes, arbres d’ombrage et massifs fleuris',
       bg: 'Пропускливи зелени настилки, перголи с увивни растения, сенчести дървета и цветни алеи',
-      ro: 'Pavele permeabile, pergole verzi perene, arbori de umbră și straturi colorate cu flori'
+      ro: 'Pavele permeabile, pergole verzi perene, arbori ornamentali și straturi colorate cu flori'
     }
   },
   {
@@ -180,12 +180,12 @@ export const PARKING_LEFT_SPECS = [
     icon: '🛒',
     focusCam: 'market',
     label: { en: 'ECO-MARKET ROOF PV', fr: 'TOITURE ÉCO-MARCHÉ', bg: 'ПОКРИВ СУПЕРМАРКЕТ', ro: 'ACOPERIȘ ECO-MARKET' },
-    value: '42 kWp + Green Deck',
+    value: '68 kWp + Cafe Wing',
     detail: {
-      en: 'Tilted rooftop photovoltaic rows paired with landscaped rooftop planters and warm LED retail facade',
-      fr: 'Rangées solaires inclinées sur toiture avec jardinières paysagères et façade vitrée LED',
-      bg: 'Наклонени покривни фотоволтаици, съчетани със зелени кашпи и модерна стъклена фасада',
-      ro: 'Rânduri fotovoltaice înclinate pe acoperiș combinate cu jardiniere verzi și vitrină LED'
+      en: 'Multi-wing hypermarket with Click-&-Collect EV drive, 21 tilted rooftop PV arrays, and rooftop garden cafe',
+      fr: 'Hypermarché multi-ailes avec Drive VE, 21 panneaux solaires en toiture et café-terrasse végétalisé',
+      bg: 'Многокрилен хипермаркет с Click-&-Collect зона, 21 соларни панела на покрива и кафе-тераса',
+      ro: 'Hipermarket multi-aripă cu zonă Drive EV, 21 panouri fotovoltaice pe acoperiș și terasă cafe'
     }
   },
   {
@@ -195,10 +195,10 @@ export const PARKING_LEFT_SPECS = [
     label: { en: 'HUWART LAW COMPLIANCE', fr: 'CONFORMITÉ LOI HUWART', bg: 'ЗАКОН APER / HUWART', ro: 'CONFORMITATE HUWART' },
     value: 'ROI < 4 Years',
     detail: {
-      en: 'Balanced 35% solar + 65% nature ratio slashes CAPEX while maximizing daytime self-consumption',
-      fr: 'Le ratio 35 % solaire / 65 % végétal réduit le CAPEX et maximise l’autoconsommation diurne',
-      bg: 'Балансът 35% солар / 65% природа намалява инвестицията и ускорява възвръщаемостта под 4 г.',
-      ro: 'Raportul 35% solar / 65% natură reduce investiția și maximizează autoconsumul diurn'
+      en: 'Spacious two-lane boulevard access with 35% solar + 65% nature ratio maximizing daytime self-consumption',
+      fr: 'Boulevard double voie et ratio 35 % solaire / 65 % végétal maximisant l’autoconsommation diurne',
+      bg: 'Широк двулентов булевард и баланс 35% солар / 65% природа за максимално дневно самопотребление',
+      ro: 'Bulevard cu două benzi și raport 35% solar / 65% natură ce maximizează autoconsumul diurn'
     }
   }
 ];
@@ -208,13 +208,13 @@ export const PARKING_RIGHT_SPECS = [
     id: 'wind',
     icon: '🌬️',
     focusCam: 'field',
-    label: { en: 'FIELD WIND TURBINE', fr: 'ÉOLIENNE DE CHAMP', bg: 'ПОЛСКИ ВЕТРОГЕНЕРАТОР', ro: 'TURBINĂ EOLIANĂ CÂMP' },
-    value: '18 kW · 24/7 Breeze',
+    label: { en: 'FIELD WIND TURBINES', fr: 'ÉOLIENNES DE CHAMP', bg: 'ПОЛСКИ ВЕТРОГЕНЕРАТОРИ', ro: 'TURBINE EOLIENE CÂMP' },
+    value: '30 kW · Dual Turbines',
     detail: {
-      en: 'Compact low-noise 3-blade wind turbine in the side meadow supplying evening and cloudy-day power',
-      fr: 'Éolienne compacte silencieuse 3 pales en prairie assurant la production nocturne et hivernale',
-      bg: 'Компактен тих 3-лопатков ветрогенератор в полето за вечерно и зимно захранване',
-      ro: 'Turbină eoliană compactă cu 3 pale în câmpul adiacent pentru energie seara și pe timp înnorat'
+      en: 'Primary 18 kW + companion 12 kW 3-blade wind turbines in the side meadow for 24/7 generation',
+      fr: 'Duo d’éoliennes silencieuses (18 kW + 12 kW) en prairie assurant la production 24h/24',
+      bg: 'Основна 18 kW и втора 12 kW 3-лопаткови турбини в поляната за денонощно захранване',
+      ro: 'Două turbine eoliene cu 3 pale (18 kW + 12 kW) pe pajiștea adiacentă pentru energie 24/7'
     }
   },
   {
@@ -222,12 +222,12 @@ export const PARKING_RIGHT_SPECS = [
     icon: '☀️',
     focusCam: 'field',
     label: { en: 'GROUND SOLAR MEADOW', fr: 'CHAMP SOLAIRE AU SOL', bg: 'НАЗЕМНИ СОЛАРИ В ПОЛЕ', ro: 'PANOURI SOLARE ÎN CÂMP' },
-    value: '22 kWp · Tracking',
+    value: '36 kWp · 12 Panels',
     detail: {
-      en: 'Elevated ground-mount bifacial panels in the adjacent meadow allowing flowers and grass beneath',
-      fr: 'Panneaux bifaciaux surélevés en prairie préservant la biodiversité et la flore au sol',
-      bg: 'Повдигнати наземни двулицеви панели на поляната със свободно пространство за трева и цветя',
-      ro: 'Panouri bifaciale ridicate pe pajiște, permițând creșterea ierbii și florilor dedesubt'
+      en: '12 elevated tracking bifacial panels across the adjacent eco-meadow with wildflowers growing beneath',
+      fr: '12 panneaux bifaciaux surélevés en prairie préservant la biodiversité et la flore au sol',
+      bg: '12 повдигнати наземни двулицеви панела на поляната със свободно пространство за трева и цветя',
+      ro: '12 panouri bifaciale ridicate pe pajiște, permițând creșterea ierbii și florilor dedesubt'
     }
   },
   {
@@ -235,12 +235,12 @@ export const PARKING_RIGHT_SPECS = [
     icon: '🔋',
     focusCam: 'field',
     label: { en: 'HYBRID LFP STORAGE HUB', fr: 'STOCKAGE HYBRIDE LFP', bg: 'ХИБРИДНА LFP БАТЕРИЯ', ro: 'STOCARE HIBRIDĂ LFP' },
-    value: '120 kWh · Smart EMS',
+    value: '180 kWh · Smart EMS',
     detail: {
-      en: 'Central battery cabinet merges solar & wind inputs to power night lighting and EV fast charging',
-      fr: 'Armoire batterie centralisant solaire et éolien pour l’éclairage nocturne et les bornes VE',
-      bg: 'Централен батериен шкаф, обединяващ солар и вятър за нощно осветление и зарядни станции',
-      ro: 'Cabinet central de baterii care combină energia solară și eoliană pentru iluminat și EV'
+      en: 'Dual-cabinet substation merging rooftop PV, meadow arrays & wind power for EV fast charging & market loads',
+      fr: 'Sous-station double armoire centralisant PV et éolien pour les bornes rapides VE et le marché',
+      bg: 'Двушкафова подстанция, обединяваща покрив, поляна и вятър за бързи зарядни станции и маркета',
+      ro: 'Substație cu dublu cabinet ce combină energia solară și eoliană pentru stațiile EV și market'
     }
   },
   {
@@ -250,56 +250,56 @@ export const PARKING_RIGHT_SPECS = [
     label: { en: 'COOL MICROCLIMATE', fr: 'ÎLOT DE FRAÎCHEUR', bg: 'ЕКО МИКРОКЛИМАТ', ro: 'MICROCLIMAT RĂCOROS' },
     value: '-6°C Surface Heat',
     detail: {
-      en: 'Tree canopies, flower medians, and vegetated shade lower summer parking temperatures naturally',
-      fr: 'Arbres, fleurs et ombrage végétal abaissent naturellement la température estivale du parking',
-      bg: 'Дърветата, цветните острови и зелените перголи понижават летните температури на паркинга',
-      ro: 'Arborii, insulele cu flori și pergolele verzi reduc natural temperatura parcării vara'
+      en: 'Shade & blossom trees, flower medians, and vegetated shade lower summer parking temperatures naturally',
+      fr: 'Arbres d’ombrage, floraisons et pergolas végétales abaissent naturellement la chaleur estivale',
+      bg: 'Сенчести и цъфтящи дървета, цветни острови и зелени перголи понижават летните температури',
+      ro: 'Arborii ornamentali, insulele cu flori și pergolele verzi reduc natural temperatura vara'
     }
   }
 ];
 
 export const PARKING_CAMERA_PRESETS = {
-  overview: { pos: [-11.5, 11.2, 16.5], target: [1.0, 1.4, -0.4] },
-  canopy: { pos: [-9.8, 5.4, 9.8], target: [-4.4, 1.6, 2.8] },
-  bio: { pos: [2.8, 5.2, 10.6], target: [2.2, 1.4, 2.4] },
-  field: { pos: [14.6, 6.2, 7.2], target: [8.0, 2.6, -1.2] },
-  market: { pos: [-7.2, 7.6, 5.4], target: [-3.2, 2.4, -4.4] }
+  overview: { pos: [-16.5, 15.5, 24.5], target: [-1.0, 1.4, -0.5] },
+  canopy: { pos: [-14.2, 6.4, 12.8], target: [-8.4, 1.6, 2.9] },
+  bio: { pos: [4.8, 6.2, 12.8], target: [2.4, 1.5, 2.9] },
+  field: { pos: [21.5, 8.2, 10.5], target: [13.2, 2.8, -1.8] },
+  market: { pos: [-8.5, 9.2, 4.5], target: [-4.5, 2.4, -9.0] }
 };
 
 export const PARKING_HOTSPOTS = [
   {
     id: 'market',
-    pos: [-3.8, 5.0, -4.4],
+    pos: [-4.5, 5.6, -9.0],
     focusCam: 'market',
     title: { en: 'NEO® Eco-Market', fr: 'NEO® Éco-Marché', bg: 'NEO® Еко-Маркет', ro: 'NEO® Eco-Market' },
-    sub: { en: '42 KWP ROOF PV & GREEN DECK', fr: '42 KWC TOITURE & TERRASSE BIO', bg: '42 KWP ПОКРИВ И ЗЕЛЕНИНА', ro: '42 KWP ACOPERIȘ & TERASĂ' }
+    sub: { en: '68 KWP ROOF PV & CAFE WING', fr: '68 KWC TOITURE & CAFÉ BIO', bg: '68 KWP ПОКРИВ И КАФЕ', ro: '68 KWP ACOPERIȘ & CAFE' }
   },
   {
     id: 'canopy',
-    pos: [-4.8, 3.6, 3.1],
+    pos: [-8.4, 3.9, 2.9],
     focusCam: 'canopy',
     title: { en: 'Solar EV Canopy', fr: 'Ombrière Solaire VE', bg: 'Соларен Навес ЕМ', ro: 'Copertină Solară EV' },
-    sub: { en: '35% PV · 4 FAST CHARGERS', fr: '35% PV · 4 BORNES RAPIDES', bg: '35% PV · 4 ЗАРЯДНИ КОЛОНКИ', ro: '35% PV · 4 STAȚII RAPIDE' }
+    sub: { en: '35% PV · 6 FAST CHARGERS', fr: '35% PV · 6 BORNES RAPIDES', bg: '35% PV · 6 ЗАРЯДНИ КОЛОНКИ', ro: '35% PV · 6 STAȚII RAPIDE' }
   },
   {
     id: 'bio',
-    pos: [2.2, 3.1, 3.2],
+    pos: [2.7, 3.4, 2.9],
     focusCam: 'bio',
     title: { en: 'Bio-Parking & Flowers', fr: 'Parking Végétal & Fleurs', bg: 'Био-Паркинг и Цветя', ro: 'Bio-Parcare & Flori' },
     sub: { en: '65% SHADE · TREES & BLOOM', fr: '65% OMBRAGE · ARBRES & FLEURS', bg: '65% СЯНКА · ДЪРВЕТА И ЦВЕТЯ', ro: '65% UMBRĂ · ARBORI & FLORI' }
   },
   {
     id: 'wind',
-    pos: [8.6, 6.7, -3.2],
+    pos: [14.8, 7.6, -6.8],
     focusCam: 'field',
-    title: { en: 'Field Wind Turbine', fr: 'Éolienne de Champ', bg: 'Полеви Ветрогенератор', ro: 'Turbină Eoliană Câmp' },
-    sub: { en: '18 KW COMPACT 24/7 BREEZE', fr: '18 KW COMPACTE 24/7', bg: '18 KW КОМПАКТНА 24/7', ro: '18 KW COMPACTĂ 24/7' }
+    title: { en: 'Dual Wind Turbines', fr: 'Duo Éolien de Champ', bg: 'Два Ветрогенератора', ro: 'Turbine Eoliene Câmp' },
+    sub: { en: '30 KW (18+12 KW) · 24/7', fr: '30 KW (18+12 KW) · 24/7', bg: '30 KW (18+12 KW) · 24/7', ro: '30 KW (18+12 KW) · 24/7' }
   },
   {
     id: 'fieldSolar',
-    pos: [8.0, 2.2, 2.2],
+    pos: [12.8, 2.3, 2.4],
     focusCam: 'field',
     title: { en: 'Field Solar & Storage', fr: 'Champ PV & Stockage', bg: 'Поле Солар и Батерия', ro: 'Câmp PV & Stocare' },
-    sub: { en: '22 KWP MEADOW + 120 KWH LFP', fr: '22 KWC PRAIRIE + 120 KWH LFP', bg: '22 KWP ПОЛЯНА + 120 KWH LFP', ro: '22 KWP PAJIȘTE + 120 KWH LFP' }
+    sub: { en: '36 KWP MEADOW + 180 KWH LFP', fr: '36 KWC PRAIRIE + 180 KWH LFP', bg: '36 KWP ПОЛЯНА + 180 KWH LFP', ro: '36 KWP PAJIȘTE + 180 KWH LFP' }
   }
 ];
