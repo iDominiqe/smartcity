@@ -41,12 +41,12 @@ function initApp() {
   scene.fog = new THREE.FogExp2('#7488ad', 0.0038);
 
   const camera = new THREE.PerspectiveCamera(
-    30,
+    36,
     window.innerWidth / window.innerHeight,
     0.5,
     350
   );
-  camera.position.set(-32, 27, 38);
+  camera.position.set(-33, 13.8, 36);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -55,7 +55,7 @@ function initApp() {
   controls.minDistance = 12;
   controls.maxDistance = 120;
   controls.enabled = false;
-  controls.target.set(-16, 2, -1.5);
+  controls.target.set(-14, 6.6, -5.5);
 
   // Build procedural 3D world
   const world = buildSmartCityWorld(scene);

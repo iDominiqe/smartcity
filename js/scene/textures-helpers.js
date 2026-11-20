@@ -487,12 +487,31 @@ export function createNeoClimPosterTexture() {
   return tex;
 }
 
+const SOLAR_STRUT_MAT = new THREE.MeshStandardMaterial({
+  color: '#334155',
+  roughness: 0.45,
+  metalness: 0.65
+});
+
 /**
- * Helper to create a tilted solar panel assembly.
+ * Helper to create a tilted solar panel assembly seated on mounting struts so it never clips roof textures.
  */
 export function createSolarPanelMesh(width, depth, tiltRad, solarMat, frameMat) {
   const group = new THREE.Group();
+  const absTilt = Math.abs(tiltRad);
+  const pivotY = (depth * 0.5 + 0.05) * Math.sin(absTilt + 0.05) + 0.14;
+
+  [-width * 0.35, width * 0.35].forEach((sx) => {
+    const strut = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, pivotY, Math.max(0.24, depth * 0.55)),
+      SOLAR_STRUT_MAT
+    );
+    strut.position.set(sx, pivotY * 0.5, 0);
+    group.add(strut);
+  });
+
   const panelGroup = new THREE.Group();
+  panelGroup.position.y = pivotY;
   panelGroup.rotation.x = tiltRad;
 
   const frame = new THREE.Mesh(

@@ -76,20 +76,20 @@ function sampleCameraKeyframes(keyframes, p, outPos, outTarget) {
   );
 }
 
-// Tuned for FOV=30 telephoto-isometric miniature maquette perspective across all 4 stages
+// Tuned for FOV=36 panoramic diorama perspective showing upper skyline, clouds, sun & crescent moon
 const CAMERA_KEYFRAMES = [
-  { p: 0.0, pos: [-32, 27, 38], target: [-18, 2.2, -1.5] },
-  { p: 0.13, pos: [-22, 19.5, 29], target: [-15.5, 2.0, -1.0] },
-  { p: 0.22, pos: [-8, 10.5, 19], target: [-3.0, 1.4, -1.5] },
-  { p: 0.30, pos: [-0.8, 8.6, 13.2], target: [1.4, 2.0, -5.2] },
-  { p: 0.42, pos: [3.2, 8.4, 11.2], target: [2.0, 2.0, -5.2] },
-  { p: 0.51, pos: [6.0, 8.6, 7.4], target: [16.5, 1.3, -1.0] },
-  { p: 0.58, pos: [25.2, 7.8, 6.4], target: [27.8, 2.2, -7.8] },
-  { p: 0.70, pos: [33.8, 7.6, 6.8], target: [28.2, 2.2, -8.2] },
-  { p: 0.74, pos: [34.2, 8.6, 3.8], target: [27.5, 2.2, -6.0] },
-  { p: 0.80, pos: [16.5, 11.8, -14.2], target: [21.5, 2.8, 2.0] },
-  { p: 0.87, pos: [0.5, 11.8, -14.2], target: [18.0, 3.1, 6.0] },
-  { p: 1.0, pos: [2.2, 12.1, -14.6], target: [18.2, 3.1, 6.4] }
+  { p: 0.0, pos: [-33, 13.8, 36], target: [-14, 6.6, -5.5] },
+  { p: 0.13, pos: [-22, 11.4, 26], target: [-11.5, 5.4, -5.5] },
+  { p: 0.22, pos: [-8, 8.2, 17], target: [-1.5, 3.8, -4.5] },
+  { p: 0.30, pos: [-1.0, 6.2, 11.8], target: [2.8, 3.5, -5.5] },
+  { p: 0.42, pos: [3.2, 6.0, 10.6], target: [3.5, 3.5, -5.5] },
+  { p: 0.51, pos: [8.5, 6.6, 6.4], target: [17.5, 3.4, -4.0] },
+  { p: 0.58, pos: [24.8, 6.0, 6.2], target: [28.2, 3.8, -8.5] },
+  { p: 0.70, pos: [33.2, 5.8, 6.4], target: [28.5, 3.8, -8.8] },
+  { p: 0.74, pos: [33.5, 6.8, 2.8], target: [26.5, 3.6, -4.0] },
+  { p: 0.80, pos: [17.5, 8.0, -11.8], target: [21.5, 3.9, 8.5] },
+  { p: 0.87, pos: [7.2, 8.2, -12.4], target: [22.2, 3.8, 9.4] },
+  { p: 1.0, pos: [7.8, 8.2, -12.6], target: [22.4, 3.8, 9.6] }
 ];
 
 const TIME_STOPS = [
@@ -101,7 +101,7 @@ const TIME_STOPS = [
     hemiGround: new THREE.Color('#3b425c'),
     cloudCol: new THREE.Color('#fde2e4'),
     cloudEmit: new THREE.Color('#fca5a5'),
-    sunPos: [42, 15, -26],
+    sunPos: [10, 15.8, -26],
     moonY: -8,
     dirInt: 1.4,
     hemiInt: 0.88,
@@ -121,7 +121,7 @@ const TIME_STOPS = [
     hemiGround: new THREE.Color('#475569'),
     cloudCol: new THREE.Color('#ffffff'),
     cloudEmit: new THREE.Color('#cbd5e1'),
-    sunPos: [-8, 56, -16],
+    sunPos: [-6, 17.2, -26],
     moonY: -18,
     dirInt: 2.35,
     hemiInt: 1.25,
@@ -141,8 +141,8 @@ const TIME_STOPS = [
     hemiGround: new THREE.Color('#271d38'),
     cloudCol: new THREE.Color('#fdba74'),
     cloudEmit: new THREE.Color('#fb923c'),
-    sunPos: [-44, 13, -24],
-    moonY: 16,
+    sunPos: [-20, 13.8, -25],
+    moonY: 14.8,
     dirInt: 1.5,
     hemiInt: 0.84,
     ambInt: 0.4,
@@ -161,8 +161,8 @@ const TIME_STOPS = [
     hemiGround: new THREE.Color('#0f172a'),
     cloudCol: new THREE.Color('#475569'),
     cloudEmit: new THREE.Color('#334155'),
-    sunPos: [-48, -12, -28],
-    moonY: 30,
+    sunPos: [-28, -10, -26],
+    moonY: 17.2,
     dirInt: 0.68,
     hemiInt: 0.56,
     ambInt: 0.35,
@@ -235,13 +235,13 @@ export class ScrollDirector {
       new THREE.Vector3(29.0, 0.05, -5.4)
     ]);
 
-    // Leg 3: Evening Smart Home -> Smart-City-Led.com Store Left Customer Parking Bay (14.2, 5.4)
+    // Leg 3: Evening Smart Home -> Smart-City-Led.com Store Left Customer Parking Bay (uses eastbound z=+1.25 lane)
     this.driveToStoreCurve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(29.0, 0.05, -5.4),
-      new THREE.Vector3(27.5, 0.05, -2.8),
-      new THREE.Vector3(23.5, 0.05, -1.15),
-      new THREE.Vector3(17.5, 0.05, -1.15),
-      new THREE.Vector3(14.5, 0.05, 1.6),
+      new THREE.Vector3(28.2, 0.05, -1.8),
+      new THREE.Vector3(24.5, 0.05, 1.25),
+      new THREE.Vector3(17.5, 0.05, 1.25),
+      new THREE.Vector3(14.6, 0.05, 2.8),
       new THREE.Vector3(14.2, 0.05, 5.4)
     ]);
 
@@ -250,6 +250,13 @@ export class ScrollDirector {
     this.hudEv = document.getElementById('hud-ev');
     this.hudGrid = document.getElementById('hud-grid');
     this.progressFill = document.getElementById('scroll-progress-fill');
+    this.cityCanvas = document.getElementById('city-canvas');
+    this.collisionCount = 0;
+    this.rollingMinBoxGap = Infinity;
+    this.rollingMinSameLaneDist = Infinity;
+    this._lastCollAttr = '';
+    this._lastGapAttr = '';
+    this._lastSameAttr = '';
   }
 
   setScrollProgress(p) {
@@ -435,21 +442,89 @@ export class ScrollDirector {
     this.prevEvPos.copy(this._evPos);
 
     // -------------------------------------------------------------------------
-    // 3. AMBIENT CITY TRAFFIC & PEDESTRIANS
+    // 3. COLLISION-FREE AMBIENT CITY TRAFFIC, SIGNAL CONTROLLER & PEDESTRIANS
     // -------------------------------------------------------------------------
-    if (this.world.trafficVehicles) {
-      this.world.trafficVehicles.forEach((v) => {
-        const vx = v.axis === 'x' ? v.pos : v.lane;
-        const vz = v.axis === 'z' ? v.pos : v.lane;
-        const distToHero = Math.hypot(vx - this._evPos.x, vz - this._evPos.z);
+    const sigTime = elapsed % 12.0;
+    const zGreen = sigTime < 5.0;
+    const xGreen = sigTime >= 6.0 && sigTime < 11.0;
 
-        const nearCrossroad =
-          v.axis === 'z' && Math.abs(vz) < 6.0 && Math.abs(this._evPos.x - -17) < 7.0;
-        if (distToHero > 4.6 && !nearCrossroad) {
-          v.pos += v.dir * v.speed * safeDt;
-          if (v.pos > v.max) v.pos = v.min;
-          if (v.pos < v.min) v.pos = v.max;
+    if (this.world.trafficVehicles) {
+      const vehicles = this.world.trafficVehicles;
+      const heroInBox = Math.abs(this._evPos.x - -17) < 7.5 && Math.abs(this._evPos.z) < 4.5;
+
+      // Scrub protection: clear z-axis cross-traffic cleanly if user drags Hero EV into intersection
+      if (heroInBox) {
+        vehicles.forEach((v) => {
+          if (v.axis !== 'z') return;
+          const halfSpan = (v.len || 3.4) * 0.5 + 2.4;
+          if (Math.abs(v.pos) < halfSpan) {
+            v.pos = v.dir > 0 ? Math.max(v.pos, 6.2) : Math.min(v.pos, -6.2);
+          }
+        });
+      }
+
+      const zInBox = vehicles.some(
+        (other) => other.axis === 'z' && Math.abs(other.pos) < (other.len || 3.4) * 0.5 + 3.0
+      );
+      const xInBox = vehicles.some(
+        (other) =>
+          other.axis === 'x' &&
+          other.pos > -19.8 - (other.len || 3.4) * 0.5 &&
+          other.pos < -14.2 + (other.len || 3.4) * 0.5
+      );
+
+      const frameDt = Math.min(safeDt, 0.05);
+      vehicles.forEach((v) => {
+        const vLen = v.len || 3.4;
+        let step = v.dir * v.speed * frameDt;
+
+        // Same-lane bumper-to-bumper queuing (handles circular wrap-around seamlessly)
+        vehicles.forEach((other) => {
+          if (other === v || other.axis !== v.axis || other.dir !== v.dir) return;
+          if (Math.abs(other.lane - v.lane) > 0.25) return;
+          const span = v.max - v.min;
+          let dAhead = (other.pos - v.pos) * v.dir;
+          if (dAhead <= 0) dAhead += span;
+          const minGap = (vLen + (other.len || 3.4)) * 0.5 + 2.6;
+          const maxMove = Math.max(0, dAhead - minGap);
+          if (Math.abs(step) > maxMove) {
+            step = v.dir * maxMove;
+          }
+        });
+
+        // Pre-crosswalk stop line yielding when red or perpendicular traffic is clearing box
+        if (v.axis === 'z' && v.dir === 1) {
+          const stopZ = -(4.25 + vLen * 0.5 + 0.5);
+          if ((!zGreen || heroInBox || xInBox) && v.pos <= stopZ + 0.05 && v.pos + step > stopZ) {
+            step = Math.max(0, stopZ - v.pos);
+          }
+        } else if (v.axis === 'z' && v.dir === -1) {
+          const stopZ = 4.25 + vLen * 0.5 + 0.5;
+          if ((!zGreen || heroInBox || xInBox) && v.pos >= stopZ - 0.05 && v.pos + step < stopZ) {
+            step = Math.min(0, stopZ - v.pos);
+          }
+        } else if (v.axis === 'x' && v.dir === -1) {
+          const stopX = -12.9 + vLen * 0.5 + 0.5;
+          if ((!xGreen || heroInBox || zInBox) && v.pos >= stopX - 0.05 && v.pos + step < stopX) {
+            step = Math.min(0, stopX - v.pos);
+          }
         }
+
+        // Yield if approaching Hero EV path closer than safe clearance
+        const curX = v.axis === 'x' ? v.pos : v.lane;
+        const curZ = v.axis === 'z' ? v.pos : v.lane;
+        const nextPos = v.pos + step;
+        const nextX = v.axis === 'x' ? nextPos : v.lane;
+        const nextZ = v.axis === 'z' ? nextPos : v.lane;
+        const oldHeroDist = Math.hypot(curX - this._evPos.x, curZ - this._evPos.z);
+        const newHeroDist = Math.hypot(nextX - this._evPos.x, nextZ - this._evPos.z);
+        if (newHeroDist < vLen * 0.5 + 3.0 && newHeroDist < oldHeroDist) {
+          step = 0;
+        }
+
+        v.pos += step;
+        if (v.pos > v.max) v.pos = v.min + (v.pos - v.max);
+        if (v.pos < v.min) v.pos = v.max - (v.min - v.pos);
 
         if (v.axis === 'z') {
           v.mesh.position.set(v.lane, 0.04, v.pos);
@@ -457,6 +532,65 @@ export class ScrollDirector {
           v.mesh.position.set(v.pos, 0.04, v.lane);
         }
       });
+
+      let frameMinBoxGap = Infinity;
+      let frameMinSameLane = Infinity;
+      for (let i = 0; i < vehicles.length; i++) {
+        const a = vehicles[i];
+        const ax = a.axis === 'x' ? a.pos : a.lane;
+        const az = a.axis === 'z' ? a.pos : a.lane;
+        const hxA = a.axis === 'x' ? (a.len || 3.4) * 0.5 : 0.82;
+        const hzA = a.axis === 'z' ? (a.len || 3.4) * 0.5 : 0.82;
+
+        const heroGap = Math.max(
+          Math.abs(ax - this._evPos.x) - (hxA + 1.1),
+          Math.abs(az - this._evPos.z) - (hzA + 1.1)
+        );
+        if (heroGap < frameMinBoxGap) frameMinBoxGap = heroGap;
+        if (heroGap <= 0) this.collisionCount += 1;
+
+        for (let j = i + 1; j < vehicles.length; j++) {
+          const b = vehicles[j];
+          const bx = b.axis === 'x' ? b.pos : b.lane;
+          const bz = b.axis === 'z' ? b.pos : b.lane;
+          const hxB = b.axis === 'x' ? (b.len || 3.4) * 0.5 : 0.82;
+          const hzB = b.axis === 'z' ? (b.len || 3.4) * 0.5 : 0.82;
+
+          const boxGap = Math.max(
+            Math.abs(ax - bx) - (hxA + hxB),
+            Math.abs(az - bz) - (hzA + hzB)
+          );
+          if (boxGap < frameMinBoxGap) frameMinBoxGap = boxGap;
+          if (boxGap <= 0) this.collisionCount += 1;
+
+          if (a.axis === b.axis && a.dir === b.dir && Math.abs(a.lane - b.lane) < 0.25) {
+            const sameDist = Math.abs(a.pos - b.pos);
+            if (sameDist < frameMinSameLane) frameMinSameLane = sameDist;
+          }
+        }
+      }
+      if (frameMinBoxGap < this.rollingMinBoxGap) this.rollingMinBoxGap = frameMinBoxGap;
+      if (frameMinSameLane < this.rollingMinSameLaneDist) {
+        this.rollingMinSameLaneDist = frameMinSameLane;
+      }
+
+      if (this.cityCanvas) {
+        const collStr = String(this.collisionCount);
+        const gapStr = this.rollingMinBoxGap.toFixed(2);
+        const sameStr = this.rollingMinSameLaneDist.toFixed(2);
+        if (collStr !== this._lastCollAttr) {
+          this.cityCanvas.setAttribute('data-collision-count', collStr);
+          this._lastCollAttr = collStr;
+        }
+        if (gapStr !== this._lastGapAttr) {
+          this.cityCanvas.setAttribute('data-min-box-gap', gapStr);
+          this._lastGapAttr = gapStr;
+        }
+        if (sameStr !== this._lastSameAttr) {
+          this.cityCanvas.setAttribute('data-min-same-lane', sameStr);
+          this._lastSameAttr = sameStr;
+        }
+      }
     }
 
     if (this.world.pedestrians) {
@@ -517,7 +651,7 @@ export class ScrollDirector {
       });
     }
 
-    this.world.moonMesh.position.set(32, atmo.moonY, -34);
+    this.world.moonMesh.position.set(4, atmo.moonY, -25);
     this.world.moonMesh.visible = atmo.moonY > -2;
     this.world.starsMat.opacity = atmo.starsOp;
     if (this.world.voxelStarsGroup) {
@@ -560,9 +694,8 @@ export class ScrollDirector {
     }
 
     if (this.world.signalLampMats) {
-      const greenPhase = Math.sin(elapsed * 1.1) > -0.2;
-      this.world.signalLampMats.forEach((sm, idx) => {
-        sm.color.setHex((idx % 2 === 0 ? greenPhase : !greenPhase) ? 0x10b981 : 0xf59e0b);
+      this.world.signalLampMats.forEach((sm) => {
+        sm.color.setHex(xGreen ? 0x10b981 : zGreen ? 0xf59e0b : 0xef4444);
       });
     }
 

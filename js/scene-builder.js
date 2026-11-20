@@ -116,9 +116,15 @@ export function buildSmartCityWorld(scene) {
   });
 
   const roadMat = new THREE.MeshStandardMaterial({
-    color: '#181f2e',
+    color: '#141a26',
     roughness: 0.78,
     metalness: 0.1
+  });
+
+  const plazaFloorMat = new THREE.MeshStandardMaterial({
+    color: '#283347',
+    roughness: 0.72,
+    metalness: 0.15
   });
 
   const crosswalkMat = new THREE.MeshBasicMaterial({ color: '#f8fafc' });
@@ -170,15 +176,25 @@ export function buildSmartCityWorld(scene) {
   scene.add(world.dirLight);
 
   world.sunMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(2.9, 24, 24),
+    new THREE.SphereGeometry(2.6, 24, 24),
     new THREE.MeshBasicMaterial({ color: '#ffe599' })
   );
+  const sunHalo = new THREE.Mesh(
+    new THREE.SphereGeometry(4.2, 24, 24),
+    new THREE.MeshBasicMaterial({
+      color: '#fde68a',
+      transparent: true,
+      opacity: 0.28,
+      depthWrite: false
+    })
+  );
+  world.sunMesh.add(sunHalo);
   scene.add(world.sunMesh);
 
   world.moonMesh = createVoxelCrescentMoon();
   scene.add(world.moonMesh);
 
-  // Floating 3D Voxel Clouds across upper diorama backdrop
+  // Floating 3D Voxel Clouds across visible upper diorama skyline (North & South backdrops)
   world.cloudMat = new THREE.MeshStandardMaterial({
     color: '#ffffff',
     emissive: new THREE.Color('#64748b'),
@@ -187,15 +203,15 @@ export function buildSmartCityWorld(scene) {
     metalness: 0.02
   });
   const cloudSpecs = [
-    [-31, 18.5, -21, 1.35, 0.35],
-    [-19, 21.0, -23, 1.55, 0.25],
-    [-5, 19.5, -24, 1.2, 0.42],
-    [11, 21.8, -22, 1.45, 0.3],
-    [26, 19.0, -19, 1.3, 0.38],
-    [-34, 17.2, -6, 1.1, 0.28],
-    [33, 18.0, 2, 1.15, 0.32],
-    [-14, 22.5, -12, 0.95, 0.45],
-    [18, 22.2, -10, 1.05, 0.26]
+    [-28, 13.6, -21, 1.3, 0.35],
+    [-16, 16.4, -24, 1.5, 0.25],
+    [-3, 14.5, -23, 1.25, 0.42],
+    [10, 17.0, -22, 1.4, 0.3],
+    [23, 14.2, -20, 1.25, 0.38],
+    [-22, 17.5, -18, 1.05, 0.28],
+    [28, 15.8, -14, 1.1, 0.32],
+    [12, 14.2, 24, 1.25, 0.4],
+    [24, 16.2, 22, 1.15, 0.28]
   ];
   cloudSpecs.forEach(([cx, cy, cz, sc, sp], i) => {
     const cloud = createVoxelCloudCluster(world.cloudMat, sc);
@@ -204,7 +220,7 @@ export function buildSmartCityWorld(scene) {
     world.voxelClouds.push({ mesh: cloud, baseX: cx, baseY: cy, baseZ: cz, speed: sp, phase: i * 1.1 });
   });
 
-  // Pixel Points Starfield + Crisp 3D Voxel Diamond Stars
+  // Pixel Points Starfield + Crisp 3D Voxel Diamond Stars in upper skyline
   const starCount = 750;
   const starPos = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount; i++) {
@@ -228,13 +244,13 @@ export function buildSmartCityWorld(scene) {
   scene.add(world.starsPoints);
 
   world.voxelStarsGroup = new THREE.Group();
-  const diamondGeo = new THREE.OctahedronGeometry(0.45, 0);
+  const diamondGeo = new THREE.OctahedronGeometry(0.42, 0);
   const voxelStarCoords = [
-    [-42, 26, -28], [-32, 31, -30], [-22, 27, -32], [-10, 34, -29],
-    [2, 29, -31], [14, 33, -28], [26, 26, -32], [38, 30, -29],
-    [-38, 22, -16], [36, 23, -15], [-28, 36, -20], [8, 37, -18],
-    [22, 35, -22], [-16, 24, -34], [30, 32, -25], [-4, 25, -35],
-    [-44, 29, -22], [42, 27, -20]
+    [-34, 15.0, -25], [-26, 19.5, -27], [-18, 16.2, -28], [-10, 21.0, -26],
+    [-2, 17.5, -29], [6, 20.5, -26], [14, 15.8, -28], [22, 19.2, -26],
+    [30, 14.8, -24], [34, 18.6, -22], [-30, 22.0, -23], [-14, 14.0, -27],
+    [2, 22.4, -24], [18, 13.8, -27], [10, 16.5, 26], [18, 19.0, 27],
+    [24, 15.2, 25], [29, 18.0, 26]
   ];
   voxelStarCoords.forEach(([sx, sy, sz], i) => {
     const sMat = new THREE.MeshBasicMaterial({
@@ -277,17 +293,18 @@ export function buildSmartCityWorld(scene) {
   trimRing.position.y = -0.34;
   islandGroup.add(trimRing);
 
-  const groundDeck = new THREE.Mesh(new THREE.BoxGeometry(84, 0.1, 56), darkMetalMat);
+  const groundDeck = new THREE.Mesh(new THREE.BoxGeometry(84, 0.1, 56), plazaFloorMat);
   groundDeck.position.y = -0.02;
   groundDeck.receiveShadow = true;
   islandGroup.add(groundDeck);
 
-  // Raised Stone Sidewalk Blocks
+  // Raised Stone Sidewalk Blocks (strict setbacks around crossRoad x=-17 & mainRoad z=0)
   const sidewalkBlocks = [
-    { x: -27.5, z: -13.0, w: 16.5, d: 20.5 },
-    { x: -5.5, z: -13.0, w: 18.5, d: 20.5 },
-    { x: -27.5, z: 13.0, w: 16.5, d: 20.5 },
-    { x: -5.5, z: 13.0, w: 18.5, d: 20.5 },
+    { x: -27.7, z: -13.0, w: 16.6, d: 20.6 },
+    { x: -8.6, z: -13.0, w: 11.8, d: 20.6 },
+    { x: 4.0, z: -16.8, w: 13.2, d: 13.0 },
+    { x: -27.7, z: 13.0, w: 16.6, d: 20.6 },
+    { x: -8.0, z: 13.0, w: 13.0, d: 20.6 },
     { x: 19.0, z: 13.8, w: 22.0, d: 19.5 },
     { x: 33.5, z: 13.8, w: 7.5, d: 19.5 }
   ];
@@ -396,12 +413,12 @@ export function buildSmartCityWorld(scene) {
 
   // Stepped Voxel Trees & Curbside Cubic Hedgerows
   const treeCoords = [
-    [-31.5, 8.5, 1.0, 0], [-31.5, 16.5, 0.9, 1], [-21.5, 8.8, 1.1, 0],
-    [-13.0, -8.5, 0.95, 1], [-8.5, -16.2, 1.05, 0], [10.0, 11.2, 0.95, 1],
+    [-31.5, 9.2, 1.0, 0], [-31.5, 16.5, 0.9, 1], [-21.5, 9.2, 1.1, 0],
+    [-13.2, -9.2, 0.95, 1], [-13.4, -15.5, 1.05, 0], [10.0, 11.2, 0.95, 1],
     [11.5, 16.5, 1.05, 0], [26.8, 15.2, 1.0, 1], [23.0, -15.5, 1.05, 0],
     [35.2, -14.8, 1.1, 1], [35.2, -5.2, 0.95, 0], [28.0, 9.2, 1.0, 1],
-    [34.5, 12.2, 1.05, 0], [16.5, -8.8, 0.9, 1], [-20.5, -3.2, 0.85, 1],
-    [-25.5, 3.3, 0.88, 0], [-14.0, 16.0, 0.95, 1], [-1.2, 11.5, 0.9, 0]
+    [34.5, 12.2, 1.05, 0], [16.5, -8.8, 0.9, 1], [-20.8, -3.2, 0.85, 1],
+    [-25.5, 3.4, 0.88, 0], [-14.0, 16.0, 0.95, 1], [-1.2, 11.5, 0.9, 0]
   ];
   treeCoords.forEach(([tx, tz, sc, variant]) => {
     const vTree = createVoxelTree(sc, variant);
@@ -430,22 +447,22 @@ export function buildSmartCityWorld(scene) {
   // ---------------------------------------------------------------------------
   const cityGroup = new THREE.Group();
 
-  const solarFarmPad = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.16, 11.4), slateTrimMat);
-  solarFarmPad.position.set(-27.2, 0.09, -12.6);
+  const solarFarmPad = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.16, 9.6), slateTrimMat);
+  solarFarmPad.position.set(-29.8, 0.09, -14.6);
   solarFarmPad.receiveShadow = true;
   cityGroup.add(solarFarmPad);
 
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 4; col++) {
-      const px = -31.1 + col * 2.6;
-      const pz = -16.0 + row * 3.4;
+      const px = -32.75 + col * 1.95;
+      const pz = -17.3 + row * 2.7;
 
       const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.75, 8), frameMat);
       pedestal.position.set(px, 0.48, pz);
       cityGroup.add(pedestal);
 
-      const { group, panelGroup } = createSolarPanelMesh(2.1, 1.45, 0.48, solarMat, frameMat);
-      group.position.set(px, 0.88, pz);
+      const { group, panelGroup } = createSolarPanelMesh(1.65, 1.35, 0.48, solarMat, frameMat);
+      group.position.set(px, 0.78, pz);
       cityGroup.add(group);
       world.trackingPanels.push({ panelGroup, baseTilt: 0.48, phase: row * 0.5 + col * 0.3 });
     }
@@ -480,8 +497,8 @@ export function buildSmartCityWorld(scene) {
     world.hubRings.push({ ring, baseY: ring.position.y, phase: i * 1.4 });
   }
 
-  const hubRoofSolar = createSolarPanelMesh(2.6, 2.6, 0.2, solarMat, frameMat);
-  hubRoofSolar.group.position.y = 3.7;
+  const hubRoofSolar = createSolarPanelMesh(2.4, 2.4, 0.2, solarMat, frameMat);
+  hubRoofSolar.group.position.y = 3.56;
   hubGroup.add(hubRoofSolar.group);
   cityGroup.add(hubGroup);
 
@@ -544,20 +561,24 @@ export function buildSmartCityWorld(scene) {
     }
   }
 
-  // 12 Multi-Palette Diorama Buildings matching Reference Architecture
+  // 13 Stepped Amphitheater Diorama Buildings (Low Foreground, Mid Center, Tall Skyline Back)
   const buildingSpecs = [
-    { x: -23.0, z: -5.4, w: 4.0, d: 3.6, h: 4.6, palette: 'emerald-eco', awning: '#38bdf8', storefront: '#38bdf8', badge: true, hvac: true, pitched: false },
-    { x: -11.4, z: -5.4, w: 3.9, d: 3.6, h: 4.5, palette: 'terracotta-brick', awning: '#e11d48', storefront: '#e11d48', sideStorefront: true, hvac: true, pitched: false },
-    { x: -11.4, z: 5.4, w: 3.9, d: 3.6, h: 5.0, palette: 'lavender-bistro', awning: '#f97316', storefront: '#f97316', sideStorefront: true, bistro: true, hvac: true, pitched: false },
-    { x: -22.6, z: 5.8, w: 3.6, d: 3.8, h: 5.4, palette: 'terracotta-brick', awning: null, storefront: '#f97316', hvac: false, pitched: true },
-    { x: -29.2, z: 5.4, w: 3.4, d: 3.8, h: 4.8, palette: 'lavender-bistro', awning: null, hvac: false, pitched: true },
-    { x: -29.8, z: -5.2, w: 3.6, d: 3.6, h: 9.0, palette: 'midnight-tower', awning: null, hvac: true, greenBalcony: true, crown: true },
-    { x: -21.2, z: -13.5, w: 3.6, d: 3.8, h: 12.0, palette: 'midnight-tower', awning: null, storefront: '#38bdf8', hvac: true, greenBalcony: true, crown: true },
-    { x: -4.8, z: -5.6, w: 4.0, d: 3.8, h: 9.8, palette: 'purple-modern', awning: null, storefront: '#e11d48', hvac: true, crown: true },
-    { x: -5.5, z: 6.4, w: 4.4, d: 4.0, h: 10.6, palette: 'midnight-tower', awning: null, storefront: '#10b981', hvac: true, greenBalcony: true, crown: true },
-    { x: -11.8, z: 12.2, w: 4.0, d: 3.8, h: 7.8, palette: 'emerald-eco', awning: null, hvac: true, crown: true },
-    { x: -4.2, z: -14.2, w: 3.8, d: 3.8, h: 8.6, palette: 'emerald-eco', awning: null, hvac: true, crown: true },
-    { x: -4.8, z: 13.5, w: 4.0, d: 3.8, h: 6.8, palette: 'terracotta-brick', awning: null, hvac: true, pitched: false }
+    // Front / South Row (low-rise h=3.4..3.8 so camera sees clearly over into intersection & sky)
+    { x: -29.6, z: 6.2, w: 3.4, d: 3.4, h: 3.4, palette: 'lavender-bistro', hvac: true },
+    { x: -23.6, z: 6.2, w: 3.6, d: 3.4, h: 3.5, palette: 'terracotta-brick', storefront: '#f97316', awning: '#f97316', hvac: true },
+    { x: -10.8, z: 6.2, w: 3.8, d: 3.4, h: 3.6, palette: 'lavender-bistro', awning: '#f97316', storefront: '#f97316', sideStorefront: true, bistro: true, hvac: true },
+    { x: -5.2, z: 6.4, w: 3.8, d: 3.4, h: 3.8, palette: 'emerald-eco', storefront: '#10b981', awning: '#10b981', hvac: true },
+    // Middle Row & South-Back Mid-Rises (h=4.6..6.2)
+    { x: -30.0, z: -6.0, w: 3.6, d: 3.6, h: 5.6, palette: 'midnight-tower', hvac: true, crown: true },
+    { x: -23.8, z: -6.0, w: 3.8, d: 3.6, h: 4.6, palette: 'emerald-eco', awning: '#38bdf8', storefront: '#38bdf8', badge: true, hvac: true },
+    { x: -10.8, z: -6.0, w: 3.8, d: 3.6, h: 4.8, palette: 'terracotta-brick', awning: '#e11d48', storefront: '#e11d48', sideStorefront: true, hvac: true },
+    { x: -5.2, z: -6.0, w: 3.6, d: 3.6, h: 5.4, palette: 'purple-modern', storefront: '#e11d48', hvac: true, crown: true },
+    { x: -10.8, z: 13.5, w: 3.8, d: 3.6, h: 5.8, palette: 'emerald-eco', hvac: true, crown: true },
+    { x: -5.0, z: 13.5, w: 3.8, d: 3.6, h: 6.2, palette: 'terracotta-brick', hvac: true, crown: true },
+    // Back / North Skyline Towers (h=9.4..11.6 framing the sky, clouds, sun & moon)
+    { x: -22.2, z: -15.2, w: 3.6, d: 3.6, h: 10.4, palette: 'midnight-tower', hvac: true, greenBalcony: true, crown: true },
+    { x: -9.5, z: -18.2, w: 4.0, d: 3.6, h: 11.6, palette: 'midnight-tower', hvac: true, greenBalcony: true, crown: true },
+    { x: -4.6, z: -15.2, w: 3.8, d: 3.6, h: 9.4, palette: 'purple-modern', hvac: true, greenBalcony: true, crown: true }
   ];
 
   buildingSpecs.forEach((b, idx) => {
@@ -581,43 +602,32 @@ export function buildSmartCityWorld(scene) {
 
     createBuildingTrimAndStorefront(b);
 
-    if (b.pitched) {
-      const gable = new THREE.Mesh(new THREE.ConeGeometry(b.w * 0.74, 1.9, 4), slateTrimMat);
-      gable.position.set(b.x, b.h + 1.05, b.z);
-      gable.rotation.y = Math.PI / 4;
-      gable.castShadow = true;
-      cityGroup.add(gable);
+    const parapet = new THREE.Mesh(new THREE.BoxGeometry(b.w + 0.28, 0.3, b.d + 0.28), stoneConcreteMat);
+    parapet.position.set(b.x, b.h + 0.24, b.z);
+    cityGroup.add(parapet);
 
-      const roofSolar = createSolarPanelMesh(b.w * 0.44, b.d * 0.34, 0.72, solarMat, frameMat);
-      roofSolar.group.position.set(b.x, b.h + 0.92, b.z + 0.96);
-      cityGroup.add(roofSolar.group);
-    } else {
-      const parapet = new THREE.Mesh(new THREE.BoxGeometry(b.w + 0.28, 0.3, b.d + 0.28), stoneConcreteMat);
-      parapet.position.set(b.x, b.h + 0.24, b.z);
-      cityGroup.add(parapet);
+    if (b.crown) {
+      const penthouse = new THREE.Mesh(
+        new THREE.BoxGeometry(b.w * 0.68, 0.75, b.d * 0.68),
+        darkMetalMat
+      );
+      penthouse.position.set(b.x, b.h + 0.68, b.z);
+      penthouse.castShadow = true;
+      cityGroup.add(penthouse);
+    }
 
-      let roofY = b.h + 0.58;
-      if (b.crown) {
-        const penthouse = new THREE.Mesh(
-          new THREE.BoxGeometry(b.w * 0.68, 0.75, b.d * 0.68),
-          darkMetalMat
-        );
-        penthouse.position.set(b.x, b.h + 0.68, b.z);
-        penthouse.castShadow = true;
-        cityGroup.add(penthouse);
-        roofY = b.h + 1.24;
-      }
+    const roofTopY = b.crown ? b.h + 1.06 : b.h + 0.4;
+    const solarW = b.crown ? b.w * 0.5 : b.w * 0.58;
+    const solarD = b.crown ? b.d * 0.34 : b.d * 0.38;
+    const roofSolar = createSolarPanelMesh(solarW, solarD, 0.34, solarMat, frameMat);
+    roofSolar.group.position.set(b.x - (b.hvac ? 0.24 : 0), roofTopY, b.z - 0.18);
+    cityGroup.add(roofSolar.group);
+    world.trackingPanels.push({ panelGroup: roofSolar.panelGroup, baseTilt: 0.34, phase: idx * 0.6 });
 
-      const roofSolar = createSolarPanelMesh(b.w * 0.58, b.d * 0.38, 0.34, solarMat, frameMat);
-      roofSolar.group.position.set(b.x - (b.hvac ? 0.3 : 0), roofY, b.z - 0.25);
-      cityGroup.add(roofSolar.group);
-      world.trackingPanels.push({ panelGroup: roofSolar.panelGroup, baseTilt: 0.34, phase: idx * 0.6 });
-
-      if (b.hvac) {
-        const fan = createRooftopFanUnit(stoneConcreteMat, frameMat, 0.4);
-        fan.position.set(b.x + b.w * 0.22, b.crown ? roofY - 0.22 : b.h + 0.38, b.z + b.d * 0.2);
-        cityGroup.add(fan);
-      }
+    if (b.hvac) {
+      const fan = createRooftopFanUnit(stoneConcreteMat, frameMat, b.crown ? 0.3 : 0.38);
+      fan.position.set(b.x + b.w * (b.crown ? 0.18 : 0.22), roofTopY - 0.01, b.z + b.d * (b.crown ? 0.16 : 0.2));
+      cityGroup.add(fan);
     }
 
     if (b.awning) {
@@ -645,14 +655,14 @@ export function buildSmartCityWorld(scene) {
       bladeSign.position.set(b.x - b.w * 0.46, 2.35, b.z - b.d * 0.5 - 0.35);
       cityGroup.add(bladeSign);
 
-      // Outdoor sidewalk cafe terrace at (x: -11.4, z: 3.15)
-      [-12.2, -10.6].forEach((tx) => {
+      // Outdoor sidewalk cafe terrace seated cleanly on stone sidewalk (z = 3.65, north of mainRoad)
+      [-11.6, -10.0].forEach((tx) => {
         const table = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 10), stoneConcreteMat);
-        table.position.set(tx, 0.55, 3.18);
+        table.position.set(tx, 0.55, 3.65);
         cityGroup.add(table);
 
         const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.45, 6), darkMetalMat);
-        leg.position.set(tx, 0.32, 3.18);
+        leg.position.set(tx, 0.32, 3.65);
         cityGroup.add(leg);
 
         const lanternMat = new THREE.MeshStandardMaterial({
@@ -662,7 +672,7 @@ export function buildSmartCityWorld(scene) {
         });
         world.storefrontMats.push(lanternMat);
         const lantern = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.16, 0.14), lanternMat);
-        lantern.position.set(tx, 0.67, 3.18);
+        lantern.position.set(tx, 0.67, 3.65);
         cityGroup.add(lantern);
       });
     }
@@ -793,11 +803,11 @@ export function buildSmartCityWorld(scene) {
   canopyRoof.add(canopyLed);
 
   const canopySolarL = createSolarPanelMesh(5.4, 4.8, 0.0, solarMat, frameMat);
-  canopySolarL.group.position.set(-2.9, 0.16, 0);
+  canopySolarL.group.position.set(-2.9, 0.14, 0);
   canopyRoof.add(canopySolarL.group);
 
   const canopySolarR = createSolarPanelMesh(5.4, 4.8, 0.0, solarMat, frameMat);
-  canopySolarR.group.position.set(2.9, 0.16, 0);
+  canopySolarR.group.position.set(2.9, 0.14, 0);
   canopyRoof.add(canopySolarR.group);
 
   stationGroup.add(canopyRoof);
@@ -874,8 +884,8 @@ export function buildSmartCityWorld(scene) {
   const homeGroup = new THREE.Group();
   homeGroup.position.set(29.0, 0.05, -10.5);
 
-  const driveway = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.06, 9.6), roadMat);
-  driveway.position.set(0, 0.02, 5.8);
+  const driveway = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.06, 5.6), roadMat);
+  driveway.position.set(0, 0.02, 5.1);
   driveway.receiveShadow = true;
   homeGroup.add(driveway);
 
@@ -906,13 +916,11 @@ export function buildSmartCityWorld(scene) {
   roof.castShadow = true;
   homeGroup.add(roof);
 
-  const homeSolarL = createSolarPanelMesh(2.6, 3.6, 0.2, solarMat, frameMat);
-  homeSolarL.group.position.set(-2.1, 5.6, -0.5);
-  homeGroup.add(homeSolarL.group);
-
-  const homeSolarR = createSolarPanelMesh(2.6, 3.6, 0.2, solarMat, frameMat);
-  homeSolarR.group.position.set(0.9, 5.6, -0.5);
-  homeGroup.add(homeSolarR.group);
+  const homeSolarL = createSolarPanelMesh(2.6, 3.6, 0.0, solarMat, frameMat);
+  homeSolarL.group.position.set(-1.5, 0.14, 0.0);
+  const homeSolarR = createSolarPanelMesh(2.6, 3.6, 0.0, solarMat, frameMat);
+  homeSolarR.group.position.set(1.5, 0.14, 0.0);
+  roof.add(homeSolarL.group, homeSolarR.group);
 
   world.homeWindowMat = new THREE.MeshStandardMaterial({
     color: '#9db4c8',
@@ -1037,11 +1045,11 @@ export function buildSmartCityWorld(scene) {
 
   // Store Rooftop Solar Array powering showroom & AC display
   const storeSolarL = createSolarPanelMesh(4.6, 3.4, 0.25, solarMat, frameMat);
-  storeSolarL.group.position.set(-2.7, 5.35, 0.8);
+  storeSolarL.group.position.set(-2.7, 5.08, 0.8);
   storeGroup.add(storeSolarL.group);
 
   const storeSolarR = createSolarPanelMesh(4.6, 3.4, 0.25, solarMat, frameMat);
-  storeSolarR.group.position.set(2.7, 5.35, 0.8);
+  storeSolarR.group.position.set(2.7, 5.08, 0.8);
   storeGroup.add(storeSolarR.group);
 
   // Slim architectural cornice canopy above vitrine (keeps entire glass display 100% open)
@@ -1275,13 +1283,13 @@ export function buildSmartCityWorld(scene) {
   // 9. AMBIENT CITY TRAFFIC (BUSES, DELIVERY TRUCK, TAXIS & EVs) & PEDESTRIANS
   // ---------------------------------------------------------------------------
   const trafficSpecs = [
-    { color: '#f59e0b', type: 'bus', axis: 'z', lane: -18.1, dir: 1, min: -22, max: 22, pos: -12, speed: 3.6 },
-    { color: '#facc15', type: 'taxi', axis: 'z', lane: -15.9, dir: -1, min: -22, max: 22, pos: 14, speed: 4.5 },
-    { color: '#38bdf8', type: 'car', axis: 'z', lane: -18.1, dir: 1, min: -22, max: 22, pos: 6, speed: 4.1 },
-    { color: '#ef4444', type: 'truck', axis: 'z', lane: -15.9, dir: -1, min: -22, max: 22, pos: -5, speed: 3.9 },
-    { color: '#fb923c', type: 'bus', axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: 14, speed: 4.2 },
-    { color: '#facc15', type: 'taxi', axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: -8, speed: 4.6 },
-    { color: '#f43f5e', type: 'car', axis: 'x', lane: -1.15, dir: -1, min: -36, max: 35, pos: 26, speed: 4.6 }
+    { color: '#f59e0b', type: 'bus', len: 4.6, axis: 'z', lane: -18.15, dir: 1, min: -22, max: 22, pos: -16, speed: 3.8 },
+    { color: '#38bdf8', type: 'car', len: 3.2, axis: 'z', lane: -18.15, dir: 1, min: -22, max: 22, pos: 8, speed: 3.8 },
+    { color: '#facc15', type: 'taxi', len: 3.2, axis: 'z', lane: -15.85, dir: -1, min: -22, max: 22, pos: 15, speed: 4.0 },
+    { color: '#ef4444', type: 'truck', len: 4.3, axis: 'z', lane: -15.85, dir: -1, min: -22, max: 22, pos: -9, speed: 4.0 },
+    { color: '#fb923c', type: 'bus', len: 4.6, axis: 'x', lane: -1.35, dir: -1, min: -36, max: 35, pos: 24, speed: 4.2 },
+    { color: '#facc15', type: 'taxi', len: 3.2, axis: 'x', lane: -1.35, dir: -1, min: -36, max: 35, pos: 0, speed: 4.2 },
+    { color: '#f43f5e', type: 'car', len: 3.2, axis: 'x', lane: -1.35, dir: -1, min: -36, max: 35, pos: -22, speed: 4.2 }
   ];
 
   trafficSpecs.forEach((spec) => {
@@ -1326,12 +1334,12 @@ export function buildSmartCityWorld(scene) {
 
   // Stage 1: City Flows
   [
-    [new THREE.Vector3(-27.2, 1.3, -12.6), new THREE.Vector3(-18.5, 2.5, -12.8), new THREE.Vector3(-9.5, 2.1, -12.5)],
-    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-16.0, 3.2, -9.0), new THREE.Vector3(-23.0, 4.6, -5.4)],
-    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.5, 3.0, -9.0), new THREE.Vector3(-11.4, 4.2, -5.4)],
-    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.5, 3.4, -2.0), new THREE.Vector3(-11.4, 4.4, 5.4)],
-    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-17.0, 2.9, -2.5), new THREE.Vector3(-22.6, 5.2, 5.8)],
-    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-7.5, 3.4, -3.0), new THREE.Vector3(-5.5, 5.2, 6.4)]
+    [new THREE.Vector3(-29.8, 1.3, -14.6), new THREE.Vector3(-18.5, 2.5, -13.5), new THREE.Vector3(-9.5, 2.1, -12.5)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-16.0, 3.2, -9.2), new THREE.Vector3(-23.8, 4.8, -6.0)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.2, 3.0, -9.2), new THREE.Vector3(-10.8, 4.9, -6.0)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-10.2, 3.4, -2.0), new THREE.Vector3(-10.8, 4.0, 6.2)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-17.0, 2.9, -2.5), new THREE.Vector3(-23.6, 3.8, 6.2)],
+    [new THREE.Vector3(-9.5, 2.1, -12.5), new THREE.Vector3(-7.4, 3.4, -3.0), new THREE.Vector3(-5.2, 4.0, 6.4)]
   ].forEach((pts) => {
     const stream = createEnergyStream(pts, '#0ea5e9', 7, 0.06);
     energyGroup.add(stream.group);
