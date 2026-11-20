@@ -419,21 +419,21 @@ export class ParkingStudio3D {
       <div class="ac-studio-backdrop" id="parking-studio-backdrop"></div>
       <div class="ac-studio-shell" role="dialog" aria-modal="true" aria-labelledby="parking-studio-title">
         <header class="ac-studio-header">
-          <div>
+          <div class="ac-studio-title-wrap">
             <span class="ac-studio-badge" id="parking-studio-badge"></span>
             <h2 id="parking-studio-title"></h2>
             <p id="parking-studio-subtitle"></p>
           </div>
           <div class="ac-studio-header-actions">
-            <button type="button" id="parking-btn-quote" class="btn-primary"></button>
-            <button type="button" id="parking-btn-close" class="ac-close-btn"></button>
+            <button type="button" id="parking-btn-quote" class="ac-btn-primary"></button>
+            <button type="button" id="parking-btn-close" class="ac-btn-close"></button>
           </div>
         </header>
 
-        <div class="ac-studio-stage">
+        <div class="ac-studio-grid">
           <aside class="ac-specs-col left" id="parking-specs-left"></aside>
 
-          <div class="ac-stage-center">
+          <section class="ac-stage-center">
             <div class="home-telemetry-bar">
               <div class="home-tele-pill solar">
                 <span class="home-tele-lbl" id="parking-lbl-solar"></span>
@@ -470,7 +470,7 @@ export class ParkingStudio3D {
               <span class="legend-chip bio"><i></i><span id="parking-leg-bio"></span></span>
             </div>
 
-            <div class="ac-cam-bar">
+            <div class="ac-cam-pills">
               <button type="button" class="ac-cam-btn active" data-pcam="overview" id="pcam-overview"></button>
               <button type="button" class="ac-cam-btn" data-pcam="canopy" id="pcam-canopy"></button>
               <button type="button" class="ac-cam-btn" data-pcam="bio" id="pcam-bio"></button>
@@ -478,18 +478,18 @@ export class ParkingStudio3D {
               <button type="button" class="ac-cam-btn" data-pcam="market" id="pcam-market"></button>
               <button type="button" class="ac-cam-btn" id="parking-btn-spin"></button>
             </div>
-          </div>
+          </section>
 
           <aside class="ac-specs-col right" id="parking-specs-right"></aside>
         </div>
 
-        <footer class="ac-studio-controls">
-          <div class="ac-ctrl-group">
+        <footer class="ac-control-dock">
+          <div class="ac-dock-group home-mode-group">
             <button type="button" class="ac-mode-btn active" data-pmode="sunny" id="pmode-sunny"></button>
             <button type="button" class="ac-mode-btn" data-pmode="windy" id="pmode-windy"></button>
             <button type="button" class="ac-mode-btn" data-pmode="hybrid" id="pmode-hybrid"></button>
           </div>
-          <div class="ac-ctrl-group">
+          <div class="ac-dock-group">
             <span class="ac-drag-hint home-hint" id="parking-drag-hint"></span>
           </div>
         </footer>
@@ -1762,6 +1762,7 @@ export class ParkingStudio3D {
     if (this.isOpen) return;
     this.isOpen = true;
     this.modal.hidden = false;
+    document.body.classList.add('ac-studio-open');
     document.body.style.overflow = 'hidden';
 
     this.initScene();
@@ -1792,6 +1793,7 @@ export class ParkingStudio3D {
     if (!this.isOpen) return;
     this.isOpen = false;
     this.modal.hidden = true;
+    document.body.classList.remove('ac-studio-open');
     document.body.style.overflow = '';
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
