@@ -219,20 +219,24 @@ function createParkedEvCar(colorHex, headLightMats, tailLightMats, isVan = false
   const rimGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.15, 10);
   rimGeo.rotateZ(Math.PI / 2);
   const wzOff = isVan ? 0.84 : 0.72;
+  const wheels = [];
   [
     [-0.58, 0.19, wzOff],
     [0.58, 0.19, wzOff],
     [-0.58, 0.19, -wzOff],
     [0.58, 0.19, -wzOff]
   ].forEach(([wx, wy, wz]) => {
+    const wheelPivot = new THREE.Group();
+    wheelPivot.position.set(wx, wy, wz);
     const tire = new THREE.Mesh(wheelGeo, tireMat);
-    tire.position.set(wx, wy, wz);
-    car.add(tire);
+    wheelPivot.add(tire);
     const rim = new THREE.Mesh(rimGeo, rimMat);
-    rim.position.set(wx, wy, wz);
-    car.add(rim);
+    wheelPivot.add(rim);
+    car.add(wheelPivot);
+    wheels.push(wheelPivot);
   });
 
+  car.userData.wheels = wheels;
   return car;
 }
 
@@ -287,6 +291,7 @@ function createLushTree(scale = 1, variant = 0) {
   }
 
   tree.scale.setScalar(scale);
+  tree.userData = { baseScale: scale, phase: Math.random() * Math.PI * 2 };
   return tree;
 }
 
@@ -383,7 +388,13 @@ export class ParkingStudio3D {
     this.windRotors = [];
     this.movingCars = [];
     this.walkers = [];
+    this.trees = [];
+    this.clouds = [];
+    this.windGusts = [];
+    this.windBeacons = [];
     this.windBeaconMats = [];
+    this.windBeaconLight = null;
+    this.cloudMat = null;
     this.marketInteriorMat = null;
     this.marketSignMat = null;
     this.canopyLedMat = null;
@@ -844,12 +855,24 @@ export class ParkingStudio3D {
     const marketGroup = new THREE.Group();
     marketGroup.position.set(-5.8, 0.06, -9.2);
 
-    // Main Hypermarket Hall (centered slightly left at x = -0.8)
-    const mainHall = new THREE.Mesh(new THREE.BoxGeometry(15.2, 3.85, 6.2), creamMat);
-    mainHall.position.set(-0.8, 1.92, 0);
-    mainHall.castShadow = true;
-    mainHall.receiveShadow = true;
-    marketGroup.add(mainHall);
+    // Main Hypermarket Hall with Genuine Recessed Ground-Floor Storefront Showcase (Z = +1.8 .. +3.1)
+    const mainHallBack = new THREE.Mesh(new THREE.BoxGeometry(15.2, 3.85, 4.9), creamMat);
+    mainHallBack.position.set(-0.8, 1.92, -0.65);
+    mainHallBack.castShadow = true;
+    mainHallBack.receiveShadow = true;
+    marketGroup.add(mainHallBack);
+
+    const mainHallSoffit = new THREE.Mesh(new THREE.BoxGeometry(15.2, 1.15, 1.35), creamMat);
+    mainHallSoffit.position.set(-0.8, 3.28, 2.42);
+    mainHallSoffit.castShadow = true;
+    marketGroup.add(mainHallSoffit);
+
+    [-8.25, 6.65].forEach((px) => {
+      const sidePier = new THREE.Mesh(new THREE.BoxGeometry(0.32, 2.72, 1.35), creamMat);
+      sidePier.position.set(px, 1.36, 2.42);
+      sidePier.castShadow = true;
+      marketGroup.add(sidePier);
+    });
 
     // Double-tier architectural red fascia parapet & crisp roof slab
     const fasciaBand = new THREE.Mesh(new THREE.BoxGeometry(15.65, 0.42, 6.6), accentRedMat);
@@ -862,12 +885,22 @@ export class ParkingStudio3D {
     upperParapet.receiveShadow = true;
     marketGroup.add(upperParapet);
 
-    // Left Wing: Click-&-Collect EV Pickup Zone (local x = -10.6 -> world X = -18.6..-14.2)
-    const clickWing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 3.1, 5.0), slateMat);
-    clickWing.position.set(-10.6, 1.55, 0.3);
+    // Left Wing: Click-&-Collect EV Pickup Zone (Recessed Service Window behind Reflective Glass)
+    const clickWing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 3.1, 4.0), slateMat);
+    clickWing.position.set(-10.6, 1.55, -0.2);
     clickWing.castShadow = true;
     clickWing.receiveShadow = true;
     marketGroup.add(clickWing);
+
+    const clickSoffit = new THREE.Mesh(new THREE.BoxGeometry(4.4, 1.12, 1.02), slateMat);
+    clickSoffit.position.set(-10.6, 2.54, 2.3);
+    marketGroup.add(clickSoffit);
+
+    [-12.65, -8.55].forEach((cx) => {
+      const clickPier = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.0, 1.02), slateMat);
+      clickPier.position.set(cx, 1.0, 2.3);
+      marketGroup.add(clickPier);
+    });
 
     const clickTrim = new THREE.Mesh(new THREE.BoxGeometry(4.65, 0.2, 5.25), creamMat);
     clickTrim.position.set(-10.6, 3.16, 0.3);
@@ -890,12 +923,22 @@ export class ParkingStudio3D {
     ecoDriveSign.position.set(-10.6, 2.75, 2.86);
     marketGroup.add(ecoDriveSign);
 
-    // Right Wing: Organic Bakery & Rooftop Garden Cafe (local x = +9.2 -> world X = +0.8..+6.0)
-    const cafeWing = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.0, 5.2), slateMat);
-    cafeWing.position.set(9.2, 1.5, 0.4);
+    // Right Wing: Organic Bakery & Rooftop Garden Cafe (Recessed Pastry Showcase behind Reflective Glass)
+    const cafeWing = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.0, 4.1), slateMat);
+    cafeWing.position.set(9.2, 1.5, -0.15);
     cafeWing.castShadow = true;
     cafeWing.receiveShadow = true;
     marketGroup.add(cafeWing);
+
+    const cafeSoffit = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.85, 1.12), slateMat);
+    cafeSoffit.position.set(9.2, 2.58, 2.44);
+    marketGroup.add(cafeSoffit);
+
+    [6.75, 11.65].forEach((cx) => {
+      const cafePier = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.15, 1.12), slateMat);
+      cafePier.position.set(cx, 1.08, 2.44);
+      marketGroup.add(cafePier);
+    });
 
     const cafeDeckTrim = new THREE.Mesh(new THREE.BoxGeometry(5.45, 0.2, 5.45), creamMat);
     cafeDeckTrim.position.set(9.2, 3.06, 0.4);
@@ -915,43 +958,227 @@ export class ParkingStudio3D {
       marketGroup.add(miniTree);
     });
 
-    // Glowing Supermarket Glass Storefronts & Interior Aisles
+    // Recessed 3D Interior Storefront Showcases & High-Gloss Reflective Glazing
     this.marketInteriorMat = new THREE.MeshStandardMaterial({
       color: '#fef3c7',
       emissive: new THREE.Color('#fde68a'),
-      emissiveIntensity: 0.32,
-      roughness: 0.25
+      emissiveIntensity: 0.34,
+      roughness: 0.28
     });
     const glassFrontMat = new THREE.MeshPhysicalMaterial({
-      color: '#bae6fd',
+      color: '#e0f2fe',
       transparent: true,
-      opacity: 0.36,
-      roughness: 0.08,
-      metalness: 0.2
+      opacity: 0.32,
+      roughness: 0.03,
+      metalness: 0.42,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.03,
+      reflectivity: 1.0,
+      depthWrite: false
+    });
+    const glassSheenMat = new THREE.MeshBasicMaterial({
+      color: '#ffffff',
+      transparent: true,
+      opacity: 0.16,
+      depthWrite: false
+    });
+    const chromeMat = new THREE.MeshStandardMaterial({
+      color: '#e2e8f0',
+      roughness: 0.18,
+      metalness: 0.85
     });
 
-    const shopInterior = new THREE.Mesh(new THREE.BoxGeometry(14.0, 2.55, 0.2), this.marketInteriorMat);
-    shopInterior.position.set(-0.8, 1.38, 3.04);
+    // Main Hall Showcase Interior Floor & Warm Illuminated Back Wall
+    const showcaseFloor = new THREE.Mesh(new THREE.BoxGeometry(14.6, 0.08, 1.35), sidewalkMat);
+    showcaseFloor.position.set(-0.8, 0.08, 2.45);
+    marketGroup.add(showcaseFloor);
+
+    const shopInterior = new THREE.Mesh(new THREE.BoxGeometry(14.6, 2.62, 0.12), this.marketInteriorMat);
+    shopInterior.position.set(-0.8, 1.38, 1.84);
     marketGroup.add(shopInterior);
 
-    const shopGlass = new THREE.Mesh(new THREE.BoxGeometry(14.3, 2.65, 0.08), glassFrontMat);
-    shopGlass.position.set(-0.8, 1.38, 3.13);
-    marketGroup.add(shopGlass);
+    // Ceiling LED light strips inside showcase
+    [-6.0, -2.5, 1.0, 4.4].forEach((lx) => {
+      const ledBar = new THREE.Mesh(
+        new THREE.BoxGeometry(2.6, 0.06, 0.18),
+        new THREE.MeshBasicMaterial({ color: '#fef9c3' })
+      );
+      ledBar.position.set(lx, 2.62, 2.48);
+      marketGroup.add(ledBar);
+    });
+
+    // Left Window Bays: Stocked 2-Tier Organic Produce & Fruit Displays
+    const produceColors = ['#ef4444', '#f97316', '#22c55e', '#facc15'];
+    [-6.2, -4.3].forEach((px, pIdx) => {
+      const rackBase = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.72, 0.65), timberMat);
+      rackBase.position.set(px, 0.44, 2.42);
+      marketGroup.add(rackBase);
+
+      const rackTop = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.55, 0.42), timberMat);
+      rackTop.position.set(px, 0.98, 2.26);
+      marketGroup.add(rackTop);
+
+      for (let b = 0; b < 4; b++) {
+        const crate = new THREE.Mesh(
+          new THREE.BoxGeometry(0.28, 0.22, 0.34),
+          new THREE.MeshStandardMaterial({
+            color: produceColors[(b + pIdx) % produceColors.length],
+            roughness: 0.45
+          })
+        );
+        crate.position.set(px - 0.48 + b * 0.32, 0.88, 2.52);
+        marketGroup.add(crate);
+
+        const crateHi = new THREE.Mesh(
+          new THREE.BoxGeometry(0.26, 0.2, 0.26),
+          new THREE.MeshStandardMaterial({
+            color: produceColors[(b + pIdx + 2) % produceColors.length],
+            roughness: 0.45
+          })
+        );
+        crateHi.position.set(px - 0.48 + b * 0.32, 1.32, 2.26);
+        marketGroup.add(crateHi);
+      }
+    });
+
+    // Right Window Bays: Illuminated Vertical Chiller & Beverage Showcases
+    const chillerGlowMat = new THREE.MeshStandardMaterial({
+      color: '#e0f2fe',
+      emissive: new THREE.Color('#38bdf8'),
+      emissiveIntensity: 0.55,
+      roughness: 0.2
+    });
+    [2.5, 4.4].forEach((cx) => {
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(1.48, 2.05, 0.52), slateMat);
+      cab.position.set(cx, 1.1, 2.18);
+      marketGroup.add(cab);
+
+      const backGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.32, 1.78), chillerGlowMat);
+      backGlow.position.set(cx, 1.15, 2.45);
+      marketGroup.add(backGlow);
+
+      [0.58, 1.05, 1.52].forEach((sy, sIdx) => {
+        const shelf = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.04, 0.34), chromeMat);
+        shelf.position.set(cx, sy, 2.44);
+        marketGroup.add(shelf);
+        for (let k = -2; k <= 2; k++) {
+          const item = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.06, 0.06, 0.22, 6),
+            new THREE.MeshStandardMaterial({
+              color: (k + sIdx) % 2 === 0 ? '#10b981' : '#38bdf8',
+              roughness: 0.3
+            })
+          );
+          item.position.set(cx + k * 0.24, sy + 0.13, 2.48);
+          marketGroup.add(item);
+        }
+      });
+    });
+
+    // Center Automatic Sliding Glass Entrance Doors + Reception Kiosk Inside
+    const kiosk = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.88, 0.55), creamMat);
+    kiosk.position.set(-0.8, 0.5, 2.28);
+    marketGroup.add(kiosk);
+    const kioskScreen = new THREE.Mesh(
+      new THREE.BoxGeometry(0.55, 0.38, 0.08),
+      new THREE.MeshBasicMaterial({ color: '#10b981' })
+    );
+    kioskScreen.position.set(-0.8, 1.1, 2.32);
+    marketGroup.add(kioskScreen);
+
+    // Chrome sliding door portal frames & OPEN header strip
+    [-2.05, 0.45].forEach((dx) => {
+      const doorPost = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.45, 0.16), chromeMat);
+      doorPost.position.set(dx, 1.25, 3.14);
+      marketGroup.add(doorPost);
+    });
+    const doorTopBar = new THREE.Mesh(new THREE.BoxGeometry(2.62, 0.14, 0.18), chromeMat);
+    doorTopBar.position.set(-0.8, 2.52, 3.14);
+    marketGroup.add(doorTopBar);
+    const openHeader = new THREE.Mesh(
+      new THREE.BoxGeometry(1.7, 0.12, 0.06),
+      new THREE.MeshBasicMaterial({ color: '#10b981' })
+    );
+    openHeader.position.set(-0.8, 2.38, 3.21);
+    marketGroup.add(openHeader);
+
+    // Parted Sliding Door Glass Leaves
+    [-1.62, 0.02].forEach((lx) => {
+      const doorLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.76, 2.32, 0.05), glassFrontMat);
+      doorLeaf.position.set(lx, 1.22, 3.12);
+      doorLeaf.renderOrder = 2;
+      marketGroup.add(doorLeaf);
+    });
+
+    // Left & Right Main Reflective Storefront Curtain Glass + Gloss Mirror Sheens
+    [-4.95, 3.35].forEach((gx) => {
+      const shopGlass = new THREE.Mesh(new THREE.BoxGeometry(5.65, 2.58, 0.07), glassFrontMat);
+      shopGlass.position.set(gx, 1.38, 3.14);
+      shopGlass.renderOrder = 2;
+      marketGroup.add(shopGlass);
+
+      // Angled subtle mirror reflection sheen highlights across glass panels
+      [-1.55, 0.45, 1.85].forEach((sx) => {
+        const sheen = new THREE.Mesh(new THREE.PlaneGeometry(0.45, 2.15), glassSheenMat);
+        sheen.position.set(gx + sx, 1.38, 3.185);
+        sheen.rotation.z = -0.24;
+        sheen.renderOrder = 3;
+        marketGroup.add(sheen);
+      });
+    });
+
+    // Brushed Chrome Storefront Kickplate & Top Transom + Dark Vertical Mullions
+    const kickplate = new THREE.Mesh(new THREE.BoxGeometry(14.7, 0.14, 0.14), chromeMat);
+    kickplate.position.set(-0.8, 0.08, 3.15);
+    marketGroup.add(kickplate);
+    const transomBar = new THREE.Mesh(new THREE.BoxGeometry(14.7, 0.12, 0.16), chromeMat);
+    transomBar.position.set(-0.8, 2.68, 3.15);
+    marketGroup.add(transomBar);
 
     for (let mx = -7.6; mx <= 6.01; mx += 1.7) {
-      const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.11, 2.7, 0.15), steelMat);
-      mullion.position.set(mx, 1.38, 3.14);
+      if (Math.abs(mx - -0.8) < 0.9) continue; // Keep sliding entry clear
+      const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.11, 2.68, 0.16), steelMat);
+      mullion.position.set(mx, 1.38, 3.15);
       marketGroup.add(mullion);
     }
 
-    // Cafe Wing glowing glass + Click-&-Collect service window
-    const cafeInterior = new THREE.Mesh(new THREE.BoxGeometry(4.3, 2.05, 0.18), this.marketInteriorMat);
-    cafeInterior.position.set(9.2, 1.15, 2.96);
+    // Cafe Wing Recessed Bakery Counter & Reflective Glass Showcase
+    const cafeInterior = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.08, 0.15), this.marketInteriorMat);
+    cafeInterior.position.set(9.2, 1.12, 1.98);
     marketGroup.add(cafeInterior);
 
-    const clickInterior = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.7, 0.18), this.marketInteriorMat);
-    clickInterior.position.set(-10.6, 0.98, 2.76);
+    const pastryCounter = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.85, 0.58), timberMat);
+    pastryCounter.position.set(9.2, 0.48, 2.48);
+    marketGroup.add(pastryCounter);
+    [-1.1, -0.35, 0.35, 1.1].forEach((bx) => {
+      const pastry = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 0.18, 0.32),
+        new THREE.MeshStandardMaterial({ color: '#fb923c', roughness: 0.5 })
+      );
+      pastry.position.set(9.2 + bx, 0.98, 2.48);
+      marketGroup.add(pastry);
+    });
+    const cafeGlass = new THREE.Mesh(new THREE.BoxGeometry(4.5, 2.12, 0.07), glassFrontMat);
+    cafeGlass.position.set(9.2, 1.12, 2.98);
+    cafeGlass.renderOrder = 2;
+    marketGroup.add(cafeGlass);
+    const cafeSheen = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 1.85), glassSheenMat);
+    cafeSheen.position.set(8.6, 1.12, 3.025);
+    cafeSheen.rotation.z = -0.24;
+    cafeSheen.renderOrder = 3;
+    marketGroup.add(cafeSheen);
+
+    // Click-&-Collect Service Counter & Reflective Glass Window
+    const clickInterior = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.85, 0.15), this.marketInteriorMat);
+    clickInterior.position.set(-10.6, 1.0, 1.88);
     marketGroup.add(clickInterior);
+    const clickDesk = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.82, 0.52), slateMat);
+    clickDesk.position.set(-10.6, 0.45, 2.38);
+    marketGroup.add(clickDesk);
+    const clickGlass = new THREE.Mesh(new THREE.BoxGeometry(3.75, 1.9, 0.07), glassFrontMat);
+    clickGlass.position.set(-10.6, 1.0, 2.78);
+    clickGlass.renderOrder = 2;
+    marketGroup.add(clickGlass);
 
     // Grand Entrance Atrium Canopy & Large Illuminated "NEO® ECO-MARKET" Billboard
     const entryCanopy = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.24, 1.85), accentRedMat);
@@ -1105,6 +1332,11 @@ export class ParkingStudio3D {
       const scr = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.34, 0.26), scrMat);
       scr.position.set(bx, 0.94, -2.0);
       canopyGroup.add(scr);
+
+      // Parking wheel stop curb
+      const wheelStop = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.07, 0.14), yellowLineMat);
+      wheelStop.position.set(bx, 0.055, -1.35);
+      canopyGroup.add(wheelStop);
     });
 
     // Cantilevered Steel & Timber Y-Frame Structure on Bay Divider Lines
@@ -1141,7 +1373,14 @@ export class ParkingStudio3D {
     });
     canopyGroup.add(canopyDeck);
 
-    // 4 Parked EVs Charging in Bays 1, 2, 4, and 5
+    // 4 Parked EVs Charging in Bays 1, 2, 4, and 5 + Curved EV Charging Cables
+    const cableMat = new THREE.MeshStandardMaterial({
+      color: '#0ea5e9',
+      emissive: new THREE.Color('#38bdf8'),
+      emissiveIntensity: 0.45,
+      roughness: 0.3
+    });
+    const plugMat = new THREE.MeshBasicMaterial({ color: '#10b981' });
     [
       { x: -4.125, col: '#f8fafc' },
       { x: -2.475, col: '#38bdf8' },
@@ -1152,6 +1391,18 @@ export class ParkingStudio3D {
       ev.position.set(cSpec.x, 0.03, 0.22);
       ev.rotation.y = Math.PI;
       canopyGroup.add(ev);
+
+      const cableCurve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(cSpec.x, 0.86, -1.88),
+        new THREE.Vector3(cSpec.x + 0.35, 0.4, -1.35),
+        new THREE.Vector3(cSpec.x + 0.54, 0.48, -0.68)
+      );
+      const cableMesh = new THREE.Mesh(new THREE.TubeGeometry(cableCurve, 12, 0.028, 6, false), cableMat);
+      canopyGroup.add(cableMesh);
+
+      const plug = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.11), plugMat);
+      plug.position.set(cSpec.x + 0.54, 0.48, -0.68);
+      canopyGroup.add(plug);
     });
 
     this.canopyLight = new THREE.PointLight('#7dd3fc', 0.4, 18);
@@ -1185,6 +1436,11 @@ export class ParkingStudio3D {
       div.position.set(lx, 0.06, 0);
       bioGroup.add(div);
     }
+    bioBayXs.forEach((bx) => {
+      const bioStop = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.07, 0.14), timberMat);
+      bioStop.position.set(bx, 0.07, -1.4);
+      bioGroup.add(bioStop);
+    });
 
     // Living Evergreen Timber Pergola (columns aligned strictly on outer/center dividers)
     [-3.1, 0.0, 3.1].forEach((px) => {
@@ -1232,7 +1488,15 @@ export class ParkingStudio3D {
 
     this.rootGroup.add(bioGroup);
 
-    // Rich Perimeter & Median Shade + Ornamental Blossom Trees (20 trees)
+    // West Perimeter Landscaped Green Planter Strip (keeps west perimeter trees off bare asphalt)
+    const westCurb = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.18, 11.8), sidewalkMat);
+    westCurb.position.set(-18.4, 0.1, 2.8);
+    this.rootGroup.add(westCurb);
+    const westSoil = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.2, 11.5), meadowMat);
+    westSoil.position.set(-18.4, 0.11, 2.8);
+    this.rootGroup.add(westSoil);
+
+    // Rich Perimeter, Meadow & Median Shade + Ornamental Blossom Trees (zero trees on exit road!)
     const parkTrees = [
       [-2.5, 1.15, 0.95, 0],
       [-2.5, 2.9, 0.85, 2],
@@ -1244,7 +1508,7 @@ export class ParkingStudio3D {
       [-6.8, 9.48, 0.88, 2],
       [-1.8, 9.48, 0.95, 1],
       [2.6, 9.48, 0.92, 0],
-      [6.2, -4.4, 0.92, 2],
+      [8.4, -4.4, 0.95, 2],
       [8.8, -11.5, 1.2, 0],
       [12.2, -11.8, 1.05, 2],
       [18.8, -10.5, 1.25, 1],
@@ -1252,13 +1516,14 @@ export class ParkingStudio3D {
       [18.8, 7.2, 1.15, 2],
       [14.2, 8.2, 1.0, 0],
       [9.4, 8.0, 0.95, 1],
-      [6.5, 3.0, 0.85, 2],
+      [8.4, 3.4, 0.92, 2],
       [-18.2, 9.48, 0.92, 0]
     ];
     parkTrees.forEach(([tx, tz, sc, v]) => {
       const tr = createLushTree(sc, v);
       tr.position.set(tx, 0.14, tz);
       this.rootGroup.add(tr);
+      this.trees.push(tr);
     });
 
     // Colorful 3D Flower Beds across medians, boulevard border, and side meadow (22 beds)
@@ -1355,11 +1620,30 @@ export class ParkingStudio3D {
       nacelleBody.castShadow = true;
       nacelleHead.add(nacelleBody);
 
-      const beaconMat = new THREE.MeshBasicMaterial({ color: '#10b981' });
-      this.windBeaconMats.push(beaconMat);
-      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.08 * scaleFactor, 10, 10), beaconMat);
-      beacon.position.set(0, 0.28 * scaleFactor, -0.52 * scaleFactor);
-      nacelleHead.add(beacon);
+      const addAviationBeacon = (parent, bx, by, bz, phaseOffset) => {
+        const coreMat = new THREE.MeshBasicMaterial({ color: '#ff2a4b' });
+        const core = new THREE.Mesh(new THREE.SphereGeometry(0.095 * scaleFactor, 10, 10), coreMat);
+        core.position.set(bx, by, bz);
+        parent.add(core);
+
+        const haloMat = new THREE.MeshBasicMaterial({
+          color: '#ff3b5c',
+          transparent: true,
+          opacity: 0.0,
+          depthWrite: false
+        });
+        const haloMesh = new THREE.Mesh(new THREE.SphereGeometry(0.28 * scaleFactor, 12, 12), haloMat);
+        haloMesh.position.set(bx, by, bz);
+        parent.add(haloMesh);
+
+        this.windBeacons.push({ coreMat, haloMat, haloMesh, phase: phaseOffset });
+        this.windBeaconMats.push(coreMat);
+      };
+
+      // Top nacelle strobe + two mast-collar warning beacons
+      addAviationBeacon(nacelleHead, 0, 0.34 * scaleFactor, -0.45 * scaleFactor, speedMult * 0.25);
+      addAviationBeacon(tGroup, -0.2 * scaleFactor, towerHeight * 0.82, 0, speedMult * 0.25 + 0.5);
+      addAviationBeacon(tGroup, 0.2 * scaleFactor, towerHeight * 0.82, 0, speedMult * 0.25 + 0.5);
 
       const rotor = new THREE.Group();
       rotor.position.set(0, 0, 0.46 * scaleFactor);
@@ -1544,21 +1828,31 @@ export class ParkingStudio3D {
     this.rootGroup.add(bCarWest);
     this.movingCars.push({ type: 'boulevard', mesh: bCarWest, x: 16.0, z: 10.8, dir: -1, speed: 4.2 });
 
+    const loopCurve = new THREE.CatmullRomCurve3(
+      [
+        new THREE.Vector3(-15.4, 0.07, -1.5),
+        new THREE.Vector3(-4.5, 0.07, -1.5),
+        new THREE.Vector3(6.1, 0.07, -1.5),
+        new THREE.Vector3(6.1, 0.07, 2.9),
+        new THREE.Vector3(6.1, 0.07, 7.35),
+        new THREE.Vector3(-4.5, 0.07, 7.35),
+        new THREE.Vector3(-15.4, 0.07, 7.35),
+        new THREE.Vector3(-15.4, 0.07, 2.9)
+      ],
+      true,
+      'catmullrom',
+      0.22
+    );
     const loopCar = createParkedEvCar('#10b981', this.carHeadMats, this.carTailMats);
-    loopCar.position.set(-15.4, 0.07, -1.5);
+    loopCar.position.copy(loopCurve.getPointAt(0));
     this.rootGroup.add(loopCar);
     this.movingCars.push({
       type: 'loop',
       mesh: loopCar,
       progress: 0.0,
-      speed: 0.058,
+      speed: 0.055,
       curAngle: Math.PI / 2,
-      waypoints: [
-        new THREE.Vector3(-15.4, 0.07, -1.5),
-        new THREE.Vector3(6.1, 0.07, -1.5),
-        new THREE.Vector3(6.1, 0.07, 7.35),
-        new THREE.Vector3(-15.4, 0.07, 7.35)
-      ]
+      curve: loopCurve
     });
 
     [
@@ -1573,6 +1867,81 @@ export class ParkingStudio3D {
       this.rootGroup.add(walker);
       this.walkers.push({ ...wSpec, mesh: walker, phase: idx * 1.4 });
     });
+
+    // -------------------------------------------------------------------------
+    // 8. 3D DRIFTING VOLUMETRIC CLOUDS, WIND GUST STREAMLINES & NIGHT BEACON LIGHT
+    // -------------------------------------------------------------------------
+    this.windBeaconLight = new THREE.PointLight('#ff3b5c', 0, 18);
+    this.windBeaconLight.position.set(14.8, 7.0, -6.8);
+    this.rootGroup.add(this.windBeaconLight);
+
+    this.cloudMat = new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      roughness: 0.92,
+      metalness: 0.0,
+      transparent: true,
+      opacity: 0.92
+    });
+    const puffGeo = new THREE.DodecahedronGeometry(1.0, 1);
+    [
+      { x: -17, y: 12.8, z: -15, s: 1.15, sp: 0.42 },
+      { x: -5, y: 14.2, z: -17.5, s: 1.3, sp: 0.36 },
+      { x: 9, y: 13.4, z: -15.5, s: 1.1, sp: 0.48 },
+      { x: 19, y: 12.6, z: -12, s: 0.95, sp: 0.4 },
+      { x: -14, y: 13.8, z: -6, s: 0.9, sp: 0.5 },
+      { x: 4, y: 14.8, z: -9, s: 1.05, sp: 0.34 },
+      { x: 16, y: 13.2, z: -4, s: 0.92, sp: 0.45 }
+    ].forEach((cs, idx) => {
+      const cGroup = new THREE.Group();
+      [
+        [0, 0, 0, 1.3, 0.72, 0.95],
+        [-0.95, -0.1, 0.15, 0.9, 0.6, 0.8],
+        [0.95, -0.08, -0.1, 0.95, 0.62, 0.82],
+        [0.25, 0.42, 0.05, 0.82, 0.56, 0.72]
+      ].forEach(([px, py, pz, sx, sy, sz]) => {
+        const puff = new THREE.Mesh(puffGeo, this.cloudMat);
+        puff.position.set(px, py, pz);
+        puff.scale.set(sx, sy, sz);
+        cGroup.add(puff);
+      });
+      cGroup.position.set(cs.x, cs.y, cs.z);
+      cGroup.scale.setScalar(cs.s);
+      this.scene.add(cGroup);
+      this.clouds.push({
+        group: cGroup,
+        baseX: cs.x,
+        baseY: cs.y,
+        baseZ: cs.z,
+        speed: cs.sp,
+        phase: idx * 1.1
+      });
+    });
+
+    // Animated translucent 3D Wind Gust Ribbons flowing across meadow & site
+    const gustGeo = new THREE.BoxGeometry(2.1, 0.032, 0.042);
+    for (let i = 0; i < 14; i++) {
+      const gustMat = new THREE.MeshBasicMaterial({
+        color: i % 3 === 0 ? '#a7f3d0' : '#bae6fd',
+        transparent: true,
+        opacity: 0.08,
+        depthWrite: false
+      });
+      const gustMesh = new THREE.Mesh(gustGeo, gustMat);
+      const gx = -18 + (i * 2.8) % 36;
+      const gy = 1.9 + (i % 5) * 1.1;
+      const gz = -10.5 + (i % 6) * 3.4;
+      gustMesh.position.set(gx, gy, gz);
+      this.rootGroup.add(gustMesh);
+      this.windGusts.push({
+        mesh: gustMesh,
+        mat: gustMat,
+        x: gx,
+        baseY: gy,
+        z: gz,
+        speed: 0.85 + (i % 4) * 0.22,
+        phase: i * 0.75
+      });
+    }
   }
 
   buildHotspotPins() {
@@ -1808,9 +2177,15 @@ export class ParkingStudio3D {
     this.carHeadMats = [];
     this.carTailMats = [];
     this.windRotors = [];
+    this.windBeacons = [];
     this.windBeaconMats = [];
+    this.windBeaconLight = null;
     this.movingCars = [];
     this.walkers = [];
+    this.trees = [];
+    this.clouds = [];
+    this.windGusts = [];
+    this.cloudMat = null;
 
     destroyStudioRenderer(this);
     this.onClose?.();
@@ -1857,13 +2232,76 @@ export class ParkingStudio3D {
       this.starsMat.opacity = isWindyNight ? 0.9 : isHybrid ? 0.25 : 0.0;
     }
 
-    // 2. Dual Wind Turbine Rotors & Beacons
+    // 2. Dual Wind Turbine Rotors, Blinking Night Aviation Beacons & Clouds / Gusts
     const rotorSpeed = isWindyNight ? 3.8 : isHybrid ? 2.4 : 1.1;
     this.windRotors.forEach(({ rotor, speedMult }) => {
       rotor.rotation.z -= rotorSpeed * speedMult * dt;
     });
-    const beaconHex = Math.sin(elapsed * 4.5) > 0 ? 0x10b981 : 0x38bdf8;
-    this.windBeaconMats.forEach((bm) => bm.color.setHex(beaconHex));
+
+    let maxBeaconPulse = 0;
+    this.windBeacons.forEach(({ coreMat, haloMat, haloMesh, phase }) => {
+      const cycle = (elapsed * 0.85 + phase) % 1;
+      const doublePulse = cycle < 0.14 || (cycle > 0.24 && cycle < 0.38);
+      const pulse = doublePulse ? 1.0 : 0.08;
+      if (isWindyNight || isHybrid) {
+        maxBeaconPulse = Math.max(maxBeaconPulse, doublePulse ? 1.0 : 0.0);
+        coreMat.color.setHex(doublePulse ? 0xff2a4b : 0x5c0a18);
+        haloMat.color.setHex(0xff3b5c);
+        haloMat.opacity = isWindyNight ? pulse * 0.72 : pulse * 0.38;
+        haloMesh.scale.setScalar(0.85 + pulse * 0.65);
+      } else {
+        coreMat.color.setHex(doublePulse ? 0x10b981 : 0x38bdf8);
+        haloMat.color.setHex(0x10b981);
+        haloMat.opacity = pulse * 0.16;
+        haloMesh.scale.setScalar(0.95);
+      }
+    });
+    if (this.windBeaconLight) {
+      this.windBeaconLight.intensity = isWindyNight
+        ? maxBeaconPulse * 3.2
+        : isHybrid
+          ? maxBeaconPulse * 1.1
+          : 0;
+    }
+
+    // Drifting Volumetric Clouds & Mode-Matched Tint
+    if (this.cloudMat) {
+      const targetCloudCol = isWindyNight ? '#334155' : isHybrid ? '#e2c4b0' : '#ffffff';
+      this.cloudMat.color.lerp(new THREE.Color(targetCloudCol), 1 - Math.exp(-3 * dt));
+      this.cloudMat.opacity = isWindyNight ? 0.68 : 0.92;
+    }
+    const cloudWindMult = isWindyNight ? 3.2 : isHybrid ? 1.8 : 0.75;
+    this.clouds.forEach((c) => {
+      c.baseX += c.speed * cloudWindMult * dt;
+      if (c.baseX > 25) c.baseX = -25;
+      c.group.position.set(
+        c.baseX,
+        c.baseY + Math.sin(elapsed * 0.6 + c.phase) * 0.14,
+        c.baseZ
+      );
+    });
+
+    // Wind Gust Ribbons & Realistic Tree Sway Physics
+    const gustSpeedMult = isWindyNight ? 13.5 : isHybrid ? 8.0 : 3.8;
+    const gustOpacity = isWindyNight ? 0.52 : isHybrid ? 0.3 : 0.07;
+    this.windGusts.forEach((g) => {
+      g.x += g.speed * gustSpeedMult * dt;
+      if (g.x > 21) g.x = -21;
+      g.mesh.position.set(
+        g.x,
+        g.baseY + Math.sin(elapsed * 3.2 + g.phase) * 0.18,
+        g.z
+      );
+      g.mat.opacity = gustOpacity * (0.65 + 0.35 * Math.sin(elapsed * 4.5 + g.phase));
+    });
+
+    const windLean = isWindyNight ? 0.065 : isHybrid ? 0.032 : 0.008;
+    const swayAmp = isWindyNight ? 0.055 : isHybrid ? 0.028 : 0.01;
+    const swayFreq = isWindyNight ? 3.6 : isHybrid ? 2.2 : 1.1;
+    this.trees.forEach((tr) => {
+      const ph = tr.userData?.phase || 0;
+      tr.rotation.z = -windLean - Math.sin(elapsed * swayFreq + ph) * swayAmp;
+    });
 
     // 3. Solar Panel Gentle Sun-Tracking
     this.trackingPanels.forEach(({ panelGroup, baseTilt, phase }) => {
@@ -1918,28 +2356,34 @@ export class ParkingStudio3D {
       }
     });
 
-    // 6. Animate Moving EV Traffic & Walking Promenade Shoppers
+    // 6. Animate Moving EV Traffic (Smooth Rounded Curves & Spinning Wheels) & Promenade Shoppers
     this.movingCars.forEach((car) => {
+      let linearSpeed = 0;
       if (car.type === 'boulevard') {
         car.x += car.dir * car.speed * dt;
         if (car.dir > 0 && car.x > 19.6) car.x = -19.6;
         if (car.dir < 0 && car.x < -19.6) car.x = 19.6;
         car.mesh.position.set(car.x, 0.08, car.z);
-      } else if (car.type === 'loop') {
+        linearSpeed = car.speed;
+      } else if (car.type === 'loop' && car.curve) {
         car.progress = (car.progress + car.speed * dt) % 1;
-        const wps = car.waypoints;
-        const n = wps.length;
-        const segFloat = car.progress * n;
-        const idx = Math.floor(segFloat) % n;
-        const t = segFloat - Math.floor(segFloat);
-        const p0 = wps[idx];
-        const p1 = wps[(idx + 1) % n];
-        car.mesh.position.lerpVectors(p0, p1, t);
+        car.curve.getPointAt(car.progress, car.mesh.position);
+        const tangent = car.curve.getTangentAt(car.progress);
 
-        const targetAngle = Math.atan2(p1.x - p0.x, p1.z - p0.z);
+        const targetAngle = Math.atan2(tangent.x, tangent.z);
         const diff = ((targetAngle - car.curAngle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-        car.curAngle += diff * Math.min(1, dt * 8.0);
+        const turnRate = diff * Math.min(1, dt * 8.5);
+        car.curAngle += turnRate;
         car.mesh.rotation.y = car.curAngle;
+        car.mesh.rotation.z = THREE.MathUtils.clamp(-turnRate * 0.9, -0.045, 0.045);
+        linearSpeed = 3.2;
+      }
+
+      if (car.mesh.userData?.wheels?.length && linearSpeed > 0) {
+        const wheelSpin = (linearSpeed / 0.19) * dt;
+        car.mesh.userData.wheels.forEach((wp) => {
+          wp.rotation.x += wheelSpin;
+        });
       }
     });
 
