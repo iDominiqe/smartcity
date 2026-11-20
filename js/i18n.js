@@ -61,6 +61,7 @@ export const TRANSLATIONS = {
     stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'Smart LEDs',
     stage3Stat3Val: 'Auto-Dim',
+    btnOpenHomeStudio: '🏠 3D Smart Home Studio (Day / Night)',
 
     stage4Badge: 'STAGE 04 · NEO CLIM® AT SMART-CITY-LED.COM STORE',
     stage4Title: 'Arriving at Smart-City-Led.com Storefront & NEO Clim® Vitrine',
@@ -175,6 +176,7 @@ export const TRANSLATIONS = {
     stage3Stat2Val: '82 % → 100 %',
     stage3Stat3Label: 'LED Intelligentes',
     stage3Stat3Val: 'Auto-Régulées',
+    btnOpenHomeStudio: '🏠 Studio 3D Maison Solaire (Jour / Nuit)',
 
     stage4Badge: 'ÉTAPE 04 · VITRINE SMART-CITY-LED.COM · NEO CLIM®',
     stage4Title: 'Arrivée devant la Vitrine Smart-City-Led.com & NEO Clim®',
@@ -288,6 +290,7 @@ export const TRANSLATIONS = {
     stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'Смарт LED',
     stage3Stat3Val: 'Авто-Режим',
+    btnOpenHomeStudio: '🏠 3D Умен Соларен Дом (Ден / Нощ)',
 
     stage4Badge: 'ЕТАП 04 · ВИТРИНА SMART-CITY-LED.COM · NEO CLIM®',
     stage4Title: 'Пристигане пред Витрината на Smart-City-Led.com · NEO Clim®',
@@ -401,6 +404,7 @@ export const TRANSLATIONS = {
     stage3Stat2Val: '82% → 100%',
     stage3Stat3Label: 'LED-uri Smart',
     stage3Stat3Val: 'Auto-Reglate',
+    btnOpenHomeStudio: '🏠 Studio 3D Casă Solară (Zi / Noapte)',
 
     stage4Badge: 'ETAPA 04 · VITRINA SMART-CITY-LED.COM · NEO CLIM®',
     stage4Title: 'Sosire la Vitrina Smart-City-Led.com · NEO Clim®',

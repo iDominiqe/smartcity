@@ -46,7 +46,10 @@ export const PAGE_UI_LABELS = {
     campRevNet: 'Estimated Campsite Margin (40%)',
     openAcStudioBannerTitle: '360° Interactive 3D Air Conditioner & Thermal Simulator',
     openAcStudioBannerDesc: 'Rotate the TCL MZ / NEO Clim® unit 360°, inspect rear exhaust & filters, and simulate live Cooling vs. Heating airflow.',
-    openAcStudioBannerBtn: '🧊 Launch 3D AC Studio'
+    openAcStudioBannerBtn: '🧊 Launch 3D AC Studio',
+    openHomeStudioBannerTitle: '360° 3D Smart Solar Home — Inverter, 20 kWh Battery & Grid Simulator',
+    openHomeStudioBannerDesc: 'Inspect how rooftop PV panels power the house by day, or switch to evening Battery / Utility Grid backup.',
+    openHomeStudioBannerBtn: '🏠 Launch 3D Home Studio'
   },
   fr: {
     backToHome3d: '← Retour à la Ville 3D',
@@ -90,7 +93,10 @@ export const PAGE_UI_LABELS = {
     campRevNet: 'Marge estimée camping (40 %)',
     openAcStudioBannerTitle: 'Simulateur 3D 360° Climatiseur Mobile & Flux Froid / Chaud',
     openAcStudioBannerDesc: 'Faites pivoter le modèle TCL MZ / NEO Clim® à 360°, inspectez ses filtres arrière et animez les flux de refroidissement et chauffage.',
-    openAcStudioBannerBtn: '🧊 Ouvrir le Studio 3D'
+    openAcStudioBannerBtn: '🧊 Ouvrir le Studio 3D',
+    openHomeStudioBannerTitle: 'Maison Solaire 3D 360° — Onduleur, Batterie 20 kWh & Réseau',
+    openHomeStudioBannerDesc: 'Observez l’alimentation solaire de jour, puis basculez sur la batterie nocturne ou le réseau public en soirée.',
+    openHomeStudioBannerBtn: '🏠 Ouvrir le Studio Maison 3D'
   },
   bg: {
     backToHome3d: '← Обратно към 3D Града',
@@ -134,7 +140,10 @@ export const PAGE_UI_LABELS = {
     campRevNet: 'Очаквана печалба за къмпинга (40%)',
     openAcStudioBannerTitle: '360° Интерактивен 3D Климатик и Термо Симулатор',
     openAcStudioBannerDesc: 'Завъртете модела на 360°, разгледайте задните филтри и вижте анимация на охлаждане и отопление в реално време.',
-    openAcStudioBannerBtn: '🧊 Отвори 3D Студио'
+    openAcStudioBannerBtn: '🧊 Отвори 3D Студио',
+    openHomeStudioBannerTitle: '360° 3D Умен Соларен Дом — Инвертор, Батерия 20 kWh и Мрежа',
+    openHomeStudioBannerDesc: 'Вижте как слънцето захранва дома през деня, а вечер превключете към батерията или електромрежата.',
+    openHomeStudioBannerBtn: '🏠 Отвори 3D Дом'
   },
   ro: {
     backToHome3d: '← Înapoi la Orașul 3D',
@@ -178,7 +187,10 @@ export const PAGE_UI_LABELS = {
     campRevNet: 'Marjă estimată camping (40%)',
     openAcStudioBannerTitle: 'Simulator 3D 360° Aer Condiționat & Flux Rece / Cald',
     openAcStudioBannerDesc: 'Rotiți unitatea la 360°, inspectați filtrele din spate și testați live animația de răcire și încălzire.',
-    openAcStudioBannerBtn: '🧊 Deschide Studioul 3D'
+    openAcStudioBannerBtn: '🧊 Deschide Studioul 3D',
+    openHomeStudioBannerTitle: 'Casă Solară 3D 360° — Invertor, Baterie 20 kWh & Rețea',
+    openHomeStudioBannerDesc: 'Vizualizați alimentarea solară ziua și comutați pe baterie nocturnă sau rețea electrică seara.',
+    openHomeStudioBannerBtn: '🏠 Deschide Studioul Casă 3D'
   }
 };
 
@@ -188,6 +200,17 @@ export const MENU_CATEGORIES = [
     kind: 'home',
     label: { en: 'Home 3D', fr: 'Accueil', bg: 'Начало 3D', ro: 'Acasă 3D' },
     items: [
+      {
+        type: 'home-studio',
+        target: 'home-studio',
+        highlight: true,
+        label: {
+          en: '🏠 3D Smart Solar Home Studio (Day / Battery / Grid)',
+          fr: '🏠 Studio 3D Maison Solaire (Jour / Batterie / Réseau)',
+          bg: '🏠 3D Умен Соларен Дом (Ден / Батерия / Мрежа)',
+          ro: '🏠 Studio 3D Casă Solară (Zi / Baterie / Rețea)'
+        }
+      },
       { type: 'stage', target: 'stage-1', label: { en: 'Stage 1: 3D Solar Mini-City', fr: 'Étape 1 : Mini-Ville Solaire 3D', bg: 'Етап 1: 3D Соларен Мини Град', ro: 'Etapa 1: Mini-Oraș Solar 3D' } },
       { type: 'stage', target: 'stage-2', label: { en: 'Stage 2: Solar EV Charging', fr: 'Étape 2 : Station Recharge VE', bg: 'Етап 2: Соларна Зарядна Станция', ro: 'Etapa 2: Stație Încărcare EV' } },
       { type: 'stage', target: 'stage-3', label: { en: 'Stage 3: Evening Smart Home', fr: 'Étape 3 : Maison du Soir', bg: 'Етап 3: Вечерен Умен Дом', ro: 'Etapa 3: Casă Inteligentă Seara' } },

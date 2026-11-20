@@ -5,6 +5,7 @@ import { buildSmartCityWorld } from './scene-builder.js';
 import { ScrollDirector } from './scroll-director.js';
 import { PagesRouter } from './pages-router.js';
 import { AcStudio3D } from './ac-studio-3d.js';
+import { HomeStudio3D } from './home-studio-3d.js';
 
 function initApp() {
   const i18n = new I18nManager('en');
@@ -266,6 +267,7 @@ function initApp() {
   });
 
   let acStudio = null;
+  let homeStudio = null;
 
   const pagesRouter = new PagesRouter({
     i18n,
@@ -285,7 +287,14 @@ function initApp() {
         playDriveHomeToStore();
       }
     },
-    onOpenAcStudio: () => acStudio?.open()
+    onOpenAcStudio: () => {
+      homeStudio?.close();
+      acStudio?.open();
+    },
+    onOpenHomeStudio: () => {
+      acStudio?.close();
+      homeStudio?.open();
+    }
   });
 
   acStudio = new AcStudio3D({
@@ -293,16 +302,33 @@ function initApp() {
     onRequestQuote: () => pagesRouter.openPage('neo-clim-location')
   });
 
+  homeStudio = new HomeStudio3D({
+    i18n,
+    onRequestQuote: () => pagesRouter.openPage('neo-home')
+  });
+
   document.getElementById('btn-open-ac-studio')?.addEventListener('click', () => {
+    homeStudio.close();
     acStudio.open();
+  });
+
+  document.getElementById('btn-open-home-studio')?.addEventListener('click', () => {
+    acStudio.close();
+    homeStudio.open();
   });
 
   if (window.location.hash === '#ac-studio') {
     acStudio.open();
+  } else if (window.location.hash === '#home-studio') {
+    homeStudio.open();
   }
   window.addEventListener('hashchange', () => {
     if (window.location.hash === '#ac-studio') {
+      homeStudio.close();
       acStudio.open();
+    } else if (window.location.hash === '#home-studio') {
+      acStudio.close();
+      homeStudio.open();
     }
   });
 
@@ -319,6 +345,7 @@ function initApp() {
       pagesRouter.renderSubpage(pagesRouter.activeSlug);
     }
     acStudio?.syncLanguage();
+    homeStudio?.syncLanguage();
   });
 
   // ---------------------------------------------------------------------------

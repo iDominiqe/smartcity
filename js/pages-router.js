@@ -10,11 +10,12 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
     this.onCategoryTrigger = onCategoryTrigger;
     this.onOpenAcStudio = onOpenAcStudio;
+    this.onOpenHomeStudio = onOpenHomeStudio;
     this.activeSlug = null;
     this.activeBlogSlug = null;
     this.openDropdownId = null;
@@ -188,6 +189,13 @@ export class PagesRouter {
       return;
     }
 
+    if (type === 'home-studio') {
+      if (this.onOpenHomeStudio) {
+        this.onOpenHomeStudio();
+      }
+      return;
+    }
+
     if (type === 'page') {
       this.openPage(target);
     } else {
@@ -345,7 +353,8 @@ export class PagesRouter {
     const interactiveHtml = this.buildInteractiveHtml(page);
     const formHtml = page.formType ? this.buildFormHtml(page) : '';
     const isAcShowcasePage = ['neo-clim-location', 'neo-clim-solaire', 'landing-camp-2027'].includes(slug);
-    const acStudioBannerHtml = isAcShowcasePage
+    const isHomeShowcasePage = ['neo-home', 'neo-all-in-one'].includes(slug);
+    const studioBannerHtml = isAcShowcasePage
       ? `
         <section class="sub-ac-studio-banner">
           <div>
@@ -353,6 +362,16 @@ export class PagesRouter {
             <span>${escapeHtml(this.ui('openAcStudioBannerDesc'))}</span>
           </div>
           <button type="button" id="btn-sub-open-ac-studio" class="btn-primary">${escapeHtml(this.ui('openAcStudioBannerBtn'))}</button>
+        </section>
+      `
+      : isHomeShowcasePage
+      ? `
+        <section class="sub-ac-studio-banner">
+          <div>
+            <strong>${escapeHtml(this.ui('openHomeStudioBannerTitle'))}</strong>
+            <span>${escapeHtml(this.ui('openHomeStudioBannerDesc'))}</span>
+          </div>
+          <button type="button" id="btn-sub-open-home-studio" class="btn-primary">${escapeHtml(this.ui('openHomeStudioBannerBtn'))}</button>
         </section>
       `
       : '';
@@ -407,7 +426,7 @@ export class PagesRouter {
       </div>
 
       ${specsHtml}
-      ${acStudioBannerHtml}
+      ${studioBannerHtml}
       ${modelsHtml}
       ${highlightsHtml}
       ${interactiveHtml}
@@ -613,6 +632,12 @@ export class PagesRouter {
     document.getElementById('btn-sub-open-ac-studio')?.addEventListener('click', () => {
       if (this.onOpenAcStudio) {
         this.onOpenAcStudio();
+      }
+    });
+
+    document.getElementById('btn-sub-open-home-studio')?.addEventListener('click', () => {
+      if (this.onOpenHomeStudio) {
+        this.onOpenHomeStudio();
       }
     });
 
