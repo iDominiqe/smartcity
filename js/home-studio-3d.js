@@ -10,78 +10,37 @@ import {
   HOME_HOTSPOTS
 } from './data/home-studio-data.js';
 
-function createWoodFloorTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = '#c58f5e';
-  ctx.fillRect(0, 0, 512, 512);
-
-  const planks = 8;
-  const ph = 512 / planks;
-  for (let i = 0; i < planks; i++) {
-    const shade = (i % 3) * 7 - 7;
-    ctx.fillStyle = `rgb(${194 + shade}, ${140 + shade}, ${91 + shade})`;
-    ctx.fillRect(0, i * ph + 2, 512, ph - 3);
-    ctx.fillStyle = 'rgba(72, 42, 18, 0.25)';
-    ctx.fillRect(0, i * ph, 512, 2);
-    const joinX = ((i * 173 + 90) % 420) + 40;
-    ctx.fillRect(joinX, i * ph, 2, ph);
-  }
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
-  return tex;
-}
-
 function createInverterCoreTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 256;
+  canvas.height = 256;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#0c1629';
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillStyle = '#09111f';
+  ctx.fillRect(0, 0, 256, 256);
 
   ctx.strokeStyle = '#38bdf8';
-  ctx.lineWidth = 14;
-  ctx.strokeRect(14, 14, 484, 484);
+  ctx.lineWidth = 8;
+  ctx.strokeRect(8, 8, 240, 240);
 
-  const glow = ctx.createRadialGradient(256, 256, 12, 256, 256, 210);
+  const glow = ctx.createRadialGradient(128, 128, 6, 128, 128, 102);
   glow.addColorStop(0, '#fffbeb');
-  glow.addColorStop(0.18, '#fde047');
-  glow.addColorStop(0.45, '#f59e0b');
-  glow.addColorStop(0.78, 'rgba(56, 189, 248, 0.35)');
-  glow.addColorStop(1, 'rgba(12, 22, 41, 0)');
+  glow.addColorStop(0.22, '#fde047');
+  glow.addColorStop(0.55, '#f59e0b');
+  glow.addColorStop(1, 'rgba(9, 17, 31, 0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(24, 24, 464, 464);
+  ctx.fillRect(14, 14, 228, 228);
 
-  [165, 118, 72].forEach((r, idx) => {
-    ctx.strokeStyle = idx === 0 ? 'rgba(56, 189, 248, 0.8)' : 'rgba(253, 224, 71, 0.9)';
-    ctx.lineWidth = idx === 2 ? 6 : 4;
+  [78, 52].forEach((r) => {
+    ctx.strokeStyle = 'rgba(253, 224, 71, 0.85)';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(256, 256, r, 0, Math.PI * 2);
-    ctx.stroke();
-  });
-
-  // Circuit traces out to top, bottom, left, right
-  ctx.strokeStyle = '#fde047';
-  ctx.lineWidth = 6;
-  [[256, 18, 256, 90], [256, 422, 256, 494], [18, 256, 90, 256], [422, 256, 494, 256]].forEach(([x1, y1, x2, y2]) => {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.arc(128, 128, r, 0, Math.PI * 2);
     ctx.stroke();
   });
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
   return tex;
 }
 
@@ -89,10 +48,10 @@ function createRealisticEvCoupe() {
   const car = new THREE.Group();
   const bodyMat = new THREE.MeshPhysicalMaterial({
     color: '#f8fafc',
-    roughness: 0.18,
+    roughness: 0.16,
     metalness: 0.25,
-    clearcoat: 0.85,
-    clearcoatRoughness: 0.12
+    clearcoat: 0.88,
+    clearcoatRoughness: 0.1
   });
   const cabinGlassMat = new THREE.MeshPhysicalMaterial({
     color: '#0f172a',
@@ -103,73 +62,69 @@ function createRealisticEvCoupe() {
   const tireMat = new THREE.MeshStandardMaterial({ color: '#111827', roughness: 0.65 });
   const rimMat = new THREE.MeshStandardMaterial({ color: '#cbd5e1', roughness: 0.25, metalness: 0.85 });
 
-  // Lower sculpted body aligned along X axis (front facing -X toward house entrance or +X)
   const bodyProfile = new THREE.Shape();
-  bodyProfile.moveTo(-1.12, 0.14);
-  bodyProfile.lineTo(1.12, 0.14);
-  bodyProfile.lineTo(1.14, 0.36);
-  bodyProfile.quadraticCurveTo(1.06, 0.56, 0.62, 0.58);
-  bodyProfile.lineTo(-0.56, 0.60);
-  bodyProfile.quadraticCurveTo(-1.05, 0.58, -1.14, 0.34);
+  bodyProfile.moveTo(-1.14, 0.14);
+  bodyProfile.lineTo(1.14, 0.14);
+  bodyProfile.lineTo(1.16, 0.36);
+  bodyProfile.quadraticCurveTo(1.06, 0.57, 0.62, 0.59);
+  bodyProfile.lineTo(-0.56, 0.61);
+  bodyProfile.quadraticCurveTo(-1.05, 0.59, -1.16, 0.34);
   bodyProfile.closePath();
 
   const bodyGeo = new THREE.ExtrudeGeometry(bodyProfile, {
-    depth: 0.98,
+    depth: 1.0,
     bevelEnabled: true,
     bevelSize: 0.04,
     bevelThickness: 0.04,
     bevelSegments: 3
   });
-  bodyGeo.translate(0, 0, -0.49);
+  bodyGeo.translate(0, 0, -0.5);
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.castShadow = true;
   car.add(body);
 
-  // Fastback glass roof silhouette
   const cabinProfile = new THREE.Shape();
-  cabinProfile.moveTo(-0.62, 0.56);
-  cabinProfile.quadraticCurveTo(-0.34, 0.90, 0.08, 0.90);
-  cabinProfile.quadraticCurveTo(0.45, 0.88, 0.66, 0.56);
+  cabinProfile.moveTo(-0.64, 0.57);
+  cabinProfile.quadraticCurveTo(-0.34, 0.91, 0.08, 0.91);
+  cabinProfile.quadraticCurveTo(0.46, 0.89, 0.68, 0.57);
   cabinProfile.closePath();
 
   const cabinGeo = new THREE.ExtrudeGeometry(cabinProfile, {
-    depth: 0.82,
+    depth: 0.84,
     bevelEnabled: true,
     bevelSize: 0.03,
     bevelThickness: 0.03,
     bevelSegments: 3
   });
-  cabinGeo.translate(0, 0, -0.41);
+  cabinGeo.translate(0, 0, -0.42);
   const cabin = new THREE.Mesh(cabinGeo, cabinGlassMat);
   cabin.castShadow = true;
   car.add(cabin);
 
-  // LED Headlight & Taillight strips
   const headLed = new THREE.Mesh(
-    new THREE.BoxGeometry(0.05, 0.06, 0.86),
+    new THREE.BoxGeometry(0.05, 0.06, 0.88),
     new THREE.MeshBasicMaterial({ color: '#e0f2fe' })
   );
-  headLed.position.set(-1.13, 0.42, 0);
+  headLed.position.set(-1.15, 0.42, 0);
   car.add(headLed);
 
   const tailLed = new THREE.Mesh(
     new THREE.BoxGeometry(0.05, 0.05, 0.84),
     new THREE.MeshBasicMaterial({ color: '#fb7185' })
   );
-  tailLed.position.set(1.13, 0.46, 0);
+  tailLed.position.set(1.15, 0.46, 0);
   car.add(tailLed);
 
-  // 4 Spoked Alloy Wheels
   const tireGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.14, 20);
   tireGeo.rotateX(Math.PI / 2);
   const rimGeo = new THREE.CylinderGeometry(0.125, 0.125, 0.15, 16);
   rimGeo.rotateX(Math.PI / 2);
 
   [
-    [-0.72, 0.21, 0.46],
-    [0.72, 0.21, 0.46],
-    [-0.72, 0.21, -0.46],
-    [0.72, 0.21, -0.46]
+    [-0.72, 0.21, 0.47],
+    [0.72, 0.21, 0.47],
+    [-0.72, 0.21, -0.47],
+    [0.72, 0.21, -0.47]
   ].forEach(([wx, wy, wz]) => {
     const tire = new THREE.Mesh(tireGeo, tireMat);
     tire.position.set(wx, wy, wz);
@@ -180,6 +135,26 @@ function createRealisticEvCoupe() {
   });
 
   return car;
+}
+
+function createPineTree(scale = 1) {
+  const tree = new THREE.Group();
+  const darkPineMat = new THREE.MeshStandardMaterial({ color: '#0d1826', roughness: 0.9 });
+  [
+    { y: 1.0, r: 0.85, h: 1.45 },
+    { y: 1.95, r: 0.68, h: 1.3 },
+    { y: 2.8, r: 0.50, h: 1.15 },
+    { y: 3.55, r: 0.34, h: 0.95 }
+  ].forEach((tier) => {
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(tier.r, tier.h, 10), darkPineMat);
+    cone.position.y = tier.y;
+    tree.add(cone);
+  });
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.8, 8), darkPineMat);
+  trunk.position.y = 0.2;
+  tree.add(trunk);
+  tree.scale.setScalar(scale);
+  return tree;
 }
 
 export class HomeStudio3D {
@@ -205,12 +180,9 @@ export class HomeStudio3D {
     this.desiredTarget = new THREE.Vector3(...HOME_CAMERA_PRESETS.overview.target);
 
     this.xrayTargets = [];
-    this.batteryEdgeMats = [];
     this.batteryBarMats = [];
     this.interiorLights = [];
-    this.lampGlowMats = [];
     this.circuits = {};
-    this.heatPumpFan = null;
 
     this.modalEl = document.getElementById('home-studio-modal');
     if (!this.modalEl) return;
@@ -282,7 +254,7 @@ export class HomeStudio3D {
             </div>
 
             <div class="ac-canvas-wrap">
-              <canvas id="home-studio-canvas" aria-label="Interactive 3D Smart Solar Home"></canvas>
+              <canvas id="home-studio-canvas" aria-label="Interactive 3D Smart Glass Solar Villa"></canvas>
               <div class="ac-hotspot-layer" id="home-hotspot-layer"></div>
             </div>
 
@@ -359,7 +331,10 @@ export class HomeStudio3D {
       (h) => `
       <button type="button" class="ac-hotspot-pin" data-hspot-id="${h.id}" data-hcam="${h.camPreset}">
         <span class="ac-hotspot-dot"></span>
-        <span class="ac-hotspot-label">${this.t(h.label)}</span>
+        <span class="ac-hotspot-text">
+          <span class="ac-hotspot-title">${this.t(h.label)}</span>
+          <span class="ac-hotspot-sub">${this.t(h.sub)}</span>
+        </span>
       </button>
     `
     ).join('');
@@ -393,18 +368,18 @@ export class HomeStudio3D {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.toneMappingExposure = 1.15;
 
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(34, 16 / 10, 0.1, 80);
+    this.camera = new THREE.PerspectiveCamera(34, 16 / 10, 0.1, 90);
     this.camera.position.set(...HOME_CAMERA_PRESETS.overview.pos);
 
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
     this.controls.minDistance = 4.2;
-    this.controls.maxDistance = 20.0;
+    this.controls.maxDistance = 21.0;
     this.controls.maxPolarAngle = Math.PI * 0.49;
     this.controls.minPolarAngle = 0.12;
     this.controls.target.set(...HOME_CAMERA_PRESETS.overview.target);
@@ -412,26 +387,25 @@ export class HomeStudio3D {
       this.camTransition = null;
     });
 
-    // Atmospheric Daylight + Evening Studio Lights
-    this.hemiLight = new THREE.HemisphereLight('#f0f9ff', '#09111f', 1.35);
+    this.hemiLight = new THREE.HemisphereLight('#d8e6f8', '#09111f', 1.25);
     this.scene.add(this.hemiLight);
 
-    this.sunLight = new THREE.DirectionalLight('#fff8eb', 2.35);
-    this.sunLight.position.set(6, 11, 7);
+    this.sunLight = new THREE.DirectionalLight('#fff5e0', 2.1);
+    this.sunLight.position.set(7, 11, 8);
     this.sunLight.castShadow = true;
     this.sunLight.shadow.mapSize.set(1024, 1024);
     this.sunLight.shadow.bias = -0.0005;
     this.scene.add(this.sunLight);
 
-    this.rimLight = new THREE.DirectionalLight('#38bdf8', 0.95);
-    this.rimLight.position.set(-7, 5, -6);
+    this.rimLight = new THREE.DirectionalLight('#38bdf8', 0.9);
+    this.rimLight.position.set(-8, 5, -6);
     this.scene.add(this.rimLight);
 
     this.sunOrb = new THREE.Mesh(
       new THREE.SphereGeometry(0.5, 24, 24),
       new THREE.MeshBasicMaterial({ color: '#fde047' })
     );
-    this.sunOrb.position.set(-4.2, 7.2, -3.0);
+    this.sunOrb.position.set(-4.5, 7.2, -3.5);
     this.scene.add(this.sunOrb);
 
     this.moonOrb = new THREE.Mesh(
@@ -448,38 +422,56 @@ export class HomeStudio3D {
   buildSmartHomeModel() {
     this.homeRoot = new THREE.Group();
 
-    const woodTex = createWoodFloorTexture();
-    const inverterCoreTex = createInverterCoreTexture();
     const solarTex = createSolarTexture();
+    const inverterTex = createInverterCoreTexture();
 
-    const studioFloorMat = new THREE.MeshStandardMaterial({
-      color: '#071122',
-      roughness: 0.22,
-      metalness: 0.42
+    const tidewaterMat = new THREE.MeshStandardMaterial({
+      color: '#081526',
+      roughness: 0.16,
+      metalness: 0.52
     });
-    const concreteMat = new THREE.MeshStandardMaterial({ color: '#334155', roughness: 0.72, metalness: 0.12 });
-    const darkSlateMat = new THREE.MeshStandardMaterial({ color: '#1e293b', roughness: 0.65, metalness: 0.18 });
-    const plasterMat = new THREE.MeshStandardMaterial({
-      color: '#f1f5f9',
+    const basaltMat = new THREE.MeshStandardMaterial({
+      color: '#6b7582',
+      roughness: 0.68,
+      metalness: 0.08
+    });
+    const slabMat = new THREE.MeshStandardMaterial({
+      color: '#cbd5e1',
       roughness: 0.52,
-      transparent: true,
-      opacity: 0.96
-    });
-    const warmWoodFloorMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.62 });
-    const timberSlatMat = new THREE.MeshStandardMaterial({ color: '#9a6842', roughness: 0.68 });
-    const roofTileMat = new THREE.MeshStandardMaterial({
-      color: '#1b2636',
-      roughness: 0.48,
-      metalness: 0.25,
+      metalness: 0.08,
       transparent: true,
       opacity: 0.97
     });
-    const furnitureWhiteMat = new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.45 });
-    const sofaMat = new THREE.MeshStandardMaterial({ color: '#e2dcd3', roughness: 0.75 });
-    const darkMetalMat = new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.35, metalness: 0.55 });
-    const bushMat = new THREE.MeshStandardMaterial({ color: '#2b593f', roughness: 0.85 });
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: '#bae6fd',
+    const steelMat = new THREE.MeshStandardMaterial({
+      color: '#111827',
+      roughness: 0.35,
+      metalness: 0.65
+    });
+    const limestoneMat = new THREE.MeshStandardMaterial({
+      color: '#e5dfd7',
+      roughness: 0.58,
+      transparent: true,
+      opacity: 0.95
+    });
+    const plumAccentMat = new THREE.MeshStandardMaterial({
+      color: '#6e5266',
+      roughness: 0.62,
+      transparent: true,
+      opacity: 0.96
+    });
+    const darkWalnutMat = new THREE.MeshStandardMaterial({
+      color: '#3f2e24',
+      roughness: 0.58
+    });
+    const furnitureMat = new THREE.MeshStandardMaterial({
+      color: '#f8fafc',
+      roughness: 0.45
+    });
+    const warmCoveMat = new THREE.MeshBasicMaterial({
+      color: '#ffd27d'
+    });
+    const framingGlassMat = new THREE.MeshPhysicalMaterial({
+      color: '#9fd8f5',
       transparent: true,
       opacity: 0.22,
       roughness: 0.06,
@@ -494,443 +486,354 @@ export class HomeStudio3D {
       emissiveIntensity: 0.35
     });
 
-    this.xrayTargets.push(plasterMat, roofTileMat);
-
-    // 1. Reflective Studio Stage & Architectural Foundation Plinth
-    const studioStage = new THREE.Mesh(new THREE.CylinderGeometry(8.8, 9.2, 0.08, 64), studioFloorMat);
-    studioStage.position.set(0.4, -0.06, 0.0);
-    studioStage.receiveShadow = true;
-    this.homeRoot.add(studioStage);
-
-    const foundationPlinth = new THREE.Mesh(new THREE.BoxGeometry(10.0, 0.16, 4.9), concreteMat);
-    foundationPlinth.position.set(0.55, 0.06, 0.05);
-    foundationPlinth.receiveShadow = true;
-    this.homeRoot.add(foundationPlinth);
-
-    const plinthBorder = new THREE.Mesh(
-      new THREE.BoxGeometry(10.12, 0.04, 5.02),
-      new THREE.MeshBasicMaterial({ color: '#38bdf8', transparent: true, opacity: 0.45 })
-    );
-    plinthBorder.position.set(0.55, 0.0, 0.05);
-    this.homeRoot.add(plinthBorder);
-    this.plinthBorderMat = plinthBorder.material;
-
-    // 2. Terraced Stone Planters & Illuminated Bushes (Left & Right Exterior Gardens)
-    const addPlanter = (x, z, w, d, h) => {
-      const box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), darkSlateMat);
-      box.position.set(x, h / 2 + 0.12, z);
-      box.castShadow = true;
-      box.receiveShadow = true;
-      this.homeRoot.add(box);
-
-      const bushCount = w > 1.2 ? 3 : 2;
-      for (let b = 0; b < bushCount; b++) {
-        const bx = x - w * 0.28 + b * (w * 0.28);
-        const shrub = new THREE.Mesh(new THREE.SphereGeometry(0.26, 12, 10), bushMat);
-        shrub.position.set(bx, h + 0.26, z);
-        shrub.scale.set(1.15, 0.85, 1.0);
-        shrub.castShadow = true;
-        this.homeRoot.add(shrub);
-      }
-
-      const uplightMat = new THREE.MeshBasicMaterial({ color: '#fbbf24' });
-      const glowStrip = new THREE.Mesh(new THREE.BoxGeometry(w * 0.6, 0.03, 0.06), uplightMat);
-      glowStrip.position.set(x, h + 0.14, z + d / 2 - 0.06);
-      this.homeRoot.add(glowStrip);
-      this.lampGlowMats.push(uplightMat);
-    };
-
-    addPlanter(-3.35, 1.25, 1.5, 1.2, 0.52);
-    addPlanter(-3.35, 0.0, 1.35, 1.1, 0.88);
-    addPlanter(3.55, 2.05, 2.8, 0.65, 0.48);
+    this.xrayTargets.push(slabMat, limestoneMat, plumAccentMat);
 
     // -------------------------------------------------------------------------
-    // 3. LEVEL 0: LOWER TECHNICAL ENERGY VAULT (x = -2.50..+2.30, y = 0.14..1.44)
+    // 1. TIDEWATER STUDIO BASE, STEPPED BASALT SLABS & COASTAL PINE SILHOUETTES
     // -------------------------------------------------------------------------
-    const vaultFloor = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 3.55), darkSlateMat);
-    vaultFloor.position.set(-0.1, 0.16, -0.05);
-    vaultFloor.receiveShadow = true;
-    this.homeRoot.add(vaultFloor);
+    const harborWater = new THREE.Mesh(new THREE.CylinderGeometry(11.5, 11.5, 0.08, 64), tidewaterMat);
+    harborWater.position.set(0.8, -0.22, 0.0);
+    harborWater.receiveShadow = true;
+    this.homeRoot.add(harborWater);
 
-    const vaultBackWall = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.28, 0.14), concreteMat);
-    vaultBackWall.position.set(-0.1, 0.80, -1.76);
-    vaultBackWall.castShadow = true;
-    this.homeRoot.add(vaultBackWall);
+    const stepLower = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.22, 5.4), basaltMat);
+    stepLower.position.set(1.05, -0.08, 0.0);
+    stepLower.receiveShadow = true;
+    this.homeRoot.add(stepLower);
 
-    const vaultLeftWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.28, 3.55), darkSlateMat);
-    vaultLeftWall.position.set(-2.43, 0.80, -0.05);
-    this.homeRoot.add(vaultLeftWall);
+    const stepMain = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.22, 4.9), slabMat);
+    stepMain.position.set(1.05, 0.14, 0.0);
+    stepMain.receiveShadow = true;
+    this.homeRoot.add(stepMain);
 
-    const vaultRightWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.28, 3.55), concreteMat);
-    vaultRightWall.position.set(2.23, 0.80, -0.05);
-    this.homeRoot.add(vaultRightWall);
+    this.plinthBorderMat = new THREE.MeshBasicMaterial({ color: '#38bdf8', transparent: true, opacity: 0.42 });
+    const plinthEdge = new THREE.Mesh(new THREE.BoxGeometry(11.1, 0.04, 5.0), this.plinthBorderMat);
+    plinthEdge.position.set(1.05, 0.03, 0.0);
+    this.homeRoot.add(plinthEdge);
 
-    // Glass-fronted vault enclosure
-    const vaultGlass = new THREE.Mesh(new THREE.BoxGeometry(4.55, 1.24, 0.04), glassMat);
-    vaultGlass.position.set(-0.1, 0.80, 1.66);
-    this.homeRoot.add(vaultGlass);
-
-    // A) 20 kWh NEO All-In-One® LiFePO4 Battery Monolith (Left Vault Bay, matching reference)
-    const batteryBody = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.98, 0.68), furnitureWhiteMat);
-    batteryBody.position.set(-1.25, 0.69, 0.55);
-    batteryBody.castShadow = true;
-    this.homeRoot.add(batteryBody);
-
-    // Vertical glowing cyan & golden LED edge strips on Battery front corners
+    // Stylized Dark Coastal Pine Trees flanking background left & right (like reference)
     [
-      { x: -1.78, color: '#38bdf8' },
-      { x: -0.72, color: '#fbbf24' }
-    ].forEach((edge) => {
-      const eMat = new THREE.MeshBasicMaterial({ color: edge.color });
-      const strip = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.94, 0.06), eMat);
-      strip.position.set(edge.x, 0.69, 0.88);
-      this.homeRoot.add(strip);
-      this.batteryEdgeMats.push(eMat);
+      [-4.9, -2.5, 1.05],
+      [-4.0, -3.1, 0.85],
+      [6.4, -2.2, 1.15],
+      [7.1, -2.8, 0.95],
+      [5.8, -3.2, 0.78]
+    ].forEach(([tx, tz, sc]) => {
+      const p = createPineTree(sc);
+      p.position.set(tx, -0.1, tz);
+      this.homeRoot.add(p);
     });
+
+    // -------------------------------------------------------------------------
+    // 2. LEVEL 1: GROUND GLASS PAVILION (x: -3.2..+2.3) + ATTACHED EV GARAGE (x: +2.3..+5.7)
+    // All Level 1 structural columns span y = 0.25 .. 2.37 strictly below Level 2 slab (2.38)
+    // -------------------------------------------------------------------------
+    const colH1 = 2.12;
+    const colY1 = 0.25 + colH1 / 2;
+    [
+      [-3.15, 1.85], [-1.05, 1.85], [0.65, 1.85], [2.32, 1.85], [5.48, 1.85],
+      [-3.15, -1.85], [0.65, -1.85], [2.32, -1.85], [5.48, -1.85]
+    ].forEach(([cx, cz]) => {
+      const col = new THREE.Mesh(new THREE.BoxGeometry(0.11, colH1, 0.11), steelMat);
+      col.position.set(cx, colY1, cz);
+      col.castShadow = true;
+      this.homeRoot.add(col);
+    });
+
+    // Back structural limestone & glass walls for Level 1
+    const backWallL1 = new THREE.Mesh(new THREE.BoxGeometry(4.6, 2.12, 0.12), basaltMat);
+    backWallL1.position.set(-0.9, 1.31, -1.85);
+    this.homeRoot.add(backWallL1);
+
+    // Front frameless glass enclosure across Ground Pavilion + Garage bay
+    const frontGlassL1 = new THREE.Mesh(new THREE.BoxGeometry(8.65, 2.10, 0.04), framingGlassMat);
+    frontGlassL1.position.set(1.16, 1.31, 1.85);
+    this.homeRoot.add(frontGlassL1);
+
+    // A) Floor-to-Ceiling Basalt Hearth / Fireplace on Left + Sofa Lounge
+    const fireplaceCol = new THREE.Mesh(new THREE.BoxGeometry(0.92, 2.12, 0.56), basaltMat);
+    fireplaceCol.position.set(-2.15, 1.31, 0.72);
+    fireplaceCol.castShadow = true;
+    this.homeRoot.add(fireplaceCol);
+
+    const hearthGlow = new THREE.Mesh(
+      new THREE.BoxGeometry(0.56, 0.22, 0.06),
+      new THREE.MeshBasicMaterial({ color: '#fbbf24' })
+    );
+    hearthGlow.position.set(-2.15, 0.62, 1.01);
+    this.homeRoot.add(hearthGlow);
+
+    const sofaMain = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.34, 0.62), furnitureMat);
+    sofaMain.position.set(-1.55, 0.42, -0.45);
+    this.homeRoot.add(sofaMain);
+
+    // B) Signature Center Floating Open-Riser Staircase (-0.68..+0.05)
+    for (let s = 0; s < 10; s++) {
+      const tread = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.055, 0.24), basaltMat);
+      tread.position.set(-0.32, 0.40 + s * 0.20, 0.88 - s * 0.19);
+      tread.castShadow = true;
+      this.homeRoot.add(tread);
+    }
+
+    // C) Center-Right Dining Pavilion Table + 5 Hanging Warm Globe Lights
+    const diningTable = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.08, 0.76), darkWalnutMat);
+    diningTable.position.set(1.15, 0.76, 0.28);
+    this.homeRoot.add(diningTable);
+
+    [-0.42, 0.0, 0.42].forEach((cx) => {
+      [-0.45, 0.45].forEach((cz) => {
+        const chair = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.42, 0.28), basaltMat);
+        chair.position.set(1.15 + cx, 0.46, 0.28 + cz);
+        this.homeRoot.add(chair);
+      });
+    });
+
+    [
+      [0.88, 2.02, 0.18],
+      [1.08, 1.90, 0.36],
+      [1.24, 2.12, 0.22],
+      [1.40, 1.96, 0.38],
+      [1.14, 2.08, 0.08]
+    ].forEach(([lx, ly, lz]) => {
+      const globe = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), warmCoveMat);
+      globe.position.set(lx, ly, lz);
+      this.homeRoot.add(globe);
+    });
+
+    // Warm Cedar Ceiling Soffit Cove Strips along Level 1 Underside
+    const soffitStrip1 = new THREE.Mesh(new THREE.BoxGeometry(5.3, 0.035, 0.08), warmCoveMat);
+    soffitStrip1.position.set(-0.5, 2.36, 1.68);
+    this.homeRoot.add(soffitStrip1);
+
+    // D) Attached Right-Side Glass EV Garage & Energy Control Wall (x = 2.3..5.6)
+    const garageBackWall = new THREE.Mesh(new THREE.BoxGeometry(3.25, 2.12, 0.14), basaltMat);
+    garageBackWall.position.set(3.92, 1.31, -1.85);
+    this.homeRoot.add(garageBackWall);
+
+    const garageRightGlass = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.10, 3.66), framingGlassMat);
+    garageRightGlass.position.set(5.48, 1.31, 0.0);
+    this.homeRoot.add(garageRightGlass);
+
+    // DUAL 10 kW HYBRID SOLAR INVERTERS inside Garage Back Wall
+    [3.0, 3.72].forEach((ix) => {
+      const invHousing = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.72, 0.20), furnitureMat);
+      invHousing.position.set(ix, 1.48, -1.68);
+      invHousing.castShadow = true;
+      this.homeRoot.add(invHousing);
+
+      const invCore = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.46, 0.46),
+        new THREE.MeshBasicMaterial({ map: inverterTex })
+      );
+      invCore.position.set(ix, 1.52, -1.57);
+      this.homeRoot.add(invCore);
+    });
+
+    // 20 kWh NEO All-In-One® LiFePO4 Battery Cabinet inside Garage Back Wall (right of dual inverters)
+    const batBody = new THREE.Mesh(new THREE.BoxGeometry(0.76, 1.24, 0.34), furnitureMat);
+    batBody.position.set(4.58, 0.90, -1.62);
+    batBody.castShadow = true;
+    this.homeRoot.add(batBody);
 
     for (let b = 0; b < 5; b++) {
       const bMat = new THREE.MeshBasicMaterial({ color: '#10b981' });
-      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.04), bMat);
-      bar.position.set(-1.25, 0.36 + b * 0.14, 0.90);
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.09, 0.05), bMat);
+      bar.position.set(4.58, 0.52 + b * 0.17, -1.43);
       this.homeRoot.add(bar);
       this.batteryBarMats.push(bMat);
     }
 
-    // B) NEO Clim® Reversible Heat Pump Condenser Unit (Right Vault Bay, with Spinning Fan!)
-    const hpBody = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.84, 0.44), furnitureWhiteMat);
-    hpBody.position.set(1.05, 0.62, 0.55);
-    hpBody.castShadow = true;
-    this.homeRoot.add(hpBody);
-
-    const hpRing = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.05, 24), darkMetalMat);
-    hpRing.rotation.x = Math.PI / 2;
-    hpRing.position.set(0.92, 0.64, 0.77);
-    this.homeRoot.add(hpRing);
-
-    const fanHub = new THREE.Group();
-    fanHub.position.set(0.92, 0.64, 0.80);
-    for (let k = 0; k < 5; k++) {
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.27, 0.02), concreteMat);
-      blade.rotation.z = (k * Math.PI * 2) / 5;
-      blade.position.set(Math.sin(blade.rotation.z) * 0.14, -Math.cos(blade.rotation.z) * 0.14, 0);
-      fanHub.add(blade);
-    }
-    this.heatPumpFan = fanHub;
-    this.homeRoot.add(fanHub);
-
-    // C) Smart Grid Bi-Directional Meter / ATS Board + Right-Side External Utility Grid Pillar
-    const meterBoard = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.56, 0.48), darkMetalMat);
-    meterBoard.position.set(2.36, 0.78, -0.45);
-    this.homeRoot.add(meterBoard);
+    // Smart ATS Meter Box & Exterior Grid Pillar
+    const atsBox = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.56, 0.38), steelMat);
+    atsBox.position.set(5.32, 1.42, -0.95);
+    this.homeRoot.add(atsBox);
     this.meterLedMat = new THREE.MeshBasicMaterial({ color: '#38bdf8' });
-    const meterLed = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.16, 0.24), this.meterLedMat);
-    meterLed.position.set(2.45, 0.84, -0.45);
-    this.homeRoot.add(meterLed);
+    const atsLed = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.16, 0.22), this.meterLedMat);
+    atsLed.position.set(5.19, 1.45, -0.95);
+    this.homeRoot.add(atsLed);
 
-    const gridPillar = new THREE.Mesh(new THREE.BoxGeometry(0.36, 1.22, 0.36), darkSlateMat);
-    gridPillar.position.set(5.12, 0.74, -1.25);
-    gridPillar.castShadow = true;
+    const gridPillar = new THREE.Mesh(new THREE.BoxGeometry(0.34, 1.15, 0.34), steelMat);
+    gridPillar.position.set(6.15, 0.65, -1.25);
     this.homeRoot.add(gridPillar);
     this.gridBeaconMat = new THREE.MeshBasicMaterial({ color: '#64748b' });
-    const gridCap = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.12, 0.4), this.gridBeaconMat);
-    gridCap.position.set(5.12, 1.38, -1.25);
+    const gridCap = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.10, 0.38), this.gridBeaconMat);
+    gridCap.position.set(6.15, 1.25, -1.25);
     this.homeRoot.add(gridCap);
 
-    // -------------------------------------------------------------------------
-    // 4. LEVEL 1: GROUND LIVING/DINING/KITCHEN (y = 1.44..3.06) + RIGHT GARAGE
-    // -------------------------------------------------------------------------
-    const level1Slab = new THREE.Mesh(new THREE.BoxGeometry(4.92, 0.10, 3.66), plasterMat);
-    level1Slab.position.set(-0.1, 1.46, -0.05);
-    level1Slab.castShadow = true;
-    level1Slab.receiveShadow = true;
-    this.homeRoot.add(level1Slab);
-
-    const woodFloorL1 = new THREE.Mesh(new THREE.BoxGeometry(4.65, 0.03, 3.4), warmWoodFloorMat);
-    woodFloorL1.position.set(-0.1, 1.52, -0.05);
-    woodFloorL1.receiveShadow = true;
-    this.homeRoot.add(woodFloorL1);
-
-    // Ground Floor Back & Left Walls (end strictly at Level 2 slab y=3.06)
-    const wallBackL1 = new THREE.Mesh(new THREE.BoxGeometry(4.84, 1.58, 0.14), plasterMat);
-    wallBackL1.position.set(-0.1, 2.28, -1.78);
-    wallBackL1.castShadow = true;
-    this.homeRoot.add(wallBackL1);
-
-    const wallLeftL1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.58, 3.55), plasterMat);
-    wallLeftL1.position.set(-2.45, 2.28, -0.05);
-    this.homeRoot.add(wallLeftL1);
-
-    const wallDividerL1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.58, 2.2), timberSlatMat);
-    wallDividerL1.position.set(-0.08, 2.28, -0.75);
-    this.homeRoot.add(wallDividerL1);
-
-    // Slim dark Level 1 mullions supporting Level 2 slab (height=1.56 -> top 3.06)
-    [-2.42, 0.0, 2.24].forEach((px) => {
-      const col = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.56, 0.12), darkMetalMat);
-      col.position.set(px, 2.28, 1.68);
-      this.homeRoot.add(col);
-    });
-    const glassFrontL1 = new THREE.Mesh(new THREE.BoxGeometry(4.62, 1.52, 0.04), glassMat);
-    glassFrontL1.position.set(-0.1, 2.28, 1.68);
-    this.homeRoot.add(glassFrontL1);
-
-    // Level 1 Furniture: Sofa, Coffee Table, Dining Set, Pendant Light & Kitchen
-    const sofaL = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.34, 0.58), sofaMat);
-    sofaL.position.set(-1.55, 1.70, 0.55);
-    this.homeRoot.add(sofaL);
-
-    const sofaBack = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.42, 0.14), sofaMat);
-    sofaBack.position.set(-1.55, 1.88, 0.80);
-    this.homeRoot.add(sofaBack);
-
-    const coffeeTbl = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.22, 0.44), timberSlatMat);
-    coffeeTbl.position.set(-1.55, 1.64, -0.08);
-    this.homeRoot.add(coffeeTbl);
-
-    const diningTbl = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.06, 0.52), timberSlatMat);
-    diningTbl.position.set(-0.62, 1.98, -0.45);
-    this.homeRoot.add(diningTbl);
-
-    const pendantMat = new THREE.MeshBasicMaterial({ color: '#fde68a' });
-    const pendant = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), pendantMat);
-    pendant.position.set(-0.62, 2.75, -0.45);
-    this.homeRoot.add(pendant);
-    this.lampGlowMats.push(pendantMat);
-
-    // Kitchen Counter + Upper Cabinets + Fridge (Center-Right Level 1)
-    const kitchenBase = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.56, 0.52), furnitureWhiteMat);
-    kitchenBase.position.set(1.12, 1.80, -1.45);
-    this.homeRoot.add(kitchenBase);
-
-    const kitchenTopWall = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.48, 0.36), furnitureWhiteMat);
-    kitchenTopWall.position.set(1.05, 2.66, -1.52);
-    this.homeRoot.add(kitchenTopWall);
-
-    const fridge = new THREE.Mesh(new THREE.BoxGeometry(0.52, 1.32, 0.48), concreteMat);
-    fridge.position.set(2.02, 2.18, -1.42);
-    this.homeRoot.add(fridge);
-
-    // CENTRAL GLOWING HYBRID INVERTER HUB (Signature square centerpiece at (0, 2.68, 1.72))
-    const hubBacking = new THREE.Mesh(new THREE.BoxGeometry(1.06, 1.06, 0.14), darkMetalMat);
-    hubBacking.position.set(0.0, 2.68, 1.68);
-    hubBacking.castShadow = true;
-    this.homeRoot.add(hubBacking);
-
-    const hubFace = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.98, 0.98),
-      new THREE.MeshBasicMaterial({ map: inverterCoreTex })
-    );
-    hubFace.position.set(0.0, 2.68, 1.76);
-    this.homeRoot.add(hubFace);
-
-    this.hubPointLight = new THREE.PointLight('#fbbf24', 1.6, 5.2);
-    this.hubPointLight.position.set(0.0, 2.68, 2.18);
-    this.homeRoot.add(this.hubPointLight);
-
-    // -------------------------------------------------------------------------
-    // 5. INTEGRATED RIGHT CARPORT GARAGE + WHITE EV COUPE + ROOF TERRACE
-    // -------------------------------------------------------------------------
-    const garageFloor = new THREE.Mesh(new THREE.BoxGeometry(3.05, 1.44, 3.66), darkSlateMat);
-    garageFloor.position.set(3.88, 0.78, -0.05);
-    garageFloor.receiveShadow = true;
-    this.homeRoot.add(garageFloor);
-
-    const garageBackWall = new THREE.Mesh(new THREE.BoxGeometry(3.05, 1.62, 0.14), timberSlatMat);
-    garageBackWall.position.set(3.88, 2.28, -1.78);
-    this.homeRoot.add(garageBackWall);
-
-    const garageRightWall = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.62, 3.66), plasterMat);
-    garageRightWall.position.set(5.32, 2.28, -0.05);
-    this.homeRoot.add(garageRightWall);
-
-    // Wall-mounted NEO Bornes Wallbox Charger in Garage
-    const wallbox = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.24), darkMetalMat);
-    wallbox.position.set(5.20, 2.24, 0.35);
+    // NEO Bornes 11 kW Wallbox & Sculpted White EV Coupe Parked inside Garage!
+    const wallbox = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.44, 0.26), steelMat);
+    wallbox.position.set(5.34, 1.32, 0.35);
     this.homeRoot.add(wallbox);
     this.wallboxLedMat = new THREE.MeshBasicMaterial({ color: '#38bdf8' });
-    const wallboxStrip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.10), this.wallboxLedMat);
-    wallboxStrip.position.set(5.12, 2.24, 0.35);
-    this.homeRoot.add(wallboxStrip);
+    const wbStrip = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.22, 0.12), this.wallboxLedMat);
+    wbStrip.position.set(5.23, 1.32, 0.35);
+    this.homeRoot.add(wbStrip);
 
-    // Realistic Sculpted White EV Coupe inside Garage
     const evCoupe = createRealisticEvCoupe();
-    evCoupe.position.set(3.68, 1.50, 0.35);
+    evCoupe.position.set(3.92, 0.25, 0.38);
+    evCoupe.rotation.y = -0.14;
     this.homeRoot.add(evCoupe);
 
     this.evRingMat = new THREE.MeshBasicMaterial({
       color: '#38bdf8',
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.58,
       side: THREE.DoubleSide
     });
-    const evRing = new THREE.Mesh(new THREE.RingGeometry(1.18, 1.30, 32), this.evRingMat);
+    const evRing = new THREE.Mesh(new THREE.RingGeometry(1.22, 1.34, 32), this.evRingMat);
     evRing.rotation.x = -Math.PI / 2;
-    evRing.position.set(3.68, 1.52, 0.35);
+    evRing.position.set(3.92, 0.265, 0.38);
     this.homeRoot.add(evRing);
 
-    // Over-Garage Upper Terrace Slab (y = 3.06..3.16) & Glass Railings
-    const terraceDeck = new THREE.Mesh(new THREE.BoxGeometry(3.16, 0.12, 3.74), plasterMat);
-    terraceDeck.position.set(3.88, 3.10, -0.05);
-    terraceDeck.castShadow = true;
-    terraceDeck.receiveShadow = true;
-    this.homeRoot.add(terraceDeck);
-
-    const tRailFront = new THREE.Mesh(new THREE.BoxGeometry(3.05, 0.52, 0.04), glassMat);
-    tRailFront.position.set(3.85, 3.42, 1.76);
-    this.homeRoot.add(tRailFront);
-    const tRailRight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.52, 3.60), glassMat);
-    tRailRight.position.set(5.36, 3.42, -0.02);
-    this.homeRoot.add(tRailRight);
-
-    // Illuminated Terrace Shrub
-    const tPlanter = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.34, 0.68), concreteMat);
-    tPlanter.position.set(4.65, 3.33, 0.25);
-    this.homeRoot.add(tPlanter);
-    const tBush = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 10), bushMat);
-    tBush.position.set(4.65, 3.66, 0.25);
-    this.homeRoot.add(tBush);
-
     // -------------------------------------------------------------------------
-    // 6. LEVEL 2: UPPER BEDROOM SUITE (y = 3.10..4.42) — TERMINATES CLEANLY UNDER ROOF
+    // 3. LEVEL 2: CANTILEVERED SUITES, LIMESTONE SPA & OVER-GARAGE TERRACE
+    // Slab sits y = 2.38 .. 2.56; Level 2 columns span 2.56 .. 4.58 flush under Main Roof
     // -------------------------------------------------------------------------
-    const level2Slab = new THREE.Mesh(new THREE.BoxGeometry(4.94, 0.12, 3.66), plasterMat);
-    level2Slab.position.set(-0.1, 3.10, -0.05);
-    level2Slab.castShadow = true;
-    level2Slab.receiveShadow = true;
-    this.homeRoot.add(level2Slab);
+    const slabL2 = new THREE.Mesh(new THREE.BoxGeometry(11.4, 0.18, 5.05), slabMat);
+    slabL2.position.set(0.95, 2.46, 0.0);
+    slabL2.castShadow = true;
+    slabL2.receiveShadow = true;
+    this.homeRoot.add(slabL2);
 
-    const woodFloorL2 = new THREE.Mesh(new THREE.BoxGeometry(4.65, 0.03, 3.4), warmWoodFloorMat);
-    woodFloorL2.position.set(-0.1, 3.17, -0.05);
-    this.homeRoot.add(woodFloorL2);
+    // Wrap-around Frameless Glass Balcony Balustrades (front overhang + over-garage deck)
+    const balFront = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.52, 0.04), framingGlassMat);
+    balFront.position.set(0.95, 2.81, 2.46);
+    this.homeRoot.add(balFront);
 
-    // STRICTLY CONSTRAINED HEIGHT: floor 3.16 -> eaves beam 4.34 (height = 1.16, center y = 3.74)
-    // ZERO pillars or walls touch or protrude through the sloped roof (roof underside starts at y=4.37)!
-    const wallBackL2 = new THREE.Mesh(new THREE.BoxGeometry(4.84, 1.16, 0.14), plasterMat);
-    wallBackL2.position.set(-0.1, 3.74, -1.78);
-    this.homeRoot.add(wallBackL2);
+    const balLeft = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.52, 4.9), framingGlassMat);
+    balLeft.position.set(-4.68, 2.81, 0.0);
+    this.homeRoot.add(balLeft);
 
-    const wallLeftL2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.16, 3.55), plasterMat);
-    wallLeftL2.position.set(-2.45, 3.74, -0.05);
-    this.homeRoot.add(wallLeftL2);
+    const balRight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.52, 4.9), framingGlassMat);
+    balRight.position.set(6.58, 2.81, 0.0);
+    this.homeRoot.add(balRight);
 
-    const wallRightL2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.16, 3.55), plasterMat);
-    wallRightL2.position.set(2.26, 3.74, -0.05);
-    this.homeRoot.add(wallRightL2);
-
-    // Interior Suite Divider & Hallway Door
-    const suiteDivider = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.16, 2.4), plasterMat);
-    suiteDivider.position.set(-0.15, 3.74, -0.58);
-    this.homeRoot.add(suiteDivider);
-
-    const hallDoor = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.02, 0.06), timberSlatMat);
-    hallDoor.position.set(0.45, 3.67, -1.68);
-    this.homeRoot.add(hallDoor);
-
-    // Level 2 Front Columns & Eaves Header Beam flush at y = 4.32 (well below roof slope)
-    [-2.42, 0.0, 2.26].forEach((px) => {
-      const colL2 = new THREE.Mesh(new THREE.BoxGeometry(0.11, 1.16, 0.11), darkMetalMat);
-      colL2.position.set(px, 3.74, 1.68);
-      this.homeRoot.add(colL2);
-    });
-    const eavesBeamFront = new THREE.Mesh(new THREE.BoxGeometry(4.92, 0.08, 0.14), darkMetalMat);
-    eavesBeamFront.position.set(-0.1, 4.30, 1.68);
-    this.homeRoot.add(eavesBeamFront);
-
-    // Master Bed, Bedside Lamps, NEO Clim® Split AC & Glass Bath Partition on Level 2
-    const bedFrame = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.28, 1.48), furnitureWhiteMat);
-    bedFrame.position.set(-1.35, 3.31, -0.62);
-    this.homeRoot.add(bedFrame);
-    const headboard = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.55, 0.08), timberSlatMat);
-    headboard.position.set(-1.35, 3.54, -1.36);
-    this.homeRoot.add(headboard);
-
-    const bathGlass = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.08, 1.35), glassMat);
-    bathGlass.position.set(1.05, 3.72, -0.95);
-    this.homeRoot.add(bathGlass);
-
-    const splitAcUpper = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.20, 0.16), furnitureWhiteMat);
-    splitAcUpper.position.set(1.55, 4.10, -1.60);
-    this.homeRoot.add(splitAcUpper);
-
-    // Warm Interior Room Lights
-    const lightFloor1 = new THREE.PointLight('#ffdca8', 1.4, 6.2);
-    lightFloor1.position.set(-0.85, 2.65, 0.1);
-    const lightKitchen = new THREE.PointLight('#ffe4b5', 1.2, 5.2);
-    lightKitchen.position.set(1.15, 2.65, -0.65);
-    const lightFloor2 = new THREE.PointLight('#ffdca8', 1.3, 6.0);
-    lightFloor2.position.set(-0.85, 4.15, -0.2);
-    const lightVault = new THREE.PointLight('#7dd3fc', 0.9, 5.2);
-    lightVault.position.set(-0.1, 1.15, 0.5);
-    const lightGarage = new THREE.PointLight('#bae6fd', 1.0, 5.5);
-    lightGarage.position.set(3.85, 2.75, 0.3);
-
-    this.interiorLights.push(lightFloor1, lightKitchen, lightFloor2, lightVault, lightGarage);
-    this.interiorLights.forEach((l) => this.homeRoot.add(l));
-
-    // -------------------------------------------------------------------------
-    // 7. SYMMETRIC A-FRAME DUAL-PITCHED GABLE ROOF & 15-PANEL BIFACIAL SOLAR ARRAY
-    // -------------------------------------------------------------------------
-    // Ridge z = -0.05, y = 5.72; Eaves y = 4.42 at z = -1.80 & z = +1.70
-    const gableShape = new THREE.Shape();
-    gableShape.moveTo(-1.75, 0);
-    gableShape.lineTo(0, 1.30);
-    gableShape.lineTo(1.75, 0);
-    gableShape.closePath();
-
-    const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: 0.12, bevelEnabled: false });
-    gableGeo.translate(0, 0, -0.06);
-    gableGeo.rotateY(Math.PI / 2);
-
-    // Gable end pediments at Left (-2.44), Center Divider (-0.15) and Right (+2.24), starting cleanly at y = 4.34
-    [-2.44, -0.15, 2.24].forEach((gx) => {
-      const gable = new THREE.Mesh(gableGeo, plasterMat);
-      gable.position.set(gx, 4.34, -0.05);
-      gable.castShadow = true;
-      this.homeRoot.add(gable);
+    // Strict Level 2 Steel Columns (height = 2.02 -> spans y = 2.56 .. 4.58)
+    const colH2 = 2.02;
+    const colY2 = 2.56 + colH2 / 2;
+    [
+      [-3.15, 1.80], [-0.95, 1.80], [0.75, 1.80], [2.42, 1.80],
+      [-3.15, -1.80], [2.42, -1.80]
+    ].forEach(([cx, cz]) => {
+      const col = new THREE.Mesh(new THREE.BoxGeometry(0.11, colH2, 0.11), steelMat);
+      col.position.set(cx, colY2, cz);
+      col.castShadow = true;
+      this.homeRoot.add(col);
     });
 
-    const slopeAngle = Math.atan2(1.30, 1.75); // ~36.6 deg
-    const roofHalfRun = 2.02;
-    const slopeLen = Math.hypot(roofHalfRun, roofHalfRun * (1.30 / 1.75));
-    const slopeMidY = 5.74 - (roofHalfRun * 0.5 * 1.30) / 1.75;
+    // Level 2 Back Walls, Plum Suite Partition & Limestone Spa Partition
+    const backWallL2 = new THREE.Mesh(new THREE.BoxGeometry(5.6, 2.02, 0.14), limestoneMat);
+    backWallL2.position.set(-0.38, 3.57, -1.80);
+    this.homeRoot.add(backWallL2);
 
-    // Front South-Facing Roof Pitch + 15-Panel Framed Solar Array
-    const frontRoofGroup = new THREE.Group();
-    frontRoofGroup.position.set(-0.1, slopeMidY, -0.05 + roofHalfRun * 0.5);
-    frontRoofGroup.rotation.x = slopeAngle;
+    const plumWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.02, 3.5), plumAccentMat);
+    plumWall.position.set(-0.92, 3.57, -0.05);
+    this.homeRoot.add(plumWall);
 
-    const frontRoofDeck = new THREE.Mesh(new THREE.BoxGeometry(5.32, 0.12, slopeLen), roofTileMat);
-    frontRoofDeck.castShadow = true;
-    frontRoofGroup.add(frontRoofDeck);
+    const spaWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.02, 3.5), limestoneMat);
+    spaWall.position.set(0.75, 3.57, -0.05);
+    this.homeRoot.add(spaWall);
 
-    // 3 rows x 5 columns = 15 bifacial framed solar panels
+    // Master Beds in Cantilevered Left & Center Suites
+    [-2.05, -0.1].forEach((bx) => {
+      const bed = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.30, 1.52), furnitureMat);
+      bed.position.set(bx, 2.71, 0.15);
+      this.homeRoot.add(bed);
+      const pillow = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.16, 0.32), slabMat);
+      pillow.position.set(bx, 2.90, -0.35);
+      this.homeRoot.add(pillow);
+    });
+
+    // Sculpted Oval Freestanding Soaking Tub + Backlit Spa Vanity Mirror on Right Suite
+    const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.45, 0.56, 24), furnitureMat);
+    tub.scale.set(1.35, 1.0, 0.82);
+    tub.position.set(1.58, 2.84, 0.42);
+    this.homeRoot.add(tub);
+
+    const vanityMirror = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.04), warmCoveMat);
+    vanityMirror.position.set(1.58, 3.68, -1.68);
+    this.homeRoot.add(vanityMirror);
+
+    const soffitStrip2 = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.035, 0.08), warmCoveMat);
+    soffitStrip2.position.set(-0.38, 4.56, 1.68);
+    this.homeRoot.add(soffitStrip2);
+
+    // -------------------------------------------------------------------------
+    // 4. LEVEL 3: MAIN FLAT ROOF SLAB + ROOFTOP SOLAR PERGOLA & FIRE LOUNGE
+    // Roof slab y = 4.58 .. 4.76; Pergola posts span y = 4.76 .. 5.88
+    // -------------------------------------------------------------------------
+    const roofMainSlab = new THREE.Mesh(new THREE.BoxGeometry(6.45, 0.18, 4.45), slabMat);
+    roofMainSlab.position.set(-0.38, 4.67, 0.0);
+    roofMainSlab.castShadow = true;
+    roofMainSlab.receiveShadow = true;
+    this.homeRoot.add(roofMainSlab);
+
+    // Rooftop Glass Deck Railing (y = 4.76 .. 5.26)
+    const rGlassFront = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.50, 0.04), framingGlassMat);
+    rGlassFront.position.set(-0.38, 5.01, 1.88);
+    this.homeRoot.add(rGlassFront);
+    const rGlassLeft = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.50, 3.76), framingGlassMat);
+    rGlassLeft.position.set(-3.16, 5.01, 0.0);
+    this.homeRoot.add(rGlassLeft);
+    const rGlassRight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.50, 3.76), framingGlassMat);
+    rGlassRight.position.set(2.40, 5.01, 0.0);
+    this.homeRoot.add(rGlassRight);
+
+    // Steel Solar Pergola Structure (-2.05..+0.85, y = 4.76..5.90, z = -1.1..+1.1)
+    [
+      [-1.95, 1.05], [0.75, 1.05],
+      [-1.95, -1.05], [0.75, -1.05]
+    ].forEach(([px, pz]) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.12, 0.10), steelMat);
+      post.position.set(px, 5.32, pz);
+      this.homeRoot.add(post);
+    });
+
+    const pergolaRoofFrame = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.09, 2.35), steelMat);
+    pergolaRoofFrame.position.set(-0.6, 5.91, 0.0);
+    pergolaRoofFrame.castShadow = true;
+    this.homeRoot.add(pergolaRoofFrame);
+
+    // Warm golden LED strips along underside of pergola beam (as seen in reference image!)
+    const pergolaLedF = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.03, 0.06), warmCoveMat);
+    pergolaLedF.position.set(-0.6, 5.85, 1.12);
+    this.homeRoot.add(pergolaLedF);
+    const pergolaLedB = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.03, 0.06), warmCoveMat);
+    pergolaLedB.position.set(-0.6, 5.85, -1.12);
+    this.homeRoot.add(pergolaLedB);
+
+    // 12 Integrated Bifacial Solar PV Panels atop Pergola Canopy (3 rows x 4 cols)
     for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 5; col++) {
-        const px = -1.78 + col * 0.89;
-        const pz = -0.68 + row * 0.68;
-
-        const panelFrame = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.04, 0.63), darkMetalMat);
-        panelFrame.position.set(px, 0.08, pz);
-        frontRoofGroup.add(panelFrame);
-
-        const pvCell = new THREE.Mesh(new THREE.BoxGeometry(0.79, 0.05, 0.58), solarMat);
-        pvCell.position.set(px, 0.085, pz);
-        frontRoofGroup.add(pvCell);
+      for (let col = 0; col < 4; col++) {
+        const pv = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.045, 0.68), solarMat);
+        pv.position.set(-1.62 + col * 0.68, 5.98, -0.72 + row * 0.72);
+        this.homeRoot.add(pv);
       }
     }
-    this.homeRoot.add(frontRoofGroup);
 
-    // Rear Roof Pitch
-    const rearRoofDeck = new THREE.Mesh(new THREE.BoxGeometry(5.32, 0.12, slopeLen), roofTileMat);
-    rearRoofDeck.position.set(-0.1, slopeMidY, -0.05 - roofHalfRun * 0.5);
-    rearRoofDeck.rotation.x = -slopeAngle;
-    rearRoofDeck.castShadow = true;
-    this.homeRoot.add(rearRoofDeck);
+    // Rooftop Fire-Pit Bowl Lounge on Right Half of Roof Deck (1.55, 4.88, 0.25)
+    const fireBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.26, 0.22, 24), basaltMat);
+    fireBowl.position.set(1.55, 4.87, 0.25);
+    this.homeRoot.add(fireBowl);
+    const flameMat = new THREE.MeshBasicMaterial({ color: '#fb923c' });
+    const flame = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.34, 12), flameMat);
+    flame.position.set(1.55, 5.08, 0.25);
+    this.homeRoot.add(flame);
 
-    // Clean Horizontal Ridge Cap Beam uniting both slopes
-    const ridgeCap = new THREE.Mesh(new THREE.BoxGeometry(5.36, 0.11, 0.16), darkMetalMat);
-    ridgeCap.position.set(-0.1, 5.75, -0.05);
-    this.homeRoot.add(ridgeCap);
+    // Warm Interior Suite & Spa Illumination Lights
+    const l1 = new THREE.PointLight('#ffcf87', 1.4, 6.2);
+    l1.position.set(-1.7, 2.0, 0.3);
+    const l2 = new THREE.PointLight('#ffe0a6', 1.5, 5.8);
+    l2.position.set(1.15, 2.05, 0.25);
+    const l3 = new THREE.PointLight('#ffcf87', 1.35, 6.0);
+    l3.position.set(-1.5, 4.15, 0.1);
+    const l4 = new THREE.PointLight('#ffe4b5', 1.4, 5.5);
+    l4.position.set(1.55, 4.1, 0.1);
+    const l5 = new THREE.PointLight('#7dd3fc', 1.25, 5.8);
+    l5.position.set(3.95, 2.05, 0.2);
+
+    this.interiorLights.push(l1, l2, l3, l4, l5);
+    this.interiorLights.forEach((l) => this.homeRoot.add(l));
 
     this.scene.add(this.homeRoot);
   }
@@ -938,7 +841,7 @@ export class HomeStudio3D {
   buildEnergyCircuits() {
     this.circuitsGroup = new THREE.Group();
 
-    const makeCircuit = (key, rawPoints, colorHex, count, radius = 0.036, secondOffset = 0) => {
+    const makeCircuit = (key, rawPoints, colorHex, count, radius = 0.036) => {
       const curve = new THREE.CatmullRomCurve3(
         rawPoints.map((p) => new THREE.Vector3(...p)),
         false,
@@ -952,20 +855,6 @@ export class HomeStudio3D {
       });
       const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 8, false), tubeMat);
       this.circuitsGroup.add(tube);
-
-      // Optional twin parallel glowing neon trace for dramatic energy spine look
-      let twinMat = null;
-      if (secondOffset !== 0) {
-        const twinCurve = new THREE.CatmullRomCurve3(
-          rawPoints.map(([x, y, z]) => new THREE.Vector3(x + secondOffset, y, z)),
-          false,
-          'catmullrom',
-          0.12
-        );
-        twinMat = tubeMat;
-        const twinTube = new THREE.Mesh(new THREE.TubeGeometry(twinCurve, 48, radius * 0.65, 6, false), twinMat);
-        this.circuitsGroup.add(twinTube);
-      }
 
       const beadGeo = new THREE.SphereGeometry(radius * 2.1, 10, 10);
       const beadMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.96 });
@@ -987,92 +876,91 @@ export class HomeStudio3D {
       };
     };
 
-    // 1. Rooftop Solar Panels -> Central Hybrid Inverter Hub (twin golden solar feed)
+    // 1. Rooftop Solar Pergola -> Rear Spine -> Garage Dual Hybrid Inverters
     makeCircuit(
       'solarToInverter',
       [
-        [-0.45, 4.78, 1.38],
-        [-0.45, 4.25, 1.72],
-        [-0.08, 3.65, 1.74],
-        [0.0, 3.16, 1.74]
+        [0.45, 5.92, -0.85],
+        [0.85, 4.78, -1.55],
+        [2.32, 4.55, -1.72],
+        [2.32, 1.85, -1.72],
+        [3.38, 1.55, -1.62]
       ],
       '#facc15',
-      6,
-      0.038,
-      0.11
+      7,
+      0.038
     );
 
-    // 2. Central Inverter Hub <-> 20 kWh Basement Battery Bank (Reversible!)
+    // 2. Garage Dual Inverters <-> 20 kWh Garage Battery Cabinet (Reversible!)
     makeCircuit(
       'inverterToBattery',
       [
-        [-0.08, 2.18, 1.74],
-        [-0.08, 1.15, 1.74],
-        [-0.42, 0.72, 1.15],
-        [-0.74, 0.72, 0.85]
+        [3.72, 1.48, -1.55],
+        [4.15, 1.48, -1.55],
+        [4.58, 1.18, -1.48]
       ],
       '#10b981',
-      6,
-      0.038,
-      -0.09
-    );
-
-    // 3. Central Inverter Hub -> Lower NEO Clim® Heat Pump
-    makeCircuit(
-      'inverterToHeatPump',
-      [
-        [0.14, 2.18, 1.74],
-        [0.14, 0.78, 1.74],
-        [0.45, 0.64, 1.10],
-        [0.64, 0.64, 0.78]
-      ],
-      '#38bdf8',
       5,
-      0.032
+      0.038
     );
 
-    // 4. Central Inverter Hub -> Living/Dining & Upper Master Suite
-    makeCircuit(
-      'inverterToLiving',
-      [
-        [-0.48, 2.68, 1.72],
-        [-1.35, 2.15, 0.65],
-        [-1.35, 3.35, 0.65],
-        [1.45, 4.05, -1.45]
-      ],
-      '#fde047',
-      7,
-      0.032
-    );
-
-    // 5. Central Inverter Hub -> Right Carport Garage Wallbox -> White EV Coupe
+    // 3. Garage Dual Inverters -> Wallbox Charger -> Parked White EV Coupe
     makeCircuit(
       'inverterToEv',
       [
-        [0.48, 2.55, 1.72],
-        [2.25, 2.15, 0.95],
-        [5.12, 2.24, 0.35],
-        [4.88, 1.56, 0.35],
-        [3.68, 1.56, 0.35]
+        [3.72, 1.22, -1.55],
+        [5.22, 1.22, -1.15],
+        [5.22, 1.32, 0.35],
+        [4.85, 0.32, 0.38],
+        [3.92, 0.32, 0.38]
       ],
       '#38bdf8',
-      8,
+      7,
       0.036
     );
 
-    // 6. External Utility Grid Pillar <-> Smart Grid Meter Board <-> Central Inverter Hub
+    // 4. Dual Inverters -> Ground Floor Dining Pavilion, Floating Stair & Hearth
+    makeCircuit(
+      'inverterToGround',
+      [
+        [3.00, 1.32, -1.55],
+        [2.20, 0.32, -1.45],
+        [1.15, 0.32, 0.28],
+        [-0.32, 0.32, 0.55],
+        [-2.15, 0.45, 0.72]
+      ],
+      '#fbbf24',
+      7,
+      0.034
+    );
+
+    // 5. Dual Inverters -> Level 2 Limestone Spa & Cantilevered Suites
+    makeCircuit(
+      'inverterToUpper',
+      [
+        [3.00, 1.68, -1.55],
+        [2.25, 2.52, -1.45],
+        [1.58, 2.58, 0.42],
+        [-0.1, 2.58, 0.15],
+        [-2.05, 2.58, 0.15]
+      ],
+      '#38bdf8',
+      7,
+      0.034
+    );
+
+    // 6. Exterior Utility Grid Pillar <-> Smart ATS Meter <-> Dual Inverters
     makeCircuit(
       'gridToMeter',
       [
-        [5.12, 1.22, -1.25],
-        [5.12, 0.25, -1.25],
-        [2.48, 0.25, -0.45],
-        [2.42, 0.78, -0.45],
-        [0.36, 2.45, 1.68]
+        [6.15, 1.05, -1.25],
+        [5.32, 1.38, -0.95],
+        [4.55, 1.48, -1.55],
+        [3.72, 1.48, -1.55]
       ],
       '#f59e0b',
-      7,
-      0.038
+      6,
+      0.036
     );
 
     this.scene.add(this.circuitsGroup);
@@ -1291,54 +1179,47 @@ export class HomeStudio3D {
     }
     this.controls.update();
 
-    // 2. Spin the lower-vault Heat Pump fan continuously
-    if (this.heatPumpFan) {
-      this.heatPumpFan.rotation.z -= dt * 7.5;
-    }
-
-    // 3. X-Ray Cutaway Wall Opacity
+    // 2. X-Ray Cutaway Wall/Slab Opacity
     const targetWallOpacity = xray ? 0.24 : 0.96;
     this.xrayTargets.forEach((m) => {
       m.opacity += (targetWallOpacity - m.opacity) * Math.min(1, dt * 8);
     });
 
-    // 4. Day vs Evening Lighting & Warm Room Illumination
+    // 3. Day vs Evening Harbor Atmosphere & Warm Suite Lighting
     const isDay = mode === 'day';
     this.sunOrb.visible = isDay;
     this.moonOrb.visible = !isDay;
 
-    this.sunLight.intensity += ((isDay ? 2.4 : 0.85) - this.sunLight.intensity) * Math.min(1, dt * 6);
-    this.hemiLight.intensity += ((isDay ? 1.5 : 0.98) - this.hemiLight.intensity) * Math.min(1, dt * 6);
+    this.sunLight.intensity += ((isDay ? 2.25 : 0.72) - this.sunLight.intensity) * Math.min(1, dt * 6);
+    this.hemiLight.intensity += ((isDay ? 1.45 : 0.95) - this.hemiLight.intensity) * Math.min(1, dt * 6);
     this.rimLight.color.set(isDay ? '#38bdf8' : mode === 'battery' ? '#34d399' : '#f59e0b');
     this.sunLight.color.set(isDay ? '#fff8eb' : '#93c5fd');
 
-    const targetInterior = isDay ? 0.85 : 2.35;
+    const targetInterior = isDay ? 1.05 : 2.35;
     this.interiorLights.forEach((l) => {
       l.intensity += (targetInterior - l.intensity) * Math.min(1, dt * 6);
     });
-    this.hubPointLight.intensity = 1.4 + 0.45 * Math.sin(elapsed * 4.5);
-    this.hubPointLight.color.set(mode === 'battery' ? '#34d399' : mode === 'grid' ? '#f59e0b' : '#fbbf24');
 
-    // 5. Configure 6 Dual-Color Circuits by Mode
+    // 4. Configure 6 Energy Circuits by Mode
     const cSolar = this.circuits.solarToInverter;
     const cBat = this.circuits.inverterToBattery;
-    const cHp = this.circuits.inverterToHeatPump;
-    const cLiv = this.circuits.inverterToLiving;
     const cEv = this.circuits.inverterToEv;
+    const cGround = this.circuits.inverterToGround;
+    const cUpper = this.circuits.inverterToUpper;
     const cGrid = this.circuits.gridToMeter;
 
     if (mode === 'day') {
-      cSolar.active = true; cSolar.dir = 1; cSolar.speed = 0.50;
+      cSolar.active = true; cSolar.dir = 1; cSolar.speed = 0.48;
       cSolar.tubeMat.color.set('#facc15'); cSolar.beadMat.color.set('#fde047');
 
       cBat.active = true; cBat.dir = 1; cBat.speed = 0.36;
-      cBat.tubeMat.color.set('#f59e0b'); cBat.beadMat.color.set('#fde047');
+      cBat.tubeMat.color.set('#10b981'); cBat.beadMat.color.set('#34d399');
 
-      cHp.tubeMat.color.set('#38bdf8'); cHp.beadMat.color.set('#7dd3fc');
-      cLiv.tubeMat.color.set('#fbbf24'); cLiv.beadMat.color.set('#fde047');
       cEv.tubeMat.color.set('#38bdf8'); cEv.beadMat.color.set('#6ee7b7');
+      cGround.tubeMat.color.set('#fbbf24'); cGround.beadMat.color.set('#fde047');
+      cUpper.tubeMat.color.set('#38bdf8'); cUpper.beadMat.color.set('#7dd3fc');
 
-      cGrid.active = true; cGrid.dir = -1; cGrid.speed = 0.25; // Surplus export to Grid
+      cGrid.active = true; cGrid.dir = -1; cGrid.speed = 0.24; // Surplus export to Grid
       cGrid.tubeMat.color.set('#38bdf8'); cGrid.beadMat.color.set('#7dd3fc');
 
       this.meterLedMat.color.set('#38bdf8');
@@ -1347,13 +1228,13 @@ export class HomeStudio3D {
     } else if (mode === 'battery') {
       cSolar.active = false;
 
-      // Discharging Battery -> Central Hybrid Inverter Hub
+      // 20 kWh Battery DISCHARGING into Garage Dual Hybrid Inverters
       cBat.active = true; cBat.dir = -1; cBat.speed = 0.54;
       cBat.tubeMat.color.set('#10b981'); cBat.beadMat.color.set('#6ee7b7');
 
-      cHp.tubeMat.color.set('#34d399'); cHp.beadMat.color.set('#6ee7b7');
-      cLiv.tubeMat.color.set('#34d399'); cLiv.beadMat.color.set('#6ee7b7');
       cEv.tubeMat.color.set('#34d399'); cEv.beadMat.color.set('#6ee7b7');
+      cGround.tubeMat.color.set('#34d399'); cGround.beadMat.color.set('#6ee7b7');
+      cUpper.tubeMat.color.set('#34d399'); cUpper.beadMat.color.set('#6ee7b7');
 
       // Zero utility grid usage!
       cGrid.active = false;
@@ -1364,15 +1245,14 @@ export class HomeStudio3D {
     } else {
       cSolar.active = false;
 
-      // Utility Grid actively powering Inverter -> House + Trickle reserve
       cBat.active = true; cBat.dir = 1; cBat.speed = 0.22;
       cBat.tubeMat.color.set('#60a5fa'); cBat.beadMat.color.set('#93c5fd');
 
-      cHp.tubeMat.color.set('#fb923c'); cHp.beadMat.color.set('#fdba74');
-      cLiv.tubeMat.color.set('#fb923c'); cLiv.beadMat.color.set('#fdba74');
       cEv.tubeMat.color.set('#f59e0b'); cEv.beadMat.color.set('#fde047');
+      cGround.tubeMat.color.set('#fb923c'); cGround.beadMat.color.set('#fdba74');
+      cUpper.tubeMat.color.set('#fb923c'); cUpper.beadMat.color.set('#fdba74');
 
-      cGrid.active = true; cGrid.dir = 1; cGrid.speed = 0.52;
+      cGrid.active = true; cGrid.dir = 1; cGrid.speed = 0.50;
       cGrid.tubeMat.color.set('#f59e0b'); cGrid.beadMat.color.set('#fbbf24');
 
       this.meterLedMat.color.set('#f59e0b');
@@ -1381,7 +1261,7 @@ export class HomeStudio3D {
     }
 
     Object.values(this.circuits).forEach((c) => {
-      c.tubeMat.opacity = c.active ? 0.44 : 0.06;
+      c.tubeMat.opacity = c.active ? 0.42 : 0.06;
       c.beads.forEach((b) => {
         b.mesh.visible = c.active;
         if (!c.active) return;
@@ -1391,7 +1271,6 @@ export class HomeStudio3D {
       });
     });
 
-    // Battery LED stack SoC indicator
     const fillCount = mode === 'day' ? 5 : mode === 'battery' ? 4 : 2;
     this.batteryBarMats.forEach((bm, idx) => {
       if (idx < fillCount) {
@@ -1406,7 +1285,7 @@ export class HomeStudio3D {
     this.plinthBorderMat.color.set(accentHex);
     this.wallboxLedMat.color.set(accentHex);
 
-    // 6. Project 3D Hotspots
+    // 5. Project 2-Line Floating Callouts
     if (this.hotspotPins && this.canvas) {
       const cw = this.canvas.clientWidth;
       const ch = this.canvas.clientHeight;
@@ -1420,7 +1299,7 @@ export class HomeStudio3D {
         }
         const x = (proj.x * 0.5 + 0.5) * cw;
         const y = (-proj.y * 0.5 + 0.5) * ch;
-        hp.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`;
+        hp.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -100%)`;
         hp.el.style.opacity = '1';
         hp.el.style.pointerEvents = 'auto';
       });

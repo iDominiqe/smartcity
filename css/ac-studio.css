@@ -766,8 +766,52 @@ body.ac-studio-open {
 }
 
 #home-studio-modal .ac-hotspot-pin {
+  padding: 4px 9px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.84);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+#home-studio-modal .ac-hotspot-pin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 1px;
+  height: 9px;
+  background: rgba(251, 191, 36, 0.65);
+  pointer-events: none;
+}
+
+#home-studio-modal .ac-hotspot-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  flex-shrink: 0;
+}
+
+.ac-hotspot-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.15;
+}
+
+.ac-hotspot-title {
   font-size: 0.62rem;
-  padding: 2px 7px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ac-hotspot-sub {
+  font-size: 0.47rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #cbd5e1;
 }
 
 .home-telemetry-bar {

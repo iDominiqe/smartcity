@@ -1,15 +1,15 @@
 /**
  * Localized copy, live Day / Battery / Grid telemetry, 8 technical parameter cards,
- * camera presets, and 3D hotspot anchors for the
- * NEO Home® 360° 3D Smart Solar Home, Inverter & Battery Studio.
+ * camera presets, and two-line 3D architectural callouts for the
+ * NEO Home® "Glass House on Harbor Lane" 360° 3D Studio.
  */
 
 export const HOME_STUDIO_TEXT = {
   en: {
     badge: 'NEO HOME® RE2020 · 360° 3D SOLAR & ENERGY STATION',
-    title: 'Interactive 3D Smart Solar Home — Inverter, Battery & Grid Simulator',
-    subtitle: 'Rotate 360° around the 3-level cutaway villa · Switch Day Solar, Night Battery & Utility Grid circuits',
-    dragHint: '↻ Drag 360° to inspect · Scroll to zoom · Toggle X-Ray Cutaway or click specs to zoom',
+    title: 'The Glass House Solar Villa — Dual Inverters, Garage EV & Battery',
+    subtitle: 'Rotate 360° around the cantilevered glass house · Switch Day Solar, Night Battery & Utility Grid',
+    dragHint: '↻ Drag 360° to inspect · Scroll to zoom · Toggle X-Ray Cutaway or click callouts',
     closeBtn: '✕ Close Studio',
     requestQuote: 'Configure My Home',
     modeDay: '☀️ Day · Sunny Solar',
@@ -28,19 +28,19 @@ export const HOME_STUDIO_TEXT = {
     telemetryGrid: 'Grid Supply',
     legendSolar: 'Solar PV DC',
     legendBattery: '20 kWh Battery',
-    legendLoads: 'Smart Rooms & EV',
+    legendLoads: 'Living, Spa & EV',
     legendGrid: 'Utility Grid AC',
     modeStatus: {
-      day: '☀️ DAYTIME SOLAR PEAK · PV PANELS POWERING HOME, CHARGING 20 kWh BATTERY & EV',
-      battery: '🔋 AUTONOMOUS EVENING · 20 kWh BATTERY & INVERTER POWERING HOME (0 kW GRID)',
-      grid: '⚡ EVENING UTILITY GRID · EXTERNAL 230V/400V GRID + RESERVE CHARGING VIA ATS'
+      day: '☀️ DAYTIME SOLAR · PERGOLA PV POWERS VILLA, GARAGE EV & CHARGING DUAL INVERTERS',
+      battery: '🔋 AUTONOMOUS EVENING · GARAGE 20 kWh BATTERY POWERS VILLA (0 kW GRID)',
+      grid: '⚡ EVENING UTILITY GRID · 230V/400V GRID + NIGHT BATTERY RESERVE VIA ATS'
     }
   },
   fr: {
     badge: 'NEO HOME® RE2020 · STATION SOLAIRE & DOMOTIQUE 3D 360°',
-    title: 'Maison Solaire Intelligente 3D — Onduleur, Batterie & Réseau',
-    subtitle: 'Pivotez à 360° autour de la villa 3 niveaux · Basculez Solaire Jour, Batterie Soir & Réseau',
-    dragHint: '↻ Glissez à 360° · Molette zoom · Activez la vue Rayons-X ou cliquez sur une fiche',
+    title: 'Villa Solaire Vitrée — Double Onduleur, Garage VE & Batterie',
+    subtitle: 'Pivotez à 360° autour de la villa en porte-à-faux · Solaire Jour, Batterie Soir & Réseau',
+    dragHint: '↻ Glissez à 360° · Molette zoom · Activez la vue Rayons-X ou cliquez un repère',
     closeBtn: '✕ Fermer le Studio',
     requestQuote: 'Configurer Ma Maison',
     modeDay: '☀️ Jour · Solaire Actif',
@@ -50,7 +50,7 @@ export const HOME_STUDIO_TEXT = {
     autoSpin: '↻ Rotation 360°',
     camOverview: 'Villa 3/4',
     camStation: 'Onduleur & Batterie',
-    camRoof: 'Toiture Solaire',
+    camRoof: 'Pergola Solaire',
     camInterior: 'Pièces en Coupe',
     camEv: 'Garage & VE',
     telemetryIndoor: 'Intérieur',
@@ -59,19 +59,19 @@ export const HOME_STUDIO_TEXT = {
     telemetryGrid: 'Réseau Électrique',
     legendSolar: 'Flux Solaire PV',
     legendBattery: 'Batterie 20 kWh',
-    legendLoads: 'Pièces & Garage VE',
+    legendLoads: 'Salon, Spa & VE',
     legendGrid: 'Réseau 230V/400V',
     modeStatus: {
-      day: '☀️ JOUR ENSOLEILLÉ · LE SOLAIRE ALIMENTE LA MAISON, CHARGE LA BATTERIE 20 kWh & LE VE',
-      battery: '🔋 SOIRÉE AUTONOME · LA BATTERIE 20 kWh ALIMENTE TOUTE LA MAISON (0 kW RÉSEAU)',
-      grid: '⚡ SOIRÉE SUR RÉSEAU · ALIMENTATION RÉSEAU 230V/400V & MAINTIEN BATTERIE VIA ATS'
+      day: '☀️ JOUR ENSOLEILLÉ · LA PERGOLA PV ALIMENTE VILLA, GARAGE VE & BATTERIE',
+      battery: '🔋 SOIRÉE AUTONOME · LA BATTERIE GARAGE 20 kWh ALIMENTE LA VILLA (0 kW RÉSEAU)',
+      grid: '⚡ SOIRÉE SUR RÉSEAU · RÉSEAU PUBLIC 230V/400V & MAINTIEN BATTERIE VIA ATS'
     }
   },
   bg: {
     badge: 'NEO HOME® RE2020 · 360° 3D СОЛАРЕН ДОМ И СТАНЦИЯ',
-    title: 'Интерактивен 3D Умен Соларен Дом — Инвертор, Батерия и Мрежа',
-    subtitle: 'Въртете на 360° триетажната вила в разрез · Превключвайте Ден / Батерия / Електромрежа',
-    dragHint: '↻ Плъзнете за 360° · Скрол за приближаване · X-Ray разрез или клик върху параметър',
+    title: 'Стъклена Соларна Вила — Два Инвертора, Гараж с ЕМ и Батерия',
+    subtitle: 'Въртете на 360° конзолната вила · Превключвайте Слънчев Ден, Батерия и Мрежа',
+    dragHint: '↻ Плъзнете за 360° · Скрол за приближаване · X-Ray разрез или избор на етикет',
     closeBtn: '✕ Затвори Студиото',
     requestQuote: 'Конфигурирай Дом',
     modeDay: '☀️ Ден · Слънчево',
@@ -80,9 +80,9 @@ export const HOME_STUDIO_TEXT = {
     xrayBtn: '🔍 X-Ray Разрез',
     autoSpin: '↻ 360° Въртене',
     camOverview: 'Общ Изглед',
-    camStation: 'Инвертор и Батерия',
-    camRoof: 'Соларен Покрив',
-    camInterior: 'Стаи на Живо',
+    camStation: 'Инвертори и Батерия',
+    camRoof: 'Соларна Пергола',
+    camInterior: 'Интериор на Живо',
     camEv: 'EV Гараж',
     telemetryIndoor: 'Вътре',
     telemetrySolar: 'Солар PV',
@@ -90,19 +90,19 @@ export const HOME_STUDIO_TEXT = {
     telemetryGrid: 'Електромрежа',
     legendSolar: 'Соларен Ток DC',
     legendBattery: 'Батерия 20 kWh',
-    legendLoads: 'Стаи & Електромобил',
+    legendLoads: 'Стаи, Спа & ЕМ',
     legendGrid: 'Външна Мрежа 230V',
     modeStatus: {
-      day: '☀️ СЛЪНЧЕВ ДЕН · ПАНЕЛИТЕ ЗАХРАНВАТ ДОМА, ЗАРЕЖДАТ БАТЕРИЯТА 20 kWh И КОЛАТА',
-      battery: '🔋 АВТОНОМНА ВЕЧЕР · МОЩНАТА БАТЕРИЯ 20 kWh ЗАХРАНВА ДОМА (0 kW ОТ МРЕЖАТА)',
-      grid: '⚡ ВЕЧЕР ОТ МРЕЖАТА · ЗАХРАНВАНЕ ОТ 230V/400V МРЕЖА И ТАБЛО ПРЕЗ ATS'
+      day: '☀️ СЛЪНЧЕВ ДЕН · ПЕРГОЛАТА ЗАХРАНВА ВИЛАТА, ГАРАЖА И ЗАРЕЖДА БАТЕРИЯТА',
+      battery: '🔋 АВТОНОМНА ВЕЧЕР · БАТЕРИЯТА 20 kWh В ГАРАЖА ЗАХРАНВА ДОМА (0 kW МРЕЖА)',
+      grid: '⚡ ВЕЧЕР ОТ МРЕЖАТА · ЗАХРАНВАНЕ ОТ 230V/400V МРЕЖА И ЩИТ ATS'
     }
   },
   ro: {
     badge: 'NEO HOME® RE2020 · STAȚIE SOLARĂ INTELIGENTĂ 3D 360°',
-    title: 'Casă Solară Inteligentă 3D — Invertor, Baterie și Rețea',
-    subtitle: 'Rotiți la 360° vila pe 3 niveluri secționate · Comutați Zi Solară, Baterie & Rețea',
-    dragHint: '↻ Trageți 360° · Scroll pentru zoom · Mod X-Ray sau click pe orice parametru',
+    title: 'Vilă Solară din Sticlă — Invertoare Duale, Garaj EV & Baterie',
+    subtitle: 'Rotiți la 360° vila în consolă · Comutați Zi Solară, Baterie Seară & Rețea',
+    dragHint: '↻ Trageți 360° · Scroll pentru zoom · Mod X-Ray sau click pe etichete',
     closeBtn: '✕ Închide Studioul',
     requestQuote: 'Configurează Casa',
     modeDay: '☀️ Zi · Solar Activ',
@@ -111,8 +111,8 @@ export const HOME_STUDIO_TEXT = {
     xrayBtn: '🔍 Secțiune X-Ray',
     autoSpin: '↻ Rotire 360°',
     camOverview: 'Vilă 3/4',
-    camStation: 'Invertor & Baterie',
-    camRoof: 'Acoperiș Solar',
+    camStation: 'Invertoare & Baterie',
+    camRoof: 'Pergolă Solară',
     camInterior: 'Camere Interioare',
     camEv: 'Garaj & EV',
     telemetryIndoor: 'Interior',
@@ -121,11 +121,11 @@ export const HOME_STUDIO_TEXT = {
     telemetryGrid: 'Rețea Electrică',
     legendSolar: 'Flux Solar PV',
     legendBattery: 'Baterie 20 kWh',
-    legendLoads: 'Camere & Garaj EV',
+    legendLoads: 'Living, Spa & EV',
     legendGrid: 'Rețea 230V/400V',
     modeStatus: {
-      day: '☀️ ZI ÎNSORITĂ · PANOURILE ALIMENTEAZĂ CASA, ÎNCARCĂ BATERIA 20 kWh ȘI MAȘINA EV',
-      battery: '🔋 SEARĂ AUTONOMĂ · BATERIA DE 20 kWh ALIMENTEAZĂ ÎNTREAGA CASĂ (0 kW REȚEA)',
+      day: '☀️ ZI ÎNSORITĂ · PERGOLA SOLARĂ ALIMENTEAZĂ VILA, GARAJUL EV ȘI BATERIA',
+      battery: '🔋 SEARĂ AUTONOMĂ · BATERIA DE 20 kWh DIN GARAJ ALIMENTEAZĂ VILA (0 kW REȚEA)',
       grid: '⚡ SEARĂ DIN REȚEA · ALIMENTARE DIN REȚEAUA 230V/400V PRIN TABLOUL ATS'
     }
   }
@@ -136,21 +136,21 @@ export const HOME_MODE_TELEMETRY = {
     indoor: '22.5°C',
     solar: '9.6 kW Peak',
     battery: '88% (+3.8 kW)',
-    grid: '−2.1 kW · 234 V',
+    grid: '−2.1 kW · 234V',
     batteryFill: 0.88
   },
   battery: {
     indoor: '22.0°C',
     solar: '0.0 kW',
-    battery: '82% (4.6 kW Out)',
-    grid: '0.0 kW · 230 V',
+    battery: '82% (4.6 kW)',
+    grid: '0.0 kW · 230V',
     batteryFill: 0.82
   },
   grid: {
     indoor: '21.5°C',
     solar: '0.0 kW',
     battery: '24% (+1.5 kW)',
-    grid: '5.7 kW · 228 V',
+    grid: '5.7 kW · 228V',
     batteryFill: 0.24
   }
 };
@@ -161,17 +161,17 @@ export const HOME_LEFT_SPECS = [
     icon: '☀️',
     camPreset: 'roof',
     label: {
-      en: 'Bifacial Solar Roof',
-      fr: 'Toiture Solaire Bifaciale',
-      bg: 'Бифациален Соларен Покрив',
-      ro: 'Acoperiș Solar Bifacial'
+      en: 'Rooftop Solar Pergola',
+      fr: 'Pergola Solaire & Lounge',
+      bg: 'Покривна Соларна Пергола',
+      ro: 'Pergolă Solară Acoperiș'
     },
-    value: '9.6 kWp · 15 Panels',
+    value: '9.6 kWp · 12 Panels',
     detail: {
-      en: 'Flush A-frame solar pitch generating ~14,200 kWh/yr directly into central hybrid hub',
-      fr: '15 panneaux intégrés sur toiture à pignons produisant ~14 200 kWh/an vers l’onduleur',
-      bg: '15 вградени соларни панела на двускатен покрив (~14 200 kWh/год) към инвертора',
-      ro: '15 panouri integrate pe acoperiș în două ape (~14.200 kWh/an) către hub-ul central'
+      en: 'Roof deck steel solar pergola with warm LEDs, fire lounge & bifacial PV roof canopy',
+      fr: 'Pergola acier & 12 panneaux solaires bifaciaux sur terrasse avec brasero et LEDs',
+      bg: 'Стоманена соларна пергола с 12 панела, топло LED осветление и огнище на покрива',
+      ro: 'Pergolă din oțel cu 12 panouri bifaciale, iluminat LED cald și zonă fire lounge'
     }
   },
   {
@@ -179,17 +179,17 @@ export const HOME_LEFT_SPECS = [
     icon: '🔌',
     camPreset: 'station',
     label: {
-      en: 'Central Hybrid Inverter',
-      fr: 'Onduleur Central MPPT',
-      bg: 'Централен MPPT Инвертор',
-      ro: 'Invertor Central Hibrid'
+      en: 'Dual Hybrid Inverters',
+      fr: 'Double Onduleur Garage',
+      bg: 'Двойни MPPT Инвертори',
+      ro: 'Invertoare Hibride Duale'
     },
-    value: '10 kW · <10 ms UPS',
+    value: '2× 10 kW · <10 ms UPS',
     detail: {
-      en: 'Glowing spine energy core routing PV, 20 kWh vault storage, rooms, heat pump & EV',
-      fr: 'Cœur énergétique central distribuant PV, batterie, pièces, pompe à chaleur & VE',
-      bg: 'Централно ядро, управляващо солара, батерията 20 kWh, термопомпата и гаража',
-      ro: 'Nod energetic central care dirijează panourile, bateria, pompa de căldură și garajul'
+      en: 'Mounted inside the attached EV garage distributing power between roof, battery & suites',
+      fr: 'Installés sur le mur technique du garage VE pour répartir le courant jour/nuit',
+      bg: 'Монтирани в гаража за интелигентно разпределение между покрива, батерията и етажите',
+      ro: 'Montate în garajul EV pentru distribuție optimă între acoperiș, baterie și camere'
     }
   },
   {
@@ -197,17 +197,17 @@ export const HOME_LEFT_SPECS = [
     icon: '🔋',
     camPreset: 'station',
     label: {
-      en: 'Basement Battery Vault',
-      fr: 'Batterie Sous-Sol 20 kWh',
-      bg: 'Подземна Батерия 20 kWh',
-      ro: 'Baterie Subsol 20 kWh'
+      en: 'Garage Battery Bank',
+      fr: 'Batterie Garage 20 kWh',
+      bg: 'Батерия 20 kWh в Гаража',
+      ro: 'Baterie Garaj 20 kWh'
     },
     value: '20.48 kWh · LiFePO₄',
     detail: {
-      en: 'High-power storage unit in lower vault providing zero-grid evening autonomy',
-      fr: 'Stockage LiFePO₄ haute capacité assurant l’autonomie complète en soirée',
-      bg: 'Мощен LiFePO₄ блок на долното ниво за пълна нощна автономия без мрежа',
-      ro: 'Unitate de stocare LiFePO₄ la demisol pentru autonomie nocturnă completă'
+      en: 'High-power storage cabinet in garage delivering full evening zero-grid villa autonomy',
+      fr: 'Armoire LiFePO₄ haute capacité dans le garage pour une autonomie nocturne complète',
+      bg: 'Мощен LiFePO₄ шкаф в гаража за пълно автономно нощно захранване на вилата',
+      ro: 'Unitate de stocare LiFePO₄ în garaj pentru autonomie nocturnă completă fără rețea'
     }
   },
   {
@@ -215,17 +215,17 @@ export const HOME_LEFT_SPECS = [
     icon: '⚡',
     camPreset: 'station',
     label: {
-      en: 'Smart Meter & ATS Board',
-      fr: 'Compteur & Tableau ATS',
-      bg: 'Смарт Електромер & ATS',
-      ro: 'Contor Smart & Tablou ATS'
+      en: 'Smart ATS & Utility Grid',
+      fr: 'Tableau ATS & Réseau',
+      bg: 'Смарт Табло ATS и Мрежа',
+      ro: 'Tablou ATS & Rețea'
     },
     value: '230/400V Bi-Directional',
     detail: {
-      en: 'Exports midday solar surplus or activates utility grid backup & night tariff recharge',
-      fr: 'Injection surplus jour et secours réseau 230V/400V avec transfert automatique ATS',
-      bg: 'Изнася дневен излишък и активира външната мрежа автоматично при нужда',
-      ro: 'Exportă surplusul diurn și comută automat pe rețeaua publică sau tarif de noapte'
+      en: 'Exports surplus solar by day and switches seamlessly to grid or night tariff backup',
+      fr: 'Exporte le surplus solaire le jour et bascule sur le réseau public sans coupure',
+      bg: 'Изнася излишъка денем и превключва мигновено към външната мрежа при нужда',
+      ro: 'Exportă surplusul diurn și comută instantaneu pe rețea sau tarif de noapte'
     }
   }
 ];
@@ -233,20 +233,20 @@ export const HOME_LEFT_SPECS = [
 export const HOME_RIGHT_SPECS = [
   {
     id: 'cutawayRooms',
-    icon: '🏠',
+    icon: '🪜',
     camPreset: 'interior',
     label: {
-      en: '3-Level Cutaway Living',
-      fr: 'Villa 3 Niveaux en Coupe',
-      bg: 'Триетажна Вила в Разрез',
-      ro: 'Vilă 3 Niveluri Secționate'
+      en: 'Floating Stair & Hearth',
+      fr: 'Escalier Flottant & Foyer',
+      bg: 'Плаващо Стълбище и Хол',
+      ro: 'Scară Plutitoare & Living'
     },
-    value: 'Day / Night Automated',
+    value: 'Cantilevered Glass Villa',
     detail: {
-      en: 'Master suite upstairs, warm wood-floored living, dining & kitchen + technical lower bay',
-      fr: 'Suite parentale à l’étage, séjour & cuisine parquet chêne et sous-sol technique',
-      bg: 'Спалня и тераса горе, хол и кухня с топъл под по средата и тех. етаж долу',
-      ro: 'Dormitor matrimonial sus, living/bucătărie cu parchet jos și nivel tehnic dedesubt'
+      en: 'Open basalt treads, warm hearth, dining globe chandelier, upper suites & limestone spa tub',
+      fr: 'Marches basaltes suspendues, foyer chaud, lustre globes, chambres & baignoire spa',
+      bg: 'Конзолни стъпала, камина, трапезария със светещи сфери, спални и спа вана горе',
+      ro: 'Trepte suspendate din bazalt, șemineu, candelabru cu globuri, dormitoare & spa'
     }
   },
   {
@@ -254,71 +254,99 @@ export const HOME_RIGHT_SPECS = [
     icon: '🚗',
     camPreset: 'ev',
     label: {
-      en: 'Carport EV & Wallbox',
-      fr: 'Garage VE & Wallbox',
-      bg: 'Гараж с Електромобил',
-      ro: 'Garaj EV & Wallbox'
+      en: 'Glass Garage & EV Coupe',
+      fr: 'Garage Vitré & VE Coupé',
+      bg: 'Стъклен Гараж и Кола',
+      ro: 'Garaj Sticlă & Mașină EV'
     },
-    value: '11 kW · Zero-Grid EV',
+    value: '11 kW · NEO Wallbox',
     detail: {
-      en: 'Side carport with glazed roof terrace above, plugged directly into solar wallbox charger',
-      fr: 'Abri voiture latéral sous terrasse vitrée, relié directement à la borne solaire',
-      bg: 'Страничен гараж със стъклена тераса отгоре и директно зареждане от стената',
-      ro: 'Garaj lateral acoperit cu terasă vitrată, conectat direct la stația Wallbox solară'
+      en: 'White EV coupe parked beside dual inverters inside the glazed right-wing garage bay',
+      fr: 'Coupé électrique garé sous terrasse vitrée face à la borne Wallbox 11 kW solaire',
+      bg: 'Бял електромобил, паркиран до инверторите и Wallbox станцията в остъкления гараж',
+      ro: 'Coupé electric parcat în garajul lateral vitrat, conectat direct la Wallbox 11 kW'
     }
   },
   {
     id: 'hvacLoad',
-    icon: '❄️',
-    camPreset: 'station',
+    icon: '🛁',
+    camPreset: 'interior',
     label: {
-      en: 'NEO Clim® Heat Pump Bay',
-      fr: 'Pompe à Chaleur NEO Clim®',
-      bg: 'Термопомпа NEO Clim®',
-      ro: 'Pompă de Căldură NEO Clim®'
+      en: 'Limestone Spa & Solar AC',
+      fr: 'Spa & Clim Solaire A+++',
+      bg: 'Спа Зона и Соларна Клима',
+      ro: 'Spa & Climatizare Solară'
     },
-    value: '-85% HVAC Power Cost',
+    value: 'Cedar Soffit LED · -85%',
     detail: {
-      en: 'Silent lower-vault heat pump condenser synchronized directly with rooftop solar PV',
-      fr: 'Groupe pompe à chaleur haute efficience couplé en direct à la production solaire',
-      bg: 'Термопомпен модул на долното ниво, захранван от слънчевия ток или батерията',
-      ro: 'Unitate pompă de căldură în nivelul tehnic cuplată direct cu producția fotovoltaică'
+      en: 'Heated spa bath, warm cedar ceiling coves and solar inverter comfort across all suites',
+      fr: 'Baignoire îlot spa, bandeaux LED sous cèdre et climatisation solaire haute efficience',
+      bg: 'Дизайнерска вана, топло скрито осветление по таваните и инверторен климат контрол',
+      ro: 'Cadă freestanding, iluminat perimetral cald în tavan și climatizare inverter solară'
     }
   },
   {
     id: 'autonomy',
-    icon: '🛡️',
+    icon: '🌲',
     camPreset: 'overview',
     label: {
-      en: 'Annual Energy Autonomy',
-      fr: 'Autonomie Énergétique',
-      bg: 'Годишна Автономност',
-      ro: 'Autonomie Energetică'
+      en: 'Coastal Basalt Terraces',
+      fr: 'Terrasses Basalte & Pins',
+      bg: 'Тераси и Автономност',
+      ro: 'Terase Bazalt & Autonomie'
     },
     value: '85% – 94% RE2020',
     detail: {
-      en: 'Complete Smart-City-Led residential ecosystem combining Solar + Battery + Smart Grid',
-      fr: 'Écosystème complet RE2020 combinant Solaire, Stockage LiFePO₄ et Réseau Intelligent',
-      bg: 'Пълна жилищна система RE2020: солари + LiFePO₄ батерия + интелигентна мрежа',
-      ro: 'Ecosistem rezidențial complet RE2020 cu Solar + Stocare LiFePO₄ + Rețea Smart'
+      en: 'Stepped basalt deck with glass balustrades uniting architectural luxury and solar storage',
+      fr: 'Terrasses étagées en basalte et garde-corps verre alliant design et indépendance',
+      bg: 'Стъпаловидни базалтови тераси със стъклени парапети и висока енергийна независимост',
+      ro: 'Terase în trepte din bazalt cu balustrade din sticlă și independență energetică'
     }
   }
 ];
 
 export const HOME_CAMERA_PRESETS = {
-  overview: { pos: [7.6, 5.1, 10.6], target: [0.6, 2.5, 0.0] },
-  station: { pos: [1.6, 2.2, 6.8], target: [-0.1, 1.75, 0.8] },
-  roof: { pos: [3.2, 7.2, 6.6], target: [-0.2, 4.8, 0.2] },
-  interior: { pos: [-2.8, 3.2, 7.6], target: [-0.3, 2.6, 0.0] },
-  ev: { pos: [6.8, 2.9, 6.8], target: [3.5, 2.1, 0.3] }
+  overview: { pos: [-2.2, 3.2, 11.4], target: [0.6, 2.4, 0.0] },
+  station: { pos: [5.4, 2.1, 6.2], target: [3.6, 1.35, -0.3] },
+  roof: { pos: [1.8, 6.8, 6.8], target: [-0.2, 5.0, 0.0] },
+  interior: { pos: [-1.6, 2.6, 7.4], target: [-0.3, 2.2, 0.0] },
+  ev: { pos: [6.8, 2.0, 5.6], target: [3.8, 1.15, 0.2] }
 };
 
 export const HOME_HOTSPOTS = [
-  { id: 'solar', pos: [-0.2, 5.2, 0.85], camPreset: 'roof', label: { en: '9.6 kWp Solar Array', fr: 'Panneaux 9,6 kWc', bg: 'Соларен Покрив', ro: 'Panouri 9.6 kWp' } },
-  { id: 'inverter', pos: [0.0, 2.68, 1.88], camPreset: 'station', label: { en: '10 kW Inverter Hub', fr: 'Onduleur Central', bg: 'Инверторен Хъб', ro: 'Hub Invertor' } },
-  { id: 'battery', pos: [-1.25, 0.72, 1.35], camPreset: 'station', label: { en: '20 kWh Battery', fr: 'Batterie 20 kWh', bg: 'Батерия 20 kWh', ro: 'Baterie 20 kWh' } },
-  { id: 'heatpump', pos: [1.05, 0.68, 1.32], camPreset: 'station', label: { en: 'NEO Clim® Pump', fr: 'PAC NEO Clim®', bg: 'Термопомпа', ro: 'Pompă NEO Clim®' } },
-  { id: 'living', pos: [-1.35, 2.15, 0.5], camPreset: 'interior', label: { en: 'Living & Dining', fr: 'Séjour & Cuisine', bg: 'Дневна и Кухня', ro: 'Living & Dining' } },
-  { id: 'bedroom', pos: [-1.35, 3.65, 0.5], camPreset: 'interior', label: { en: 'Master Suite', fr: 'Suite Étage', bg: 'Спалня Етаж', ro: 'Suită Etaj' } },
-  { id: 'ev', pos: [3.7, 2.05, 0.65], camPreset: 'ev', label: { en: 'EV Garage & Wallbox', fr: 'Garage & VE', bg: 'Гараж & ЕМ', ro: 'Garaj EV' } }
+  {
+    id: 'solar',
+    pos: [0.35, 5.95, 0.25],
+    camPreset: 'roof',
+    label: { en: 'Solar Pergola Deck', fr: 'Pergola Solaire & Lounge', bg: 'Соларна Пергола', ro: 'Pergolă Solară & Deck' },
+    sub: { en: '9.6 KWP BIFACIAL & FIRE LOUNGE', fr: '9,6 KWC BIFACIAL & FOYER', bg: '9.6 KWP ПАНЕЛИ И ЛАУНДЖ', ro: '9.6 KWP BIFACIAL & LOUNGE' }
+  },
+  {
+    id: 'bedroom',
+    pos: [-2.35, 3.65, 1.25],
+    camPreset: 'interior',
+    label: { en: 'Cantilevered Suites', fr: 'Suites en Porte-à-Faux', bg: 'Конзолни Спални', ro: 'Suite în Consolă' },
+    sub: { en: 'SMART CLIMATE & LED COVES', fr: 'CLIM SOLAIRE & GORGES LED', bg: 'СМАРТ КЛИМАТ И LED СВЕТИЛНИЦИ', ro: 'CLIMATIZARE & LED-URI' }
+  },
+  {
+    id: 'spa',
+    pos: [1.85, 3.55, 1.25],
+    camPreset: 'interior',
+    label: { en: 'Limestone & Glass Spa', fr: 'Spa Pierre & Verre', bg: 'Спа Баня и Термопомпа', ro: 'Spa Piatră & Sticlă' },
+    sub: { en: 'SOLAR THERMAL & HEAT PUMP', fr: 'EAU CHAUDE SOLAIRE & PAC', bg: 'СОЛАРЕН БОЙЛЕР И ТЕРМОПОМПА', ro: 'TERMIC SOLAR & POMPĂ' }
+  },
+  {
+    id: 'living',
+    pos: [-1.55, 0.95, 1.35],
+    camPreset: 'interior',
+    label: { en: 'Hearth & Floating Stair', fr: 'Foyer & Escalier Flottant', bg: 'Хол и Плаващо Стълбище', ro: 'Living & Scară Plutitoare' },
+    sub: { en: 'DINING PAVILION & SMART LEDS', fr: 'PAVILLON & ÉCLAIRAGE LED', bg: 'ТРАПЕЗАРИЯ И УМНО ОСВЕТЛЕНИЕ', ro: 'PAVILION & ILUMINAT SMART' }
+  },
+  {
+    id: 'station',
+    pos: [3.85, 1.45, 1.25],
+    camPreset: 'station',
+    label: { en: 'EV Garage & Dual Inverters', fr: 'Garage VE & 2 Onduleurs', bg: 'Гараж, ЕМ и 2 Инвертора', ro: 'Garaj EV & 2 Invertoare' },
+    sub: { en: '2× 10 KW MPPT · 20 KWH BATTERY', fr: '2× 10 KW MPPT · BATTERIE 20 KWH', bg: '2× 10 KW MPPT · 20 KWH БАТЕРИЯ', ro: '2× 10 KW MPPT · BATERIE 20 KWH' }
+  }
 ];
