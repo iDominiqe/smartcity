@@ -1,4 +1,4 @@
-import { MENU_CATEGORIES, PAGES_DATA, PAGE_UI_LABELS, BLOG_POSTS } from './pages-data.js';
+import { MENU_CATEGORIES, PAGE_UI_LABELS, getMenuCategoryForSlug } from './data/nav-menu.js';
 
 function escapeHtml(str) {
   return String(str ?? '')
@@ -10,15 +10,19 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio, onSubpageToggle }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
     this.onCategoryTrigger = onCategoryTrigger;
     this.onOpenAcStudio = onOpenAcStudio;
     this.onOpenHomeStudio = onOpenHomeStudio;
+    this.onSubpageToggle = onSubpageToggle;
     this.activeSlug = null;
     this.activeBlogSlug = null;
     this.openDropdownId = null;
+    this.loadedPages = {};
+    this.loadedCategories = new Set();
+    this.blogPosts = [];
 
     this.navContainer = document.getElementById('main-nav-list');
     this.mobileDrawer = document.getElementById('mobile-menu-drawer');
@@ -99,8 +103,9 @@ export class PagesRouter {
         const badgeHtml = cat.badgeKey
           ? `<span class="nav-badge">${escapeHtml(this.ui(cat.badgeKey))}</span>`
           : '';
+        const activeCat = getMenuCategoryForSlug(this.activeSlug);
         const isCategoryActive =
-          (this.activeSlug && PAGES_DATA[this.activeSlug]?.category === cat.id) ||
+          (this.activeSlug && activeCat === cat.id) ||
           (!this.activeSlug && cat.id === 'home');
 
         const itemsHtml = cat.items
@@ -206,11 +211,43 @@ export class PagesRouter {
     }
   }
 
+  async ensurePageLoaded(slug) {
+    if (this.loadedPages[slug] && (slug !== 'blog' || this.blogPosts.length)) {
+      return this.loadedPages[slug];
+    }
+
+    const catId = getMenuCategoryForSlug(slug);
+    if (!catId) return null;
+
+    if (!this.loadedCategories.has(catId)) {
+      if (catId === 'solar') {
+        const { SOLAR_PAGES } = await import('./data/pages-solar.js');
+        Object.assign(this.loadedPages, SOLAR_PAGES);
+      } else if (catId === 'climatisation') {
+        const { CLIM_PAGES } = await import('./data/pages-clim.js');
+        Object.assign(this.loadedPages, CLIM_PAGES);
+      } else if (catId === 'ev' || catId === 'group') {
+        const { EV_AND_GROUP_PAGES } = await import('./data/pages-ev-group.js');
+        Object.assign(this.loadedPages, EV_AND_GROUP_PAGES);
+        this.loadedCategories.add('ev');
+        this.loadedCategories.add('group');
+      }
+      this.loadedCategories.add(catId);
+    }
+
+    if (slug === 'blog' && !this.blogPosts.length) {
+      const { BLOG_POSTS } = await import('./data/blog-posts.js');
+      this.blogPosts = BLOG_POSTS;
+    }
+
+    return this.loadedPages[slug] || null;
+  }
+
   syncFromHash() {
     const hash = window.location.hash || '';
     if (hash.startsWith('#page/')) {
       const slug = decodeURIComponent(hash.slice(6));
-      if (PAGES_DATA[slug]) {
+      if (getMenuCategoryForSlug(slug)) {
         this.openPage(slug, false);
         return;
       }
@@ -220,8 +257,8 @@ export class PagesRouter {
     }
   }
 
-  openPage(slug, pushHash = true) {
-    const page = PAGES_DATA[slug];
+  async openPage(slug, pushHash = true) {
+    const page = await this.ensurePageLoaded(slug);
     if (!page) return;
 
     this.activeSlug = slug;
@@ -235,6 +272,7 @@ export class PagesRouter {
       this.subpageView.hidden = false;
       this.subpageView.scrollTop = 0;
     }
+    this.onSubpageToggle?.(true);
 
     this.renderMenus();
     this.renderSubpage(slug);
@@ -242,6 +280,7 @@ export class PagesRouter {
   }
 
   closeSubpage(clearHash = true) {
+    const wasOpen = Boolean(this.activeSlug);
     this.activeSlug = null;
     this.activeBlogSlug = null;
     document.body.classList.remove('subpage-open');
@@ -251,12 +290,15 @@ export class PagesRouter {
     if (clearHash && window.location.hash.startsWith('#page/')) {
       history.replaceState(null, '', window.location.pathname + window.location.search);
     }
+    if (wasOpen) {
+      this.onSubpageToggle?.(false);
+    }
     this.renderMenus();
   }
 
   renderSubpage(slug) {
     if (!this.subpageContent) return;
-    const page = PAGES_DATA[slug];
+    const page = this.loadedPages[slug];
     if (!page) return;
 
     const category = MENU_CATEGORIES.find((c) => c.id === page.category);
@@ -520,7 +562,7 @@ export class PagesRouter {
 
     if (page.interactiveType === 'blog') {
       if (this.activeBlogSlug) {
-        const post = BLOG_POSTS.find((b) => b.slug === this.activeBlogSlug);
+        const post = this.blogPosts.find((b) => b.slug === this.activeBlogSlug);
         if (post) {
           const articleContext = {
             en: [
@@ -563,7 +605,8 @@ export class PagesRouter {
       return `
         <section class="sub-section">
           <div class="sub-blog-grid">
-            ${BLOG_POSTS.map(
+            ${this.blogPosts
+              .map(
               (post) => `
               <article class="sub-blog-card">
                 <div class="sub-blog-meta">${escapeHtml(post.date)} · ${escapeHtml(post.author)}</div>

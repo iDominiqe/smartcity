@@ -293,3 +293,13 @@ export const MENU_CATEGORIES = [
     ]
   }
 ];
+
+export function getMenuCategoryForSlug(slug) {
+  if (!slug) return null;
+  for (const cat of MENU_CATEGORIES) {
+    if (cat.items.some((it) => it.type === 'page' && it.slug === slug)) {
+      return cat.id;
+    }
+  }
+  return null;
+}

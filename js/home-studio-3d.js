@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { getDevicePerfTier, destroyStudioRenderer } from './utils/webgl-memory.js';
 import { createSolarTexture } from './scene/textures-helpers.js';
 import {
   HOME_STUDIO_TEXT,
@@ -158,9 +159,10 @@ function createPineTree(scale = 1) {
 }
 
 export class HomeStudio3D {
-  constructor({ i18n, onRequestQuote }) {
+  constructor({ i18n, onRequestQuote, onClose }) {
     this.i18n = i18n;
     this.onRequestQuote = onRequestQuote;
+    this.onClose = onClose;
 
     this.state = {
       mode: 'day', // 'day' | 'battery' | 'grid'
@@ -188,7 +190,6 @@ export class HomeStudio3D {
     if (!this.modalEl) return;
 
     this.renderShellDOM();
-    this.initScene();
     this.bindUIEvents();
     this.syncLanguage();
     this.syncStateToUI();
@@ -357,14 +358,20 @@ export class HomeStudio3D {
     const canvas = document.getElementById('home-studio-canvas');
     if (!canvas) return;
 
+    const perf = getDevicePerfTier();
+    this.xrayTargets = [];
+    this.batteryBarMats = [];
+    this.interiorLights = [];
+    this.circuits = {};
+
     this.canvas = canvas;
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !perf.isMobile,
       alpha: true,
       powerPreference: 'high-performance'
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(perf.maxPixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -995,8 +1002,10 @@ export class HomeStudio3D {
 
     document.getElementById('home-btn-autospin')?.addEventListener('click', () => {
       this.state.autoRotate = !this.state.autoRotate;
-      this.controls.autoRotate = this.state.autoRotate;
-      this.controls.autoRotateSpeed = 1.45;
+      if (this.controls) {
+        this.controls.autoRotate = this.state.autoRotate;
+        this.controls.autoRotateSpeed = 1.45;
+      }
       this.syncStateToUI();
     });
 
@@ -1015,7 +1024,9 @@ export class HomeStudio3D {
     const preset = HOME_CAMERA_PRESETS[presetName] || HOME_CAMERA_PRESETS.overview;
     this.state.activePreset = presetName;
     this.state.autoRotate = false;
-    this.controls.autoRotate = false;
+    if (this.controls) {
+      this.controls.autoRotate = false;
+    }
     this.desiredCamPos.set(...preset.pos);
     this.desiredTarget.set(...preset.target);
     this.camTransition = { active: true };
@@ -1123,11 +1134,16 @@ export class HomeStudio3D {
     this.modalEl.classList.add('is-open');
     document.body.classList.add('ac-studio-open');
 
+    if (!this.renderer) {
+      this.initScene();
+    }
+
     this.syncLanguage();
     this.syncStateToUI();
     this.focusCameraPreset('overview');
 
     requestAnimationFrame(() => {
+      if (!this.isOpen) return;
       this.resize();
       this.startLoop();
     });
@@ -1135,6 +1151,7 @@ export class HomeStudio3D {
 
   close() {
     if (!this.modalEl) return;
+    const wasOpen = this.isOpen;
     this.isOpen = false;
     this.modalEl.classList.remove('is-open');
     this.modalEl.hidden = true;
@@ -1142,6 +1159,10 @@ export class HomeStudio3D {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
+    }
+    destroyStudioRenderer(this);
+    if (wasOpen) {
+      this.onClose?.();
     }
   }
 
@@ -1297,7 +1318,9 @@ export class HomeStudio3D {
           hp.el.style.pointerEvents = 'none';
           return;
         }
-        const x = (proj.x * 0.5 + 0.5) * cw;
+        const rawX = (proj.x * 0.5 + 0.5) * cw;
+        const padX = cw < 480 ? Math.min(72, cw * 0.25) : 0;
+        const x = padX > 0 ? Math.max(padX, Math.min(cw - padX, rawX)) : rawX;
         const y = (-proj.y * 0.5 + 0.5) * ch;
         hp.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -100%)`;
         hp.el.style.opacity = '1';

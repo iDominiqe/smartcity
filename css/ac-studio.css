@@ -285,6 +285,7 @@ body.ac-studio-open {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 0;
   min-height: 0;
   border-radius: 18px;
   border: 1px solid rgba(148, 163, 184, 0.16);
@@ -344,18 +345,22 @@ body.ac-studio-open {
 .ac-canvas-wrap {
   position: relative;
   width: 100%;
+  min-width: 0;
   flex: 1;
   min-height: 220px;
 }
 
-#ac-studio-canvas {
+#ac-studio-canvas,
+#home-studio-canvas {
   width: 100%;
   height: 100%;
   display: block;
   cursor: grab;
+  touch-action: none;
 }
 
-#ac-studio-canvas:active {
+#ac-studio-canvas:active,
+#home-studio-canvas:active {
   cursor: grabbing;
 }
 
@@ -424,7 +429,7 @@ body.ac-studio-open {
   padding: 5px 10px;
   border-radius: 999px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .ac-cam-btn:hover,
@@ -474,7 +479,7 @@ body.ac-studio-open {
   padding: 6px 12px;
   border-radius: 999px;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .ac-mode-btn[data-mode='cool'].active {
@@ -662,31 +667,52 @@ body.ac-studio-open {
 
 @media (max-width: 900px) {
   .ac-studio-modal {
-    padding: 8px;
+    padding: calc(8px + env(safe-area-inset-top)) 8px calc(8px + env(safe-area-inset-bottom));
     overflow-y: auto;
     align-items: flex-start;
+    -webkit-overflow-scrolling: touch;
   }
 
   .ac-studio-shell {
     height: auto;
     min-height: 100%;
     overflow: visible;
-    grid-template-rows: auto auto auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .ac-studio-header {
+    order: 1;
   }
 
   .ac-studio-grid {
-    grid-template-columns: 1fr;
+    display: contents;
   }
 
   .ac-stage-center {
-    order: -1;
-    min-height: 380px;
+    order: 2;
+    min-height: 390px;
+  }
+
+  .ac-control-dock {
+    order: 3;
+    justify-content: center;
+  }
+
+  .ac-specs-col.left {
+    order: 4;
+  }
+
+  .ac-specs-col.right {
+    order: 5;
   }
 
   .ac-specs-col {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
     overflow: visible;
     height: auto;
   }
@@ -701,9 +727,58 @@ body.ac-studio-open {
 }
 
 @media (max-width: 680px) {
+  .ac-studio-shell {
+    overflow-x: hidden;
+    padding: 10px;
+  }
+
   .ac-studio-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ac-studio-header h2 {
+    font-size: 0.96rem;
+  }
+
+  .ac-studio-header p {
+    font-size: 0.72rem;
+  }
+
+  .ac-studio-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .ac-stage-center {
+    width: 100%;
+    min-height: 315px;
+    padding: 8px;
+  }
+
+  .ac-canvas-wrap {
+    min-height: 225px;
+  }
+
+  .home-telemetry-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .home-tele-pill {
+    padding: 4px 8px;
+  }
+
+  .ac-mode-btn,
+  .ac-fan-btn,
+  .ac-cam-btn {
+    font-size: 0.7rem;
+    padding: 5px 9px;
+  }
+
+  .home-hint {
+    display: none;
   }
 
   .ac-specs-col {
@@ -949,22 +1024,25 @@ body.ac-studio-open {
   margin-bottom: 0;
 }
 
-.home-photos-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.home-photos-grid .ac-photo-item img {
-  height: 220px;
-}
-
-@media (max-width: 900px) {
-  .home-telemetry-bar {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 680px) {
+  .ac-live-banner {
+    padding: 4px 9px;
+    font-size: 0.64rem;
+    gap: 6px;
+    margin-bottom: 4px;
   }
 
-  .home-photos-grid {
-    grid-template-columns: 1fr;
+  #home-studio-modal .ac-hotspot-pin {
+    padding: 3px 6px;
+    gap: 5px;
+    border-radius: 7px;
+  }
+
+  #home-studio-modal .ac-hotspot-title {
+    font-size: 0.56rem;
+  }
+
+  #home-studio-modal .ac-hotspot-sub {
+    display: none;
   }
 }

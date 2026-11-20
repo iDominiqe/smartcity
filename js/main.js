@@ -4,8 +4,7 @@ import { I18nManager } from './i18n.js';
 import { buildSmartCityWorld } from './scene-builder.js';
 import { ScrollDirector } from './scroll-director.js';
 import { PagesRouter } from './pages-router.js';
-import { AcStudio3D } from './ac-studio-3d.js';
-import { HomeStudio3D } from './home-studio-3d.js';
+import { getDevicePerfTier } from './utils/webgl-memory.js';
 
 function initApp() {
   const i18n = new I18nManager('en');
@@ -13,6 +12,7 @@ function initApp() {
 
   const canvas = document.getElementById('city-canvas');
   const storyTrack = document.getElementById('story-track');
+  const perfTier = getDevicePerfTier();
 
   // ---------------------------------------------------------------------------
   // 1. THREE.JS RENDERER, SCENE, CAMERA & ORBIT CONTROLS
@@ -21,7 +21,7 @@ function initApp() {
   try {
     renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !perfTier.isMobile,
       powerPreference: 'high-performance'
     });
   } catch (err) {
@@ -29,7 +29,7 @@ function initApp() {
     return;
   }
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(perfTier.maxPixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -59,6 +59,9 @@ function initApp() {
 
   // Build procedural 3D world
   const world = buildSmartCityWorld(scene);
+  if (world.dirLight?.shadow && perfTier.shadowMapSize !== 2048) {
+    world.dirLight.shadow.mapSize.set(perfTier.shadowMapSize, perfTier.shadowMapSize);
+  }
   const director = new ScrollDirector(scene, camera, world, i18n);
 
   // ---------------------------------------------------------------------------
@@ -104,6 +107,7 @@ function initApp() {
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    renderer.setPixelRatio(getDevicePerfTier().maxPixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight, false);
     handleScroll();
   });
@@ -268,6 +272,60 @@ function initApp() {
 
   let acStudio = null;
   let homeStudio = null;
+  let cityRafId = null;
+  let isCityHibernated = false;
+
+  function hibernateCityRenderer() {
+    isCityHibernated = true;
+    if (cityRafId !== null) {
+      cancelAnimationFrame(cityRafId);
+      cityRafId = null;
+    }
+    if (world.dirLight?.shadow?.map) {
+      world.dirLight.shadow.map.dispose();
+      world.dirLight.shadow.map = null;
+    }
+    renderer.renderLists?.dispose();
+  }
+
+  function resumeCityRenderer() {
+    if (acStudio?.isOpen || homeStudio?.isOpen || pagesRouter?.activeSlug || document.hidden) {
+      return;
+    }
+    isCityHibernated = false;
+    lastTime = null;
+    if (cityRafId === null) {
+      cityRafId = requestAnimationFrame(animate);
+    }
+  }
+
+  async function openAcStudio() {
+    homeStudio?.close();
+    hibernateCityRenderer();
+    if (!acStudio) {
+      const { AcStudio3D } = await import('./ac-studio-3d.js');
+      acStudio = new AcStudio3D({
+        i18n,
+        onRequestQuote: () => pagesRouter.openPage('neo-clim-location'),
+        onClose: () => resumeCityRenderer()
+      });
+    }
+    acStudio.open();
+  }
+
+  async function openHomeStudio() {
+    acStudio?.close();
+    hibernateCityRenderer();
+    if (!homeStudio) {
+      const { HomeStudio3D } = await import('./home-studio-3d.js');
+      homeStudio = new HomeStudio3D({
+        i18n,
+        onRequestQuote: () => pagesRouter.openPage('neo-home'),
+        onClose: () => resumeCityRenderer()
+      });
+    }
+    homeStudio.open();
+  }
 
   const pagesRouter = new PagesRouter({
     i18n,
@@ -287,48 +345,44 @@ function initApp() {
         playDriveHomeToStore();
       }
     },
-    onOpenAcStudio: () => {
-      homeStudio?.close();
-      acStudio?.open();
-    },
-    onOpenHomeStudio: () => {
-      acStudio?.close();
-      homeStudio?.open();
+    onOpenAcStudio: () => openAcStudio(),
+    onOpenHomeStudio: () => openHomeStudio(),
+    onSubpageToggle: (isOpen) => {
+      if (isOpen) {
+        renderer.render(scene, camera);
+        hibernateCityRenderer();
+      } else {
+        resumeCityRenderer();
+      }
     }
   });
 
-  acStudio = new AcStudio3D({
-    i18n,
-    onRequestQuote: () => pagesRouter.openPage('neo-clim-location')
-  });
-
-  homeStudio = new HomeStudio3D({
-    i18n,
-    onRequestQuote: () => pagesRouter.openPage('neo-home')
-  });
-
   document.getElementById('btn-open-ac-studio')?.addEventListener('click', () => {
-    homeStudio.close();
-    acStudio.open();
+    openAcStudio();
   });
 
   document.getElementById('btn-open-home-studio')?.addEventListener('click', () => {
-    acStudio.close();
-    homeStudio.open();
+    openHomeStudio();
   });
 
   if (window.location.hash === '#ac-studio') {
-    acStudio.open();
+    openAcStudio();
   } else if (window.location.hash === '#home-studio') {
-    homeStudio.open();
+    openHomeStudio();
   }
   window.addEventListener('hashchange', () => {
     if (window.location.hash === '#ac-studio') {
-      homeStudio.close();
-      acStudio.open();
+      openAcStudio();
     } else if (window.location.hash === '#home-studio') {
-      acStudio.close();
-      homeStudio.open();
+      openHomeStudio();
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      hibernateCityRenderer();
+    } else {
+      resumeCityRenderer();
     }
   });
 
@@ -409,11 +463,15 @@ function initApp() {
   updateControlLabels();
 
   // ---------------------------------------------------------------------------
-  // 6. MAIN ANIMATION LOOP
+  // 6. MAIN ANIMATION LOOP (WITH HIBERNATION SUPPORT)
   // ---------------------------------------------------------------------------
   let lastTime = null;
   function animate(now) {
-    requestAnimationFrame(animate);
+    if (isCityHibernated) {
+      cityRafId = null;
+      return;
+    }
+    cityRafId = requestAnimationFrame(animate);
     if (lastTime === null) lastTime = now;
     const dt = Math.max(0, Math.min(0.05, (now - lastTime) / 1000));
     lastTime = now;
@@ -426,7 +484,9 @@ function initApp() {
     renderer.render(scene, camera);
   }
 
-  requestAnimationFrame(animate);
+  if (!isCityHibernated) {
+    cityRafId = requestAnimationFrame(animate);
+  }
 }
 
 if (document.readyState === 'loading') {

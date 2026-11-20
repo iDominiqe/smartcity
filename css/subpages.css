@@ -588,7 +588,9 @@ body.subpage-open #city-canvas {
 }
 
 @media (max-width: 640px) {
-  .subpage-view { padding: 86px 14px 60px; }
+  .subpage-view { padding: calc(74px + env(safe-area-inset-top)) 12px calc(48px + env(safe-area-inset-bottom)); }
+  .subpage-hero h1 { font-size: 1.45rem; }
+  .subpage-cat-bar { padding: 10px; gap: 6px; }
   .sub-specs-grid, .sub-form-row { grid-template-columns: 1fr; }
-  .subpage-hero, .sub-section { padding: 20px; }
+  .subpage-hero, .sub-section { padding: 16px; }
 }

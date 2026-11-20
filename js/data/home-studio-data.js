@@ -306,7 +306,7 @@ export const HOME_RIGHT_SPECS = [
 ];
 
 export const HOME_CAMERA_PRESETS = {
-  overview: { pos: [-2.2, 3.2, 11.4], target: [0.6, 2.4, 0.0] },
+  overview: { pos: [-2.5, 3.6, 12.6], target: [0.6, 2.65, 0.0] },
   station: { pos: [5.4, 2.1, 6.2], target: [3.6, 1.35, -0.3] },
   roof: { pos: [1.8, 6.8, 6.8], target: [-0.2, 5.0, 0.0] },
   interior: { pos: [-1.6, 2.6, 7.4], target: [-0.3, 2.2, 0.0] },
