@@ -49,7 +49,10 @@ export const PAGE_UI_LABELS = {
     openAcStudioBannerBtn: '🧊 Launch 3D AC Studio',
     openHomeStudioBannerTitle: '360° 3D Smart Solar Home — Inverter, 20 kWh Battery & Grid Simulator',
     openHomeStudioBannerDesc: 'Inspect how rooftop PV panels power the house by day, or switch to evening Battery / Utility Grid backup.',
-    openHomeStudioBannerBtn: '🏠 Launch 3D Home Studio'
+    openHomeStudioBannerBtn: '🏠 Launch 3D Home Studio',
+    openParkingStudioBannerTitle: '360° 3D Eco-Supermarket & NEO® HUWART Solar + Vegetated Parking',
+    openParkingStudioBannerDesc: 'Explore the supermarket exterior, EV solar charging canopy, vegetated bio-parking with trees & flower beds, and side field with solar array & wind turbine.',
+    openParkingStudioBannerBtn: '🛒 Launch 3D Parking Studio'
   },
   fr: {
     backToHome3d: '← Retour à la Ville 3D',
@@ -96,7 +99,10 @@ export const PAGE_UI_LABELS = {
     openAcStudioBannerBtn: '🧊 Ouvrir le Studio 3D',
     openHomeStudioBannerTitle: 'Maison Solaire 3D 360° — Onduleur, Batterie 20 kWh & Réseau',
     openHomeStudioBannerDesc: 'Observez l’alimentation solaire de jour, puis basculez sur la batterie nocturne ou le réseau public en soirée.',
-    openHomeStudioBannerBtn: '🏠 Ouvrir le Studio Maison 3D'
+    openHomeStudioBannerBtn: '🏠 Ouvrir le Studio Maison 3D',
+    openParkingStudioBannerTitle: 'Supermarché & Parking Solaire / Végétalisé NEO® HUWART 3D 360°',
+    openParkingStudioBannerDesc: 'Explorez l’extérieur du supermarché, l’ombrière solaire VE, le parking arboré et fleuri (65 % bio) et le champ annexe avec panneaux et éolienne.',
+    openParkingStudioBannerBtn: '🛒 Ouvrir le Studio Parking 3D'
   },
   bg: {
     backToHome3d: '← Обратно към 3D Града',
@@ -143,7 +149,10 @@ export const PAGE_UI_LABELS = {
     openAcStudioBannerBtn: '🧊 Отвори 3D Студио',
     openHomeStudioBannerTitle: '360° 3D Умен Соларен Дом — Инвертор, Батерия 20 kWh и Мрежа',
     openHomeStudioBannerDesc: 'Вижте как слънцето захранва дома през деня, а вечер превключете към батерията или електромрежата.',
-    openHomeStudioBannerBtn: '🏠 Отвори 3D Дом'
+    openHomeStudioBannerBtn: '🏠 Отвори 3D Дом',
+    openParkingStudioBannerTitle: '360° 3D Еко-Супермаркет, Соларен / Зелен Паркинг и Ветрогенератор',
+    openParkingStudioBannerDesc: 'Разгледайте супермаркета, соларния навес за зареждане на ЕМ, озеленения паркинг с дървета и цветя и полето със солари и вятърна турбина.',
+    openParkingStudioBannerBtn: '🛒 Отвори 3D Паркинг Студио'
   },
   ro: {
     backToHome3d: '← Înapoi la Orașul 3D',
@@ -190,7 +199,10 @@ export const PAGE_UI_LABELS = {
     openAcStudioBannerBtn: '🧊 Deschide Studioul 3D',
     openHomeStudioBannerTitle: 'Casă Solară 3D 360° — Invertor, Baterie 20 kWh & Rețea',
     openHomeStudioBannerDesc: 'Vizualizați alimentarea solară ziua și comutați pe baterie nocturnă sau rețea electrică seara.',
-    openHomeStudioBannerBtn: '🏠 Deschide Studioul Casă 3D'
+    openHomeStudioBannerBtn: '🏠 Deschide Studioul Casă 3D',
+    openParkingStudioBannerTitle: 'Supermarket Eco & Parcare Solară / Vegetală NEO® HUWART 3D 360°',
+    openParkingStudioBannerDesc: 'Explorați exteriorul supermarketului, copertina solară EV, parcarea verde cu arbori și flori și câmpul adiacent cu panouri și turbină eoliană.',
+    openParkingStudioBannerBtn: '🛒 Deschide Studioul Parcare 3D'
   }
 };
 
@@ -224,6 +236,17 @@ export const MENU_CATEGORIES = [
     kind: 'category',
     label: { en: 'NEO Solar Solutions', fr: 'Neo solutions solaires', bg: 'Neo Соларни Решения', ro: 'Soluții Solare NEO' },
     items: [
+      {
+        type: 'parking-studio',
+        target: 'parking-studio',
+        highlight: true,
+        label: {
+          en: '🛒 3D Supermarket & HUWART Eco-Parking',
+          fr: '🛒 Studio 3D Supermarché & Parking HUWART',
+          bg: '🛒 3D Супермаркет и Еко-Паркинг HUWART',
+          ro: '🛒 Studio 3D Supermarket & Parcare HUWART'
+        }
+      },
       { type: 'page', slug: 'neo-ombrieres-huwart', label: { en: 'NEO® HUWART Canopy (APER Law)', fr: 'Neo Ombrières HUWART', bg: 'Neo Сенници HUWART (APER)', ro: 'Copertine NEO® HUWART (APER)' } },
       { type: 'page', slug: 'ombriere-pro', label: { en: 'NEO® Solar Shade Pro', fr: 'NEO Ombrière Pro', bg: 'NEO Соларен Навес Pro', ro: 'Copertină Solară NEO® Pro' } },
       { type: 'page', slug: 'neo-all-in-one', label: { en: 'NEO All In One® Batteries', fr: 'NEO All In One Batteries', bg: 'NEO All In One Батерии', ro: 'Baterii NEO All In One®' } },

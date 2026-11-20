@@ -287,6 +287,7 @@ function initApp() {
 
   let acStudio = null;
   let homeStudio = null;
+  let parkingStudio = null;
   let cityRafId = null;
   let isCityHibernated = false;
 
@@ -304,7 +305,13 @@ function initApp() {
   }
 
   function resumeCityRenderer() {
-    if (acStudio?.isOpen || homeStudio?.isOpen || pagesRouter?.activeSlug || document.hidden) {
+    if (
+      acStudio?.isOpen ||
+      homeStudio?.isOpen ||
+      parkingStudio?.isOpen ||
+      pagesRouter?.activeSlug ||
+      document.hidden
+    ) {
       return;
     }
     isCityHibernated = false;
@@ -316,6 +323,7 @@ function initApp() {
 
   async function openAcStudio() {
     homeStudio?.close();
+    parkingStudio?.close();
     hibernateCityRenderer();
     if (!acStudio) {
       const { AcStudio3D } = await import('./ac-studio-3d.js');
@@ -330,6 +338,7 @@ function initApp() {
 
   async function openHomeStudio() {
     acStudio?.close();
+    parkingStudio?.close();
     hibernateCityRenderer();
     if (!homeStudio) {
       const { HomeStudio3D } = await import('./home-studio-3d.js');
@@ -340,6 +349,21 @@ function initApp() {
       });
     }
     homeStudio.open();
+  }
+
+  async function openParkingStudio() {
+    acStudio?.close();
+    homeStudio?.close();
+    hibernateCityRenderer();
+    if (!parkingStudio) {
+      const { ParkingStudio3D } = await import('./parking-studio-3d.js');
+      parkingStudio = new ParkingStudio3D({
+        i18n,
+        onRequestQuote: () => pagesRouter.openPage('neo-ombrieres-huwart'),
+        onClose: () => resumeCityRenderer()
+      });
+    }
+    parkingStudio.open();
   }
 
   const pagesRouter = new PagesRouter({
@@ -362,6 +386,7 @@ function initApp() {
     },
     onOpenAcStudio: () => openAcStudio(),
     onOpenHomeStudio: () => openHomeStudio(),
+    onOpenParkingStudio: () => openParkingStudio(),
     onSubpageToggle: (isOpen) => {
       if (isOpen) {
         renderer.render(scene, camera);
@@ -384,12 +409,16 @@ function initApp() {
     openAcStudio();
   } else if (window.location.hash === '#home-studio') {
     openHomeStudio();
+  } else if (window.location.hash === '#parking-studio') {
+    openParkingStudio();
   }
   window.addEventListener('hashchange', () => {
     if (window.location.hash === '#ac-studio') {
       openAcStudio();
     } else if (window.location.hash === '#home-studio') {
       openHomeStudio();
+    } else if (window.location.hash === '#parking-studio') {
+      openParkingStudio();
     }
   });
 
@@ -415,6 +444,7 @@ function initApp() {
     }
     acStudio?.syncLanguage();
     homeStudio?.syncLanguage();
+    parkingStudio?.syncLanguage();
   });
 
   // ---------------------------------------------------------------------------

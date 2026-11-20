@@ -10,12 +10,13 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio, onSubpageToggle }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio, onOpenParkingStudio, onSubpageToggle }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
     this.onCategoryTrigger = onCategoryTrigger;
     this.onOpenAcStudio = onOpenAcStudio;
     this.onOpenHomeStudio = onOpenHomeStudio;
+    this.onOpenParkingStudio = onOpenParkingStudio;
     this.onSubpageToggle = onSubpageToggle;
     this.activeSlug = null;
     this.activeBlogSlug = null;
@@ -197,6 +198,13 @@ export class PagesRouter {
     if (type === 'home-studio') {
       if (this.onOpenHomeStudio) {
         this.onOpenHomeStudio();
+      }
+      return;
+    }
+
+    if (type === 'parking-studio') {
+      if (this.onOpenParkingStudio) {
+        this.onOpenParkingStudio();
       }
       return;
     }
@@ -396,6 +404,7 @@ export class PagesRouter {
     const formHtml = page.formType ? this.buildFormHtml(page) : '';
     const isAcShowcasePage = ['neo-clim-location', 'neo-clim-solaire', 'landing-camp-2027'].includes(slug);
     const isHomeShowcasePage = ['neo-home', 'neo-all-in-one'].includes(slug);
+    const isParkingShowcasePage = ['neo-ombrieres-huwart', 'ombriere-pro', 'ombriere-aper-recharge-dc'].includes(slug);
     const studioBannerHtml = isAcShowcasePage
       ? `
         <section class="sub-ac-studio-banner">
@@ -414,6 +423,16 @@ export class PagesRouter {
             <span>${escapeHtml(this.ui('openHomeStudioBannerDesc'))}</span>
           </div>
           <button type="button" id="btn-sub-open-home-studio" class="btn-primary">${escapeHtml(this.ui('openHomeStudioBannerBtn'))}</button>
+        </section>
+      `
+      : isParkingShowcasePage
+      ? `
+        <section class="sub-ac-studio-banner">
+          <div>
+            <strong>${escapeHtml(this.ui('openParkingStudioBannerTitle'))}</strong>
+            <span>${escapeHtml(this.ui('openParkingStudioBannerDesc'))}</span>
+          </div>
+          <button type="button" id="btn-sub-open-parking-studio" class="btn-primary">${escapeHtml(this.ui('openParkingStudioBannerBtn'))}</button>
         </section>
       `
       : '';
@@ -681,6 +700,12 @@ export class PagesRouter {
     document.getElementById('btn-sub-open-home-studio')?.addEventListener('click', () => {
       if (this.onOpenHomeStudio) {
         this.onOpenHomeStudio();
+      }
+    });
+
+    document.getElementById('btn-sub-open-parking-studio')?.addEventListener('click', () => {
+      if (this.onOpenParkingStudio) {
+        this.onOpenParkingStudio();
       }
     });
 

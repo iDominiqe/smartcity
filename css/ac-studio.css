@@ -351,7 +351,8 @@ body.ac-studio-open {
 }
 
 #ac-studio-canvas,
-#home-studio-canvas {
+#home-studio-canvas,
+#parking-studio-canvas {
   width: 100%;
   height: 100%;
   display: block;
@@ -360,7 +361,8 @@ body.ac-studio-open {
 }
 
 #ac-studio-canvas:active,
-#home-studio-canvas:active {
+#home-studio-canvas:active,
+#parking-studio-canvas:active {
   cursor: grabbing;
 }
 
@@ -840,7 +842,8 @@ body.ac-studio-open {
   box-shadow: 0 10px 26px rgba(245, 158, 11, 0.2);
 }
 
-#home-studio-modal .ac-hotspot-pin {
+#home-studio-modal .ac-hotspot-pin,
+#parking-studio-modal .ac-hotspot-pin {
   padding: 4px 9px;
   border-radius: 9px;
   background: rgba(15, 23, 42, 0.84);
@@ -851,7 +854,8 @@ body.ac-studio-open {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
-#home-studio-modal .ac-hotspot-pin::after {
+#home-studio-modal .ac-hotspot-pin::after,
+#parking-studio-modal .ac-hotspot-pin::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -862,10 +866,16 @@ body.ac-studio-open {
   pointer-events: none;
 }
 
+#home-studio-modal .ac-hotspot-dot,
+#parking-studio-modal .ac-hotspot-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  flex-shrink: 0;
+}
+
 #home-studio-modal .ac-hotspot-dot {
   background: #f59e0b;
   box-shadow: 0 0 8px #f59e0b;
-  flex-shrink: 0;
 }
 
 .ac-hotspot-text {
@@ -1002,19 +1012,27 @@ body.ac-studio-open {
   box-shadow: 0 0 8px #f59e0b;
 }
 
-.ac-mode-btn[data-hmode='day'].active {
+.legend-chip.bio i {
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+.ac-mode-btn[data-hmode='day'].active,
+.ac-mode-btn[data-pmode='sunny'].active {
   background: linear-gradient(135deg, #0284c7, #38bdf8);
   border-color: #7dd3fc;
   color: #031320;
 }
 
-.ac-mode-btn[data-hmode='battery'].active {
+.ac-mode-btn[data-hmode='battery'].active,
+.ac-mode-btn[data-pmode='windy'].active {
   background: linear-gradient(135deg, #059669, #34d399);
   border-color: #6ee7b7;
   color: #032016;
 }
 
-.ac-mode-btn[data-hmode='grid'].active {
+.ac-mode-btn[data-hmode='grid'].active,
+.ac-mode-btn[data-pmode='hybrid'].active {
   background: linear-gradient(135deg, #d97706, #fbbf24);
   border-color: #fde68a;
   color: #1c1002;
@@ -1032,17 +1050,20 @@ body.ac-studio-open {
     margin-bottom: 4px;
   }
 
-  #home-studio-modal .ac-hotspot-pin {
+  #home-studio-modal .ac-hotspot-pin,
+  #parking-studio-modal .ac-hotspot-pin {
     padding: 3px 6px;
     gap: 5px;
     border-radius: 7px;
   }
 
-  #home-studio-modal .ac-hotspot-title {
+  #home-studio-modal .ac-hotspot-title,
+  #parking-studio-modal .ac-hotspot-title {
     font-size: 0.56rem;
   }
 
-  #home-studio-modal .ac-hotspot-sub {
+  #home-studio-modal .ac-hotspot-sub,
+  #parking-studio-modal .ac-hotspot-sub {
     display: none;
   }
 }
