@@ -37,8 +37,8 @@ function initApp() {
   renderer.toneMappingExposure = 1.04;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#e3edf8');
-  scene.fog = new THREE.FogExp2('#e3edf8', 0.0035);
+  scene.background = new THREE.Color('#7488ad');
+  scene.fog = new THREE.FogExp2('#7488ad', 0.0038);
 
   const camera = new THREE.PerspectiveCamera(
     30,
@@ -127,10 +127,18 @@ function initApp() {
   const btnStoryMode = document.getElementById('btn-mode-story');
   const btnOrbitMode = document.getElementById('btn-mode-orbit');
   const btnFlowBoost = document.getElementById('btn-flow-boost');
-  const btnDayNight = document.getElementById('btn-day-night');
+  const timeModeBtns = document.querySelectorAll('.time-mode-btn');
   const orbitHint = document.getElementById('orbit-hint');
   const btnEnter3dCta = document.getElementById('btn-enter-3d');
   const btnBackTopCta = document.getElementById('btn-back-top');
+
+  function syncTimeModeButtons() {
+    timeModeBtns.forEach((btn) => {
+      const active = btn.getAttribute('data-time-mode') === director.timeMode;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+  }
 
   function setOrbitMode(enabled) {
     director.setFreeOrbitMode(enabled);
@@ -150,7 +158,11 @@ function initApp() {
     }
   }
 
-  btnStoryMode?.addEventListener('click', () => setOrbitMode(false));
+  btnStoryMode?.addEventListener('click', () => {
+    setOrbitMode(false);
+    director.setTimeMode('auto');
+    syncTimeModeButtons();
+  });
   btnOrbitMode?.addEventListener('click', () => setOrbitMode(true));
   btnEnter3dCta?.addEventListener('click', () => setOrbitMode(true));
   btnBackTopCta?.addEventListener('click', () => {
@@ -174,9 +186,12 @@ function initApp() {
     updateControlLabels();
   });
 
-  btnDayNight?.addEventListener('click', () => {
-    const isNight = director.toggleDayNightPreview();
-    btnDayNight.classList.toggle('active', isNight);
+  timeModeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-time-mode');
+      director.setTimeMode(director.timeMode === mode ? 'auto' : mode);
+      syncTimeModeButtons();
+    });
   });
 
   function getStageScrollY(stageId) {

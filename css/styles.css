@@ -289,6 +289,31 @@ body.orbit-active .story-track {
   color: #ffffff;
 }
 
+.time-mode-btn {
+  padding: 7px 10px;
+  font-size: 0.75rem;
+}
+
+.time-mode-btn[data-time-mode='morning'].active {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.34), rgba(244, 114, 182, 0.28));
+  border-color: #fdba74;
+}
+
+.time-mode-btn[data-time-mode='day'].active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.36), rgba(250, 204, 21, 0.26));
+  border-color: #fde047;
+}
+
+.time-mode-btn[data-time-mode='sunset'].active {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.38), rgba(168, 85, 247, 0.32));
+  border-color: #fb923c;
+}
+
+.time-mode-btn[data-time-mode='night'].active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.34), rgba(99, 102, 241, 0.34));
+  border-color: #93c5fd;
+}
+
 .orbit-hint {
   padding: 6px 14px;
   background: var(--glass-bg-strong);
@@ -829,6 +854,10 @@ body.orbit-active .story-track {
     padding: 5px 9px;
     font-size: 0.69rem;
   }
+  .time-mode-btn {
+    padding: 4px 7px;
+    font-size: 0.64rem;
+  }
   .content-sections { padding: 54px 14px 40px; }
   .calc-grid { padding: 16px; }
   .calc-outputs { grid-template-columns: 1fr; }
@@ -850,4 +879,7 @@ body.orbit-active .story-track {
   .lang-switcher { padding: 2px; gap: 1px; }
   .lang-btn { font-size: 0.62rem; padding: 3px 5px; }
   .mobile-menu-btn { padding: 4px 8px; font-size: 0.92rem; }
+  .controls-pill { gap: 3px; padding: 4px; }
+  .ctrl-btn { padding: 4px 7px; font-size: 0.65rem; }
+  .time-mode-btn { padding: 4px 6px; font-size: 0.61rem; }
 }

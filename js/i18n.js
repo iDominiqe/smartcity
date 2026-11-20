@@ -24,7 +24,10 @@ export const TRANSLATIONS = {
     modeOrbit: 'Free 3D Orbit',
     btnFlowBoost: 'Energy Flow: Normal',
     btnFlowBoostActive: 'Energy Flow: Boosted',
-    btnDayNight: 'Day / Night Preview',
+    timeMorning: '🌅 Morning',
+    timeDay: '☀️ Day',
+    timeSunset: '🌇 Sunset',
+    timeNight: '🌙 Night',
     orbitHint: 'Drag to rotate · Scroll to zoom · Right-click to pan',
 
     scrollPrompt: 'Scroll down to guide the solar energy journey',
@@ -112,6 +115,7 @@ export const TRANSLATIONS = {
     footerBackTop: 'Back to Top ↑',
 
     // Dynamic telemetry status values
+    gridMorningDawn: 'Dawn Solar Ramp-Up',
     gridDayCity: 'Solar Peak → City',
     gridCharging: 'Canopy → EV Fast Charge',
     gridEveningDrive: 'Dusk Transition · LEDs On',
@@ -139,7 +143,10 @@ export const TRANSLATIONS = {
     modeOrbit: 'Orbite 3D Libre',
     btnFlowBoost: 'Flux Énergie : Normal',
     btnFlowBoostActive: 'Flux Énergie : Boost',
-    btnDayNight: 'Aperçu Jour / Nuit',
+    timeMorning: '🌅 Matin',
+    timeDay: '☀️ Jour',
+    timeSunset: '🌇 Coucher',
+    timeNight: '🌙 Nuit',
     orbitHint: 'Glisser pour pivoter · Molette pour zoomer · Clic droit pour déplacer',
 
     scrollPrompt: 'Faites défiler vers le bas pour suivre le parcours solaire',
@@ -226,6 +233,7 @@ export const TRANSLATIONS = {
     footerDomain: 'Smart-City-Led.com · Expérience 3D Statique Prête pour GitHub Pages',
     footerBackTop: 'Haut de Page ↑',
 
+    gridMorningDawn: 'Aube · Montée Solaire',
     gridDayCity: 'Pic Solaire → Ville',
     gridCharging: 'Ombrière → Charge Rapide VE',
     gridEveningDrive: 'Crépuscule · LED Activées',
@@ -253,7 +261,10 @@ export const TRANSLATIONS = {
     modeOrbit: 'Свободна 3D Орбита',
     btnFlowBoost: 'Енергиен Поток: Нормален',
     btnFlowBoostActive: 'Енергиен Поток: Усилен',
-    btnDayNight: 'Преглед Ден / Нощ',
+    timeMorning: '🌅 Сутрин',
+    timeDay: '☀️ Ден',
+    timeSunset: '🌇 Залез',
+    timeNight: '🌙 Нощ',
     orbitHint: 'Плъзнете за завъртане · Скрол за мащаб · Десен бутон за преместване',
 
     scrollPrompt: 'Превъртете надолу, за да проследите соларния енергиен път',
@@ -340,6 +351,7 @@ export const TRANSLATIONS = {
     footerDomain: 'Smart-City-Led.com · Статичен 3D Проект за GitHub Pages',
     footerBackTop: 'Нагоре ↑',
 
+    gridMorningDawn: 'Утринен Соларен Старт',
     gridDayCity: 'Соларен Пик → Град',
     gridCharging: 'Навес → Бързо Зареждане ЕМ',
     gridEveningDrive: 'Здрач · LED Включени',
@@ -367,7 +379,10 @@ export const TRANSLATIONS = {
     modeOrbit: 'Orbită 3D Liberă',
     btnFlowBoost: 'Flux Energie: Normal',
     btnFlowBoostActive: 'Flux Energie: Intens',
-    btnDayNight: 'Previzualizare Zi / Noapte',
+    timeMorning: '🌅 Zori',
+    timeDay: '☀️ Zi',
+    timeSunset: '🌇 Apus',
+    timeNight: '🌙 Noapte',
     orbitHint: 'Trageți pentru rotire · Rotița pentru zoom · Click dreapta pentru deplasare',
 
     scrollPrompt: 'Derulați în jos pentru a urmări călătoria energiei solare',
@@ -454,6 +469,7 @@ export const TRANSLATIONS = {
     footerDomain: 'Smart-City-Led.com · Experiență 3D Statică Pregătită pentru GitHub Pages',
     footerBackTop: 'Înapoi Sus ↑',
 
+    gridMorningDawn: 'Zori · Pornire Solară',
     gridDayCity: 'Vârf Solar → Oraș',
     gridCharging: 'Copertină → Încărcare Rapidă EV',
     gridEveningDrive: 'Amurg · LED-uri Aprinse',

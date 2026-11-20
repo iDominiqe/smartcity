@@ -55,10 +55,74 @@ export function createSolarTexture() {
   return tex;
 }
 
+const DIORAMA_FACADE_PALETTES = {
+  'midnight-tower': {
+    wall: '#1b263b',
+    band: '#24344d',
+    mullion: '#0f172a',
+    paneDark: '#263850',
+    paneMid: '#334e6e',
+    litColors: ['#ffd166', '#f4a261', '#fef3c7', '#7dd3fc'],
+    cols: 4,
+    rows: 10,
+    litThreshold: 0.22,
+    lintels: false
+  },
+  'terracotta-brick': {
+    wall: '#6e2f3c',
+    band: '#853c4a',
+    mullion: '#3a1a22',
+    paneDark: '#3f2a36',
+    paneMid: '#523442',
+    litColors: ['#ffb703', '#fde68a', '#fb923c', '#ffedd5'],
+    cols: 4,
+    rows: 8,
+    litThreshold: 0.16,
+    lintels: true
+  },
+  'purple-modern': {
+    wall: '#3f3759',
+    band: '#4f466e',
+    mullion: '#221d33',
+    paneDark: '#2d2845',
+    paneMid: '#3e385e',
+    litColors: ['#fde047', '#38bdf8', '#fb7185', '#fef08a'],
+    cols: 4,
+    rows: 10,
+    litThreshold: 0.18,
+    lintels: false
+  },
+  'lavender-bistro': {
+    wall: '#524b6b',
+    band: '#655d82',
+    mullion: '#2c273d',
+    paneDark: '#332f47',
+    paneMid: '#443e5e',
+    litColors: ['#fde68a', '#facc15', '#5eead4', '#fb7185'],
+    cols: 4,
+    rows: 7,
+    litThreshold: 0.14,
+    lintels: true
+  },
+  'emerald-eco': {
+    wall: '#1f3a42',
+    band: '#294c57',
+    mullion: '#102227',
+    paneDark: '#24454f',
+    paneMid: '#2e5763',
+    litColors: ['#ffd166', '#6ee7b7', '#93c5fd', '#fef3c7'],
+    cols: 4,
+    rows: 9,
+    litThreshold: 0.2,
+    lintels: false
+  }
+};
+
 /**
- * Creates crisp architectural white-maquette window textures (soft cool slate by day, warm golden glow by night).
+ * Generates crisp multi-palette voxel/diorama facade color & emissive window maps.
  */
-export function createMaquetteWindowTextures() {
+export function createDioramaWindowTextures(paletteKey = 'midnight-tower') {
+  const cfg = DIORAMA_FACADE_PALETTES[paletteKey] || DIORAMA_FACADE_PALETTES['midnight-tower'];
   const colorCanvas = document.createElement('canvas');
   colorCanvas.width = 256;
   colorCanvas.height = 512;
@@ -69,33 +133,51 @@ export function createMaquetteWindowTextures() {
   emitCanvas.height = 512;
   const eCtx = emitCanvas.getContext('2d');
 
-  cCtx.fillStyle = '#f4f6fa';
+  cCtx.fillStyle = cfg.wall;
   cCtx.fillRect(0, 0, 256, 512);
   eCtx.fillStyle = '#000000';
   eCtx.fillRect(0, 0, 256, 512);
 
-  const cols = 4;
-  const rows = 10;
+  const cols = cfg.cols;
+  const rows = cfg.rows;
   const padX = 14;
   const padY = 14;
   const w = (256 - padX * (cols + 1)) / cols;
   const h = (512 - padY * (rows + 1)) / rows;
 
+  // Subtle architectural spandrel bands between floors
+  for (let r = 0; r < rows; r++) {
+    const bandY = padY + r * (h + padY) - padY * 0.45;
+    cCtx.fillStyle = cfg.band;
+    cCtx.fillRect(0, Math.max(0, bandY), 256, 4);
+  }
+
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const x = padX + c * (w + padX);
       const y = padY + r * (h + padY);
-      const litSeed = Math.sin(r * 17.7 + c * 9.3) * 0.5 + 0.5;
-      const isWarm = (r + c) % 3 !== 1;
+      const litSeed = Math.sin(r * 17.7 + c * 9.3 + cols * 2.1) * 0.5 + 0.5;
+      const colorIdx = Math.abs(r * 3 + c * 5) % cfg.litColors.length;
 
-      cCtx.fillStyle = '#cbd5e1';
-      cCtx.fillRect(x - 2, y - 2, w + 4, h + 4);
-      cCtx.fillStyle = litSeed > 0.25 ? '#9fb3c8' : '#b4c3d4';
+      // Window frame & optional lintel
+      cCtx.fillStyle = cfg.mullion;
+      cCtx.fillRect(x - 3, y - 3, w + 6, h + 6);
+      if (cfg.lintels) {
+        cCtx.fillStyle = cfg.band;
+        cCtx.fillRect(x - 4, y - 5, w + 8, 3);
+      }
+
+      // Daytime reflective dark glass pane
+      cCtx.fillStyle = litSeed > 0.35 ? cfg.paneMid : cfg.paneDark;
       cCtx.fillRect(x, y, w, h);
 
-      if (litSeed > 0.2) {
-        eCtx.fillStyle = isWarm ? '#ffd27d' : '#9ce8ff';
-        eCtx.fillRect(x, y, w, h);
+      // Highlight reflection slash for crisp day look
+      cCtx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+      cCtx.fillRect(x + 2, y + 2, Math.max(3, w * 0.25), h - 4);
+
+      if (litSeed > cfg.litThreshold) {
+        eCtx.fillStyle = cfg.litColors[colorIdx];
+        eCtx.fillRect(x + 1, y + 1, w - 2, h - 2);
       }
     }
   }
@@ -108,6 +190,20 @@ export function createMaquetteWindowTextures() {
   emissiveMap.anisotropy = 4;
 
   return { map, emissiveMap };
+}
+
+/**
+ * Returns default diorama window maps plus a full map of all 5 architectural palettes.
+ */
+export function createMaquetteWindowTextures() {
+  const palettes = {};
+  Object.keys(DIORAMA_FACADE_PALETTES).forEach((key) => {
+    palettes[key] = createDioramaWindowTextures(key);
+  });
+  return {
+    ...palettes['midnight-tower'],
+    palettes
+  };
 }
 
 /**
@@ -567,54 +663,291 @@ export function createEnergyStream(points, colorHex, beadCount = 6, tubeRadius =
 }
 
 /**
- * Builds a stylized maquette car or electric bus (local front is +Z).
+ * Creates a stepped 3D voxel cloud cluster from overlapping blocks.
  */
-export function createStylizedVehicle(bodyColor, isBus = false) {
+export function createVoxelCloudCluster(cloudMat, scale = 1) {
+  const cloud = new THREE.Group();
+  const blocks = [
+    [0, 0.25, 0, 2.2, 0.9, 1.4],
+    [-1.1, 0.05, 0.15, 1.3, 0.65, 1.1],
+    [1.15, 0.1, -0.1, 1.4, 0.72, 1.15],
+    [-0.35, 0.75, 0.05, 1.25, 0.68, 1.0],
+    [0.45, 0.65, -0.05, 1.0, 0.58, 0.9],
+    [0.05, -0.1, 0.45, 1.6, 0.5, 0.8]
+  ];
+  blocks.forEach(([bx, by, bz, bw, bh, bd]) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), cloudMat);
+    mesh.position.set(bx, by, bz);
+    cloud.add(mesh);
+  });
+  cloud.scale.setScalar(scale);
+  return cloud;
+}
+
+/**
+ * Creates a stylized blocky 3D voxel crescent moon matching the isometric diorama aesthetic.
+ */
+export function createVoxelCrescentMoon() {
+  const moon = new THREE.Group();
+  const moonMat = new THREE.MeshBasicMaterial({ color: '#e2ecff' });
+  const glowMat = new THREE.MeshBasicMaterial({ color: '#93c5fd', transparent: true, opacity: 0.45 });
+
+  // Pixel-grid crescent coordinates [gridX, gridY, size]
+  const voxels = [
+    [0.4, 1.6], [1.2, 1.6],
+    [-0.4, 0.8], [0.4, 0.8],
+    [-0.8, 0.0], [0.0, 0.0],
+    [-0.4, -0.8], [0.4, -0.8],
+    [0.4, -1.6], [1.2, -1.6]
+  ];
+  const cubeGeo = new THREE.BoxGeometry(0.86, 0.86, 0.86);
+  voxels.forEach(([vx, vy]) => {
+    const cube = new THREE.Mesh(cubeGeo, moonMat);
+    cube.position.set(vx, vy, 0);
+    moon.add(cube);
+  });
+
+  const halo = new THREE.Mesh(new THREE.BoxGeometry(2.6, 3.8, 0.35), glowMat);
+  halo.position.set(0.15, 0, -0.3);
+  moon.add(halo);
+
+  return moon;
+}
+
+/**
+ * Builds a stepped voxel tree with stone planter, timber trunk, and layered green cubic canopy.
+ */
+export function createVoxelTree(scale = 1, variant = 0) {
+  const tree = new THREE.Group();
+  const planterMat = new THREE.MeshStandardMaterial({ color: '#475569', roughness: 0.8 });
+  const trunkMat = new THREE.MeshStandardMaterial({ color: '#6b4423', roughness: 0.85 });
+  const greens = ['#15803d', '#16a34a', '#22c55e', '#4ade80'];
+  const leafDark = new THREE.MeshStandardMaterial({ color: greens[variant % 2], roughness: 0.78 });
+  const leafBright = new THREE.MeshStandardMaterial({ color: greens[(variant % 2) + 2], roughness: 0.72 });
+
+  const planter = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.22, 0.9), planterMat);
+  planter.position.y = 0.11;
+  tree.add(planter);
+
+  const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.95, 0.32), trunkMat);
+  trunk.position.y = 0.68;
+  trunk.castShadow = true;
+  tree.add(trunk);
+
+  if (variant % 2 === 0) {
+    // Stepped broadleaf voxel crown
+    const tier1 = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.65, 1.45), leafDark);
+    tier1.position.y = 1.35;
+    tier1.castShadow = true;
+    tree.add(tier1);
+
+    const tier2 = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.62, 1.15), leafBright);
+    tier2.position.set(0.06, 1.85, -0.04);
+    tier2.castShadow = true;
+    tree.add(tier2);
+
+    const tier3 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.45, 0.7), leafBright);
+    tier3.position.set(-0.08, 2.3, 0.06);
+    tree.add(tier3);
+  } else {
+    // Stepped conifer / cypress voxel tiers
+    const tier1 = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.55, 1.3), leafDark);
+    tier1.position.y = 1.25;
+    tier1.castShadow = true;
+    tree.add(tier1);
+
+    const tier2 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.55, 1.0), leafBright);
+    tier2.position.y = 1.75;
+    tier2.castShadow = true;
+    tree.add(tier2);
+
+    const tier3 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.52, 0.7), leafDark);
+    tier3.position.y = 2.22;
+    tree.add(tier3);
+
+    const tip = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.4, 0.38), leafBright);
+    tip.position.y = 2.62;
+    tree.add(tip);
+  }
+
+  tree.scale.setScalar(scale);
+  return tree;
+}
+
+/**
+ * Builds a stylized diorama vehicle ('car', 'taxi', 'bus', or 'truck'; local front is +Z).
+ */
+export function createStylizedVehicle(bodyColor, typeOrIsBus = false, lightMats = null) {
+  const type = typeof typeOrIsBus === 'string' ? typeOrIsBus : typeOrIsBus ? 'bus' : 'car';
   const group = new THREE.Group();
   const bodyMat = new THREE.MeshStandardMaterial({
     color: bodyColor,
     roughness: 0.28,
     metalness: 0.35
   });
-  const glassMat = new THREE.MeshStandardMaterial({
-    color: '#1e293b',
-    roughness: 0.15,
-    metalness: 0.75
+  const roofWhiteMat = new THREE.MeshStandardMaterial({
+    color: '#f8fafc',
+    roughness: 0.32,
+    metalness: 0.2
   });
-  const tireMat = new THREE.MeshStandardMaterial({ color: '#1e293b', roughness: 0.85 });
+  const glassMat = new THREE.MeshStandardMaterial({
+    color: '#0f172a',
+    roughness: 0.12,
+    metalness: 0.85
+  });
+  const tireMat = new THREE.MeshStandardMaterial({ color: '#111827', roughness: 0.85 });
+  const rimMat = new THREE.MeshStandardMaterial({ color: '#cbd5e1', metalness: 0.75, roughness: 0.25 });
 
-  const w = isBus ? 1.55 : 1.38;
-  const len = isBus ? 4.35 : 2.95;
-  const h = isBus ? 1.48 : 0.46;
+  const headMat = new THREE.MeshStandardMaterial({
+    color: '#fffbeb',
+    emissive: new THREE.Color('#fde68a'),
+    emissiveIntensity: 0.35
+  });
+  headMat.userData = { dayIntensity: 0.2, nightIntensity: 2.6 };
 
-  const chassis = new THREE.Mesh(new THREE.BoxGeometry(w, h, len), bodyMat);
-  chassis.position.y = isBus ? 0.96 : 0.42;
-  chassis.castShadow = true;
-  group.add(chassis);
+  const tailMat = new THREE.MeshStandardMaterial({
+    color: '#ef4444',
+    emissive: new THREE.Color('#ef4444'),
+    emissiveIntensity: 0.4
+  });
+  tailMat.userData = { dayIntensity: 0.25, nightIntensity: 2.2 };
 
-  if (isBus) {
-    const windowBand = new THREE.Mesh(new THREE.BoxGeometry(w + 0.03, 0.56, len * 0.84), glassMat);
-    windowBand.position.set(0, 1.18, 0.06);
-    group.add(windowBand);
-  } else {
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(w * 0.82, 0.42, len * 0.54), glassMat);
-    cabin.position.set(0, 0.82, -0.1);
-    cabin.castShadow = true;
-    group.add(cabin);
+  if (lightMats) {
+    lightMats.push(headMat, tailMat);
   }
 
+  let w = 1.44;
+  let len = 3.05;
+  let wheelOffX = 0.68;
+
+  if (type === 'bus') {
+    w = 1.62;
+    len = 4.45;
+    wheelOffX = 0.76;
+
+    const lowerBody = new THREE.Mesh(new THREE.BoxGeometry(w, 0.88, len), bodyMat);
+    lowerBody.position.y = 0.66;
+    lowerBody.castShadow = true;
+    group.add(lowerBody);
+
+    const upperRoof = new THREE.Mesh(new THREE.BoxGeometry(w * 0.96, 0.34, len * 0.94), roofWhiteMat);
+    upperRoof.position.y = 1.62;
+    upperRoof.castShadow = true;
+    group.add(upperRoof);
+
+    // Rooftop HVAC & battery pod
+    const roofPod = new THREE.Mesh(new THREE.BoxGeometry(w * 0.62, 0.16, len * 0.42), roofWhiteMat);
+    roofPod.position.set(0, 1.85, -0.2);
+    group.add(roofPod);
+
+    // Warm glowing passenger window band
+    const winEmitMat = new THREE.MeshStandardMaterial({
+      color: '#1e293b',
+      emissive: new THREE.Color('#ffd166'),
+      emissiveIntensity: 0.2,
+      roughness: 0.18,
+      metalness: 0.45
+    });
+    winEmitMat.userData = { dayIntensity: 0.08, nightIntensity: 1.75 };
+    if (lightMats) lightMats.push(winEmitMat);
+
+    const windowBand = new THREE.Mesh(new THREE.BoxGeometry(w + 0.03, 0.52, len * 0.86), winEmitMat);
+    windowBand.position.set(0, 1.24, 0.04);
+    group.add(windowBand);
+
+    // Front route brow display
+    const routeSign = new THREE.Mesh(new THREE.BoxGeometry(w * 0.65, 0.16, 0.08), headMat);
+    routeSign.position.set(0, 1.56, len * 0.48);
+    group.add(routeSign);
+  } else if (type === 'truck') {
+    w = 1.58;
+    len = 4.15;
+    wheelOffX = 0.74;
+
+    // Chassis rail
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(w * 0.92, 0.24, len * 0.94), tireMat);
+    rail.position.y = 0.34;
+    group.add(rail);
+
+    // Forward cab (crimson red or passed color)
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(w * 0.94, 1.15, 1.35), bodyMat);
+    cab.position.set(0, 0.98, len * 0.3);
+    cab.castShadow = true;
+    group.add(cab);
+
+    const windshield = new THREE.Mesh(new THREE.BoxGeometry(w * 0.84, 0.48, 0.1), glassMat);
+    windshield.position.set(0, 1.18, len * 0.3 + 0.66);
+    group.add(windshield);
+
+    // Crisp white insulated cargo container
+    const cargo = new THREE.Mesh(new THREE.BoxGeometry(w * 1.02, 1.48, len * 0.6), roofWhiteMat);
+    cargo.position.set(0, 1.16, -len * 0.19);
+    cargo.castShadow = true;
+    group.add(cargo);
+
+    const cargoStripe = new THREE.Mesh(new THREE.BoxGeometry(w * 1.04, 0.14, len * 0.58), bodyMat);
+    cargoStripe.position.set(0, 0.62, -len * 0.19);
+    group.add(cargoStripe);
+  } else {
+    // 'car' or 'taxi'
+    const chassis = new THREE.Mesh(new THREE.BoxGeometry(w, 0.46, len), bodyMat);
+    chassis.position.y = 0.44;
+    chassis.castShadow = true;
+    group.add(chassis);
+
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(w * 0.84, 0.42, len * 0.54), glassMat);
+    cabin.position.set(0, 0.84, -0.1);
+    cabin.castShadow = true;
+    group.add(cabin);
+
+    const roofCap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.78, 0.08, len * 0.44), bodyMat);
+    roofCap.position.set(0, 1.06, -0.12);
+    group.add(roofCap);
+
+    if (type === 'taxi') {
+      const taxiMat = new THREE.MeshStandardMaterial({
+        color: '#fef08a',
+        emissive: new THREE.Color('#facc15'),
+        emissiveIntensity: 0.6
+      });
+      taxiMat.userData = { dayIntensity: 0.35, nightIntensity: 2.2 };
+      if (lightMats) lightMats.push(taxiMat);
+
+      const taxiSign = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.18, 0.24), taxiMat);
+      taxiSign.position.set(0, 1.18, -0.05);
+      group.add(taxiSign);
+    }
+  }
+
+  // Dual Front Headlights (+Z) & Rear Taillights (-Z)
+  [-w * 0.34, w * 0.34].forEach((lx) => {
+    const hl = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.08), headMat);
+    hl.position.set(lx, 0.46, len * 0.5);
+    group.add(hl);
+
+    const tl = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.13, 0.08), tailMat);
+    tl.position.set(lx, 0.48, -len * 0.5);
+    group.add(tl);
+  });
+
+  // Wheels with silver rims
   const wheelGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.2, 12);
   wheelGeo.rotateZ(Math.PI / 2);
+  const rimGeo = new THREE.CylinderGeometry(0.13, 0.13, 0.22, 8);
+  rimGeo.rotateZ(Math.PI / 2);
   const zOff = len * 0.31;
   [
-    [-w * 0.48, 0.24, zOff],
-    [w * 0.48, 0.24, zOff],
-    [-w * 0.48, 0.24, -zOff],
-    [w * 0.48, 0.24, -zOff]
+    [-wheelOffX, 0.24, zOff],
+    [wheelOffX, 0.24, zOff],
+    [-wheelOffX, 0.24, -zOff],
+    [wheelOffX, 0.24, -zOff]
   ].forEach(([wx, wy, wz]) => {
     const tire = new THREE.Mesh(wheelGeo, tireMat);
     tire.position.set(wx, wy, wz);
     group.add(tire);
+    const rim = new THREE.Mesh(rimGeo, rimMat);
+    rim.position.set(wx, wy, wz);
+    group.add(rim);
   });
 
   return group;

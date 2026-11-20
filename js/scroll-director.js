@@ -92,63 +92,95 @@ const CAMERA_KEYFRAMES = [
   { p: 1.0, pos: [2.2, 12.1, -14.6], target: [18.2, 3.1, 6.4] }
 ];
 
-const ATMOSPHERE_STOPS = [
+const TIME_STOPS = [
   {
-    d: 0.0,
-    sky: new THREE.Color('#0c1733'),
-    sun: new THREE.Color('#8bb4f8'),
-    hemiSky: new THREE.Color('#4c689e'),
-    hemiGround: new THREE.Color('#182238'),
-    dirInt: 0.65,
-    hemiInt: 0.55,
-    ambInt: 0.32,
-    fogDensity: 0.0046
-  },
-  {
-    d: 0.22,
-    sky: new THREE.Color('#2c4478'),
-    sun: new THREE.Color('#9ec0fa'),
-    hemiSky: new THREE.Color('#6f8cc4'),
-    hemiGround: new THREE.Color('#2b3654'),
-    dirInt: 0.88,
-    hemiInt: 0.72,
-    ambInt: 0.36,
-    fogDensity: 0.0044
-  },
-  {
-    d: 0.45,
-    sky: new THREE.Color('#f4a27b'),
-    sun: new THREE.Color('#ff9252'),
-    hemiSky: new THREE.Color('#ffc49b'),
-    hemiGround: new THREE.Color('#5a506e'),
-    dirInt: 1.55,
+    c: 0.0, // Morning / Dawn (~07:30)
+    sky: new THREE.Color('#7488ad'),
+    sun: new THREE.Color('#ffb36b'),
+    hemiSky: new THREE.Color('#ffd5c2'),
+    hemiGround: new THREE.Color('#3b425c'),
+    cloudCol: new THREE.Color('#fde2e4'),
+    cloudEmit: new THREE.Color('#fca5a5'),
+    sunPos: [42, 15, -26],
+    moonY: -8,
+    dirInt: 1.4,
     hemiInt: 0.88,
     ambInt: 0.42,
-    fogDensity: 0.0042
+    fogDensity: 0.0038,
+    ledGlow: 0.26,
+    solarFactor: 0.58,
+    starsOp: 0.08,
+    hour: 7,
+    min: 30
   },
   {
-    d: 0.72,
-    sky: new THREE.Color('#f0e4d4'),
-    sun: new THREE.Color('#ffe8bf'),
-    hemiSky: new THREE.Color('#fff5e6'),
-    hemiGround: new THREE.Color('#c8ced8'),
-    dirInt: 2.1,
-    hemiInt: 1.12,
-    ambInt: 0.48,
-    fogDensity: 0.0038
+    c: 0.33, // High Noon Day (~12:30)
+    sky: new THREE.Color('#5b9bd5'),
+    sun: new THREE.Color('#fff8e7'),
+    hemiSky: new THREE.Color('#eef6ff'),
+    hemiGround: new THREE.Color('#475569'),
+    cloudCol: new THREE.Color('#ffffff'),
+    cloudEmit: new THREE.Color('#cbd5e1'),
+    sunPos: [-8, 56, -16],
+    moonY: -18,
+    dirInt: 2.35,
+    hemiInt: 1.25,
+    ambInt: 0.54,
+    fogDensity: 0.0031,
+    ledGlow: 0.0,
+    solarFactor: 1.0,
+    starsOp: 0.0,
+    hour: 12,
+    min: 30
   },
   {
-    d: 1.0,
-    sky: new THREE.Color('#e3edf8'),
-    sun: new THREE.Color('#fff9ec'),
-    hemiSky: new THREE.Color('#ffffff'),
-    hemiGround: new THREE.Color('#dce3ed'),
-    dirInt: 2.45,
-    hemiInt: 1.38,
-    ambInt: 0.56,
-    fogDensity: 0.0035
+    c: 0.66, // Golden Sunset / Dusk (~18:45)
+    sky: new THREE.Color('#4a325c'),
+    sun: new THREE.Color('#ff6b35'),
+    hemiSky: new THREE.Color('#f9a88c'),
+    hemiGround: new THREE.Color('#271d38'),
+    cloudCol: new THREE.Color('#fdba74'),
+    cloudEmit: new THREE.Color('#fb923c'),
+    sunPos: [-44, 13, -24],
+    moonY: 16,
+    dirInt: 1.5,
+    hemiInt: 0.84,
+    ambInt: 0.4,
+    fogDensity: 0.0041,
+    ledGlow: 0.74,
+    solarFactor: 0.28,
+    starsOp: 0.32,
+    hour: 18,
+    min: 45
+  },
+  {
+    c: 1.0, // Deep Midnight Night (~22:15)
+    sky: new THREE.Color('#070e1e'),
+    sun: new THREE.Color('#8bb4f8'),
+    hemiSky: new THREE.Color('#334e85'),
+    hemiGround: new THREE.Color('#0f172a'),
+    cloudCol: new THREE.Color('#475569'),
+    cloudEmit: new THREE.Color('#334155'),
+    sunPos: [-48, -12, -28],
+    moonY: 30,
+    dirInt: 0.68,
+    hemiInt: 0.56,
+    ambInt: 0.35,
+    fogDensity: 0.0044,
+    ledGlow: 1.0,
+    solarFactor: 0.04,
+    starsOp: 0.95,
+    hour: 22,
+    min: 15
   }
 ];
+
+const TIME_CYCLE_TARGETS = {
+  morning: 0.0,
+  day: 0.33,
+  sunset: 0.66,
+  night: 1.0
+};
 
 export class ScrollDirector {
   constructor(scene, camera, world, i18n) {
@@ -161,7 +193,8 @@ export class ScrollDirector {
     this.smoothProgress = 0;
     this.freeOrbitMode = false;
     this.flowBoost = false;
-    this.previewMode = 'auto';
+    this.timeMode = 'auto';
+    this.smoothCycle = 0.0;
 
     this.flowClock = 0;
     this.wheelSpin = 0;
@@ -172,10 +205,12 @@ export class ScrollDirector {
     this._evPos = new THREE.Vector3();
     this._evNext = new THREE.Vector3();
 
-    this._skyCurrent = new THREE.Color('#e3edf8');
-    this._sunColorCur = new THREE.Color('#fff9ec');
-    this._hemiSkyCur = new THREE.Color('#ffffff');
-    this._hemiGroundCur = new THREE.Color('#dce3ed');
+    this._skyCurrent = new THREE.Color('#7488ad');
+    this._sunColorCur = new THREE.Color('#ffb36b');
+    this._hemiSkyCur = new THREE.Color('#ffd5c2');
+    this._hemiGroundCur = new THREE.Color('#3b425c');
+    this._cloudColorCur = new THREE.Color('#fde2e4');
+    this._cloudEmitCur = new THREE.Color('#fca5a5');
 
     // Leg 1: City Core -> Solar EV Charging Bay
     this.driveToStationCurve = new THREE.CatmullRomCurve3([
@@ -229,39 +264,61 @@ export class ScrollDirector {
     this.flowBoost = enabled;
   }
 
-  toggleDayNightPreview() {
-    const order = ['auto', 'night', 'sunset', 'day'];
-    const nextIdx = (order.indexOf(this.previewMode) + 1) % order.length;
-    this.previewMode = order[nextIdx];
-    return this.previewMode !== 'auto';
+  setTimeMode(mode) {
+    if (mode === 'auto' || !(mode in TIME_CYCLE_TARGETS)) {
+      this.timeMode = 'auto';
+    } else {
+      this.timeMode = mode;
+    }
+    return this.timeMode;
   }
 
-  sampleAtmosphere(daylight) {
-    const d = clamp(daylight, 0, 1);
-    let s0 = ATMOSPHERE_STOPS[0];
-    let s1 = ATMOSPHERE_STOPS[ATMOSPHERE_STOPS.length - 1];
+  toggleDayNightPreview() {
+    const order = ['auto', 'morning', 'day', 'sunset', 'night'];
+    const nextIdx = (order.indexOf(this.timeMode) + 1) % order.length;
+    this.timeMode = order[nextIdx];
+    return this.timeMode !== 'auto';
+  }
 
-    for (let i = 0; i < ATMOSPHERE_STOPS.length - 1; i++) {
-      if (d >= ATMOSPHERE_STOPS[i].d && d <= ATMOSPHERE_STOPS[i + 1].d) {
-        s0 = ATMOSPHERE_STOPS[i];
-        s1 = ATMOSPHERE_STOPS[i + 1];
+  sampleAtmosphere(cycle) {
+    const c = clamp(cycle, 0, 1);
+    let s0 = TIME_STOPS[0];
+    let s1 = TIME_STOPS[TIME_STOPS.length - 1];
+
+    for (let i = 0; i < TIME_STOPS.length - 1; i++) {
+      if (c >= TIME_STOPS[i].c && c <= TIME_STOPS[i + 1].c) {
+        s0 = TIME_STOPS[i];
+        s1 = TIME_STOPS[i + 1];
         break;
       }
     }
 
-    const span = Math.max(0.0001, s1.d - s0.d);
-    const t = smoothstep(0, 1, (d - s0.d) / span);
+    const span = Math.max(0.0001, s1.c - s0.c);
+    const t = smoothstep(0, 1, (c - s0.c) / span);
 
     this._skyCurrent.copy(s0.sky).lerp(s1.sky, t);
     this._sunColorCur.copy(s0.sun).lerp(s1.sun, t);
     this._hemiSkyCur.copy(s0.hemiSky).lerp(s1.hemiSky, t);
     this._hemiGroundCur.copy(s0.hemiGround).lerp(s1.hemiGround, t);
+    this._cloudColorCur.copy(s0.cloudCol).lerp(s1.cloudCol, t);
+    this._cloudEmitCur.copy(s0.cloudEmit).lerp(s1.cloudEmit, t);
+
+    const mins0 = s0.hour * 60 + s0.min;
+    const mins1 = s1.hour * 60 + s1.min;
 
     return {
+      sunX: lerp(s0.sunPos[0], s1.sunPos[0], t),
+      sunY: lerp(s0.sunPos[1], s1.sunPos[1], t),
+      sunZ: lerp(s0.sunPos[2], s1.sunPos[2], t),
+      moonY: lerp(s0.moonY, s1.moonY, t),
       dirInt: lerp(s0.dirInt, s1.dirInt, t),
       hemiInt: lerp(s0.hemiInt, s1.hemiInt, t),
       ambInt: lerp(s0.ambInt, s1.ambInt, t),
-      fogDensity: lerp(s0.fogDensity, s1.fogDensity, t)
+      fogDensity: lerp(s0.fogDensity, s1.fogDensity, t),
+      ledGlow: lerp(s0.ledGlow, s1.ledGlow, t),
+      solarFactor: lerp(s0.solarFactor, s1.solarFactor, t),
+      starsOp: lerp(s0.starsOp, s1.starsOp, t),
+      totalMinutes: lerp(mins0, mins1, t)
     };
   }
 
@@ -414,15 +471,18 @@ export class ScrollDirector {
     }
 
     // -------------------------------------------------------------------------
-    // 4. NATURAL 5-STOP DAY -> SUNSET -> TWILIGHT -> NIGHT LIGHTING
+    // 4. NATURAL 4-PHASE MORNING -> DAY -> SUNSET -> NIGHT LIGHTING
     // -------------------------------------------------------------------------
-    let daylight = 1.0 - smoothstep(0.42, 0.62, p);
-    if (this.previewMode === 'night') daylight = 0.0;
-    else if (this.previewMode === 'sunset') daylight = 0.44;
-    else if (this.previewMode === 'day') daylight = 1.0;
+    const targetCycle =
+      this.timeMode === 'auto'
+        ? clamp(p, 0, 1)
+        : (TIME_CYCLE_TARGETS[this.timeMode] ?? 0.33);
+    const cycleDamp = 1 - Math.exp(-5.0 * safeDt);
+    this.smoothCycle += (targetCycle - this.smoothCycle) * cycleDamp;
 
-    const nightness = 1.0 - daylight;
-    const atmo = this.sampleAtmosphere(daylight);
+    const atmo = this.sampleAtmosphere(this.smoothCycle);
+    const ledGlow = atmo.ledGlow;
+    const solarFactor = atmo.solarFactor;
 
     this.scene.background = this._skyCurrent;
     if (this.scene.fog) {
@@ -430,18 +490,12 @@ export class ScrollDirector {
       this.scene.fog.density = atmo.fogDensity;
     }
 
-    const sunElevAngle = lerp(-0.14, 1.12, daylight);
-    const sunRadius = 78;
-    const sunX = lerp(-46, -20, daylight);
-    const sunY = Math.sin(sunElevAngle) * sunRadius;
-    const sunZ = -Math.cos(sunElevAngle) * 34;
-
-    this.world.sunMesh.position.set(sunX, sunY, sunZ);
-    this.world.sunMesh.visible = sunY > -6;
+    this.world.sunMesh.position.set(atmo.sunX, atmo.sunY, atmo.sunZ);
+    this.world.sunMesh.visible = atmo.sunY > -6;
     this.world.dirLight.position.set(
-      sunX * 0.52,
-      Math.max(8, sunY * 0.68),
-      Math.max(12, sunZ + 40)
+      atmo.sunX * 0.52,
+      Math.max(8, atmo.sunY * 0.68),
+      Math.max(10, atmo.sunZ + 38)
     );
     this.world.dirLight.color.copy(this._sunColorCur);
     this.world.dirLight.intensity = atmo.dirInt;
@@ -451,26 +505,59 @@ export class ScrollDirector {
     this.world.hemiLight.intensity = atmo.hemiInt;
     this.world.ambientLight.intensity = atmo.ambInt;
 
-    const moonY = lerp(-15, 38, nightness);
-    this.world.moonMesh.position.set(36, moonY, -36);
-    this.world.moonMesh.visible = moonY > -2;
-    this.world.starsMat.opacity = clamp((nightness - 0.35) / 0.55, 0, 0.9);
+    if (this.world.cloudMat) {
+      this.world.cloudMat.color.copy(this._cloudColorCur);
+      this.world.cloudMat.emissive.copy(this._cloudEmitCur);
+      this.world.cloudMat.emissiveIntensity = lerp(0.18, 0.28, ledGlow);
+    }
+    if (this.world.voxelClouds) {
+      this.world.voxelClouds.forEach((c) => {
+        c.mesh.position.x = c.baseX + Math.sin(elapsed * c.speed * 0.25 + c.phase) * 3.2;
+        c.mesh.position.y = c.baseY + Math.sin(elapsed * 0.55 + c.phase) * 0.32;
+      });
+    }
+
+    this.world.moonMesh.position.set(32, atmo.moonY, -34);
+    this.world.moonMesh.visible = atmo.moonY > -2;
+    this.world.starsMat.opacity = atmo.starsOp;
+    if (this.world.voxelStarsGroup) {
+      this.world.voxelStarsGroup.visible = atmo.starsOp > 0.02;
+      this.world.voxelStarMats.forEach((st) => {
+        const twinkle = 0.65 + 0.35 * Math.sin(elapsed * 2.4 + st.phase);
+        st.mat.opacity = atmo.starsOp * twinkle;
+      });
+    }
 
     // -------------------------------------------------------------------------
-    // 5. SMART-CITY-LED LIGHTS, WINDOWS, EV & NEO CLIM® FLAGSHIP STORE
+    // 5. SMART-CITY-LED LIGHTS, WINDOWS, STOREFRONTS, VEHICLES & VITRINE
     // -------------------------------------------------------------------------
-    const ledGlow = smoothstep(0.32, 0.78, nightness);
-
-    this.world.streetLamps.forEach(({ bulbMat, coneMat }) => {
-      bulbMat.emissiveIntensity = lerp(0.0, 2.5, ledGlow);
+    this.world.streetLamps.forEach(({ bulbMat, coneMat, poolMat }) => {
+      bulbMat.emissiveIntensity = lerp(0.0, 2.6, ledGlow);
       if (coneMat) {
-        coneMat.opacity = lerp(0.0, 0.25, ledGlow);
+        coneMat.opacity = lerp(0.0, 0.26, ledGlow);
+      }
+      if (poolMat) {
+        poolMat.opacity = lerp(0.0, 0.36, ledGlow);
       }
     });
 
     this.world.buildingMaterials.forEach((mat) => {
-      mat.emissiveIntensity = lerp(0.0, 1.25, ledGlow);
+      mat.emissiveIntensity = lerp(0.02, 1.38, ledGlow);
     });
+
+    if (this.world.storefrontMats) {
+      this.world.storefrontMats.forEach((mat) => {
+        mat.emissiveIntensity = lerp(0.12, 1.45, ledGlow);
+      });
+    }
+
+    if (this.world.vehicleLightMats) {
+      this.world.vehicleLightMats.forEach((vMat) => {
+        const dayInt = vMat.userData?.dayIntensity ?? 0.2;
+        const nightInt = vMat.userData?.nightIntensity ?? 2.2;
+        vMat.emissiveIntensity = lerp(dayInt, nightInt, ledGlow);
+      });
+    }
 
     if (this.world.signalLampMats) {
       const greenPhase = Math.sin(elapsed * 1.1) > -0.2;
@@ -479,10 +566,10 @@ export class ScrollDirector {
       });
     }
 
-    this.world.evHeadlightMat.emissiveIntensity = lerp(0.2, 3.0, ledGlow);
-    this.world.evTaillightMat.emissiveIntensity = lerp(0.3, 2.2, ledGlow);
+    this.world.evHeadlightMat.emissiveIntensity = lerp(0.25, 3.0, ledGlow);
+    this.world.evTaillightMat.emissiveIntensity = lerp(0.35, 2.3, ledGlow);
     this.world.evHeadlightCones.forEach((bm) => {
-      bm.opacity = lerp(0.0, 0.24, ledGlow);
+      bm.opacity = lerp(0.0, 0.26, ledGlow);
     });
     this.world.evHeadlightSpot.intensity = lerp(0.0, 2.8, ledGlow);
 
@@ -492,7 +579,7 @@ export class ScrollDirector {
     this.world.stationBayRingMat.opacity = 0.28 + evChargingFactor * 0.65;
     this.world.stationLight.intensity = 0.35 + evChargingFactor * 2.2 + ledGlow * 1.4;
     if (this.world.stationSignMat) {
-      this.world.stationSignMat.emissiveIntensity = 0.5 + 0.35 * Math.max(ledGlow, evChargingFactor);
+      this.world.stationSignMat.emissiveIntensity = 0.5 + 0.38 * Math.max(ledGlow, evChargingFactor);
     }
     this.world.stationStatusMats.forEach((sm, idx) => {
       const pulse = 0.5 + 0.5 * Math.sin(elapsed * 5 + idx);
@@ -516,7 +603,7 @@ export class ScrollDirector {
     const storeActiveGlow = Math.max(ledGlow, storePickupFactor);
     if (this.world.storeWindowMat) {
       this.world.storeWindowMat.opacity = lerp(0.24, 0.16, storeActiveGlow);
-      this.world.storeWindowMat.emissiveIntensity = lerp(0.08, 0.22, storeActiveGlow);
+      this.world.storeWindowMat.emissiveIntensity = lerp(0.08, 0.24, storeActiveGlow);
     }
     if (this.world.storeSignMat) {
       this.world.storeSignMat.emissiveIntensity = lerp(0.45, 1.25, storeActiveGlow);
@@ -543,7 +630,6 @@ export class ScrollDirector {
         0.12 + bob,
         -4.55
       );
-      // Slight gentle head/body look left-right between the 3D AC unit (-2.2) and poster (+2.3)
       this.world.storeShopper.rotation.y = Math.sin(elapsed * 0.9) * 0.28;
     }
 
@@ -561,7 +647,7 @@ export class ScrollDirector {
     const speedMult = this.flowBoost ? 2.2 : 1.0;
     this.flowClock += safeDt * speedMult;
 
-    const cityStrength = lerp(0.45, 1.0, daylight) * (this.flowBoost ? 1.25 : 1.0);
+    const cityStrength = lerp(0.45, 1.0, solarFactor) * (this.flowBoost ? 1.25 : 1.0);
     this.world.cityFlows.forEach((stream, sIdx) => {
       stream.tubeMat.opacity = 0.2 + cityStrength * 0.25;
       stream.beadMat.opacity = clamp(0.45 + cityStrength * 0.55, 0, 1);
@@ -611,29 +697,17 @@ export class ScrollDirector {
     // -------------------------------------------------------------------------
     // 7. UPDATE LIVE TELEMETRY HUD
     // -------------------------------------------------------------------------
-    this.updateHUD(p, daylight, evBatteryPct, evChargingFactor);
+    this.updateHUD(p, atmo, evBatteryPct, evChargingFactor);
   }
 
-  updateHUD(p, daylight, evBatteryPct, evChargingFactor) {
-    let totalMinutes;
-    if (this.previewMode === 'night') {
-      totalMinutes = 21 * 60 + 30;
-    } else if (this.previewMode === 'sunset') {
-      totalMinutes = 18 * 60 + 40;
-    } else if (this.previewMode === 'day') {
-      totalMinutes = 12 * 60 + 30;
-    } else if (p < 0.42) {
-      totalMinutes = lerp(12 * 60 + 30, 16 * 60 + 0, p / 0.42);
-    } else {
-      totalMinutes = lerp(16 * 60 + 0, 21 * 60 + 45, (p - 0.42) / 0.58);
-    }
-    const hrs = Math.floor(totalMinutes / 60) % 24;
-    const mins = Math.floor(totalMinutes % 60);
+  updateHUD(p, atmo, evBatteryPct, evChargingFactor) {
+    const hrs = Math.floor(atmo.totalMinutes / 60) % 24;
+    const mins = Math.floor(atmo.totalMinutes % 60);
     if (this.hudTime) {
       this.hudTime.textContent = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
     }
 
-    const baseKw = Math.round(lerp(18, 485, Math.pow(daylight, 1.15)));
+    const baseKw = Math.round(lerp(18, 485, atmo.solarFactor));
     const boostAdd = this.flowBoost ? Math.round(baseKw * 0.2) : 0;
     if (this.hudSolar) {
       this.hudSolar.textContent = `${baseKw + boostAdd} kW`;
@@ -646,12 +720,14 @@ export class ScrollDirector {
 
     if (this.hudGrid) {
       let key = 'gridDayCity';
-      if (this.previewMode === 'night') {
+      if (this.timeMode === 'night') {
         key = 'gridNightEco';
-      } else if (this.previewMode === 'sunset') {
+      } else if (this.timeMode === 'sunset') {
         key = 'gridEveningDrive';
-      } else if (this.previewMode === 'day') {
+      } else if (this.timeMode === 'day') {
         key = 'gridDayCity';
+      } else if (this.timeMode === 'morning' || p < 0.14) {
+        key = 'gridMorningDawn';
       } else if (p >= 0.30 && p <= 0.45) {
         key = 'gridCharging';
       } else if (p > 0.45 && p < 0.58) {
