@@ -507,7 +507,7 @@ export class ChargerStudio3D {
               <span id="charger-lbl-time"></span>:
               <strong id="charger-val-time">13:30</strong>
             </label>
-            <input type="range" id="charger-time-slider" min="0" max="23.95" step="0.05" value="13.5" />
+            <input type="range" id="charger-time-slider" min="0" max="24" step="0.05" value="13.5" />
             <button type="button" class="ac-cam-btn" id="charger-btn-autotime"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-grid"></button>
           </div>
@@ -1510,7 +1510,8 @@ export class ChargerStudio3D {
     const isAlert = this.tamperTimer > 0;
     const isCharging = this.connectedToEv;
 
-    const totalMins = Math.floor(this.timeOfDay * 60) % 1440;
+    const clampedTod = Math.max(0, Math.min(24, this.timeOfDay));
+    const totalMins = Math.round(clampedTod * 60);
     const hrs = Math.floor(totalMins / 60);
     const mins = totalMins % 60;
     const timeStr = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
@@ -1839,9 +1840,10 @@ export class ChargerStudio3D {
     this.controls.autoRotateSpeed = 0.85;
     this.controls.update();
 
-    // 1. 24-Hour Time-of-Day Auto/Manual Cycle, Sky, Sun Arc & Streetlight Physics
+    // 1. 24-Hour Time-of-Day Auto/Manual Cycle (00:00 -> 24:00), Sky, Sun/Moon Arc & Streetlight Physics
     if (this.autoTime) {
-      this.timeOfDay = (this.timeOfDay + dt * 1.6) % 24;
+      this.timeOfDay += dt * 1.5;
+      if (this.timeOfDay > 24) this.timeOfDay -= 24;
       const sliderEl = this.modal?.querySelector('#charger-time-slider');
       if (sliderEl) sliderEl.value = this.timeOfDay.toFixed(2);
       const step5m = Math.floor(this.timeOfDay * 12);
@@ -1856,6 +1858,12 @@ export class ChargerStudio3D {
     const sunX = -Math.cos(sunAngle) * 14;
     const sunY = Math.max(2.5, Math.sin(sunAngle) * 13);
 
+    const nightHours = this.timeOfDay >= 19.0 ? this.timeOfDay - 19.0 : this.timeOfDay + 5.0;
+    const nightProg = Math.min(1, Math.max(0, nightHours / 11.0));
+    const moonAngle = nightProg * Math.PI;
+    const moonX = -Math.cos(moonAngle) * 13;
+    const moonY = Math.max(2.8, Math.sin(moonAngle) * 11.5);
+
     const targetSky = !isDay
       ? this.gridBackup
         ? '#0f1322'
@@ -1867,7 +1875,7 @@ export class ChargerStudio3D {
     if (this.scene.fog) this.scene.fog.color.copy(this.scene.background);
 
     if (this.sunLight) {
-      this.sunLight.position.set(isDay ? sunX : -6, isDay ? sunY : 12, isDay ? 8 : -8);
+      this.sunLight.position.set(isDay ? sunX : moonX, isDay ? sunY : moonY, isDay ? 8 : -6);
       this.sunLight.intensity = isDay ? 2.4 : 0.48;
       this.sunLight.color.set(
         !isDay ? '#93c5fd' : this.timeOfDay < 8.5 || this.timeOfDay > 16.5 ? '#ffae70' : '#fff8eb'
@@ -1879,7 +1887,7 @@ export class ChargerStudio3D {
     }
     if (this.moonOrb) {
       this.moonOrb.visible = !isDay;
-      this.moonOrb.position.set(8, 10, -14);
+      this.moonOrb.position.set(moonX, moonY, -14);
     }
     if (this.starsMat) this.starsMat.opacity = isDay ? 0.0 : 0.88;
     this.hemiLight.intensity = isDay ? 0.95 : 0.42;
