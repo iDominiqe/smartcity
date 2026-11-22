@@ -1050,6 +1050,61 @@ body.ac-studio-open {
   margin-bottom: 0;
 }
 
+.charger-dock-wrap {
+  gap: 8px 14px;
+}
+
+.charger-time-group,
+.charger-security-group {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.charger-time-lbl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.charger-time-lbl strong {
+  color: #fde047;
+  min-width: 38px;
+}
+
+#charger-time-slider {
+  width: 118px;
+  accent-color: #38bdf8;
+  cursor: pointer;
+}
+
+.charger-pin-input {
+  width: 66px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.charger-tamper-btn {
+  border-color: rgba(248, 113, 113, 0.5) !important;
+  color: #fecaca !important;
+}
+
+.charger-tamper-btn:hover {
+  background: rgba(220, 38, 38, 0.45) !important;
+  border-color: #f87171 !important;
+  color: #ffffff !important;
+}
+
 @media (max-width: 680px) {
   .ac-live-banner {
     padding: 4px 9px;

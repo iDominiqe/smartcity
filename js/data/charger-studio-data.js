@@ -1,167 +1,165 @@
 /**
- * Localized copy, live Day (Solar+Wind) / Night (Na-ion 100kWh) / Night (Grid) telemetry,
- * 8 technical parameter cards, camera presets, and 3D callouts for the
- * NEO® SafeCharge 500V 60kW + 100kWh Na-ion Anti-Theft EV Fast Charger 360° 3D Studio.
+ * Localized copy, live Power Flow Sankey telemetry, 8 technical specs,
+ * 4 camera presets, and 3D callouts for the
+ * NEO® SafeCharge X1 — 500V 60kW Anti-Theft EV Fast Charger & 100 kWh Na-ion Energy Hub.
  */
 
 export const CHARGER_STUDIO_TEXT = {
   en: {
-    badge: 'NEO® BORNES · ANTI-THEFT 500V EV FAST CHARGER + 100 KWH NA-ION',
-    title: 'NEO® SafeCharge — 500V 60kW EV Charger & 100 kWh Na-ion Storage',
-    subtitle: 'Anti-theft PIN/QR glass door locks copper cable inside · Day Solar/Wind & Night Na-ion/Grid charging',
-    dragHint: '↻ Drag 360° · Scroll zoom · Unlock front door (PIN/QR) & switch Day / Night modes',
+    badge: 'NEO® SAFECHAGE X1 · 500V 60KW ANTI-THEFT EV CHARGER & 100 KWH NA-ION HUB',
+    title: 'NEO® SafeCharge X1 — 500V 60kW EV Charger & 100 kWh Na-ion Hub',
+    subtitle: 'Motorized PIN/QR armored glass door · Verlet copper cable physics · 24h Solar/Wind & Na-ion microgrid',
+    dragHint: '↻ Drag 360° · Scroll zoom · Enter PIN 2026 or Scan QR · Slide 24h Time-of-Day',
     closeBtn: '✕ Close Studio',
-    requestQuote: 'Request Charger Quote',
-    modeDay: '☀️ Day (Solar + Wind)',
-    modeNightBat: '🔋 Night (Na-ion 100 kWh)',
-    modeNightGrid: '⚡ Night (Smart Grid)',
-    unlockBtnLocked: '🔐 Unlock Door (PIN / QR)',
-    unlockBtnOpen: '🔒 Lock Anti-Theft Door',
-    xrayBtn: '🔍 Na-ion Cutaway',
+    requestQuote: 'Request SafeCharge X1 Quote',
+    camOverview: 'Hero Front View',
+    camDoor: 'Access Panel & QR',
+    camNaion: 'Internal X-Ray',
+    camRenew: 'Microgrid Overview',
     autoSpin: '↻ 360° Spin',
-    camOverview: 'Overview 3/4',
-    camDoor: 'PIN / QR Door',
-    camNaion: '100 kWh Na-ion',
-    camEv: 'EV & 500V Cable',
-    camRenew: 'Solar & Wind',
-    telemetryPower: 'Charge Output',
-    telemetryVoltage: 'DC Bus',
-    telemetryBattery: 'Na-ion 100 kWh',
-    telemetryDoor: 'Copper Shield',
-    legendRenew: 'Solar & Wind Input',
-    legendNaion: 'Na-ion 100 kWh',
-    legendEv: '500V EV Charge',
+    xrayBtn: '🔍 X-Ray / Internal',
+    qrScanBtn: '📱 Simulate QR Scan',
+    pinPlaceholder: 'PIN 2026',
+    pinUnlockBtn: '🔓 Unlock',
+    lockBtn: '🔒 Lock Door',
+    connectEvBtn: '🔌 Connect to EV',
+    disconnectEvBtn: '⏏️ Disconnect EV',
+    tamperBtn: '🚨 Test Tamper / Theft',
+    gridBackupBtn: '⚡ Night Grid Backup',
+    timeLabel: 'Time of Day',
+    telemetrySolarWind: 'Solar + Wind',
+    telemetryGrid: 'Grid Backup',
+    telemetryNaion: 'Na-ion SoC (100 kWh)',
+    telemetryEv: 'EV Charge (500V)',
+    telemetryDoor: 'Anti-Theft Lock',
+    legendRenew: 'Solar & VAWT Wind',
+    legendNaion: '100 kWh Na-ion',
+    legendEv: '500V / 120A EV',
     legendGrid: 'Night Grid Backup',
-    doorLockedTxt: 'LOCKED (PIN/QR)',
-    doorOpenTxt: 'UNLOCKED · CHARGING',
-    modeStatus: {
-      day: '☀️ DAY RENEWABLE · SOLAR PV + WIND TURBINE CHARGE EV (60 KW) & TOP UP 100 KWH NA-ION',
-      'night-bat': '🔋 NIGHT NA-ION AUTONOMY · INTERNAL 100 KWH SODIUM-ION BATTERY DELIVERS 500V 60 KW',
-      'night-grid': '⚡ NIGHT SMART GRID · OFF-PEAK GRID SUPPLIES 500V EV CHARGE & RECHARGES NA-ION'
-    }
+    doorLockedTxt: 'LOCKED (ARMORED)',
+    doorUnlockedTxt: 'UNLOCKED (POCKET)',
+    doorChargingTxt: 'CHARGING · 60 KW',
+    tamperAlertTxt: '🚨 TAMPER ALERT · CABLE LOCK RESISTED IMPACT · SIREN ACTIVE',
+    modeStatusDay: '☀️ DAY MICROGRID · SOLAR PV + VAWT WIND -> MPPT -> EV (60 KW) + NA-ION SURPLUS',
+    modeStatusNightBat: '🌙 NIGHT NA-ION · 100 KWH SODIUM-ION BATTERY DELIVERS 500V / 60 KW AUTONOMOUSLY',
+    modeStatusNightGrid: '⚡ NIGHT GRID BACKUP · OFF-PEAK 400V GRID -> 500V SIC INVERTER -> EV & NA-ION'
   },
   fr: {
-    badge: 'NEO® BORNES · BORNE RAPIDE 500V ANTI-VOL CUIVRE + NA-ION 100 KWH',
-    title: 'NEO® SafeCharge — Borne 500V 60 kW & Stockage Na-ion 100 kWh',
-    subtitle: 'Porte blindée PIN/QR anti-vol de câble · Charge Jour Solaire/Éolien & Nuit Batterie Na-ion/Réseau',
-    dragHint: '↻ Glissez à 360° · Molette zoom · Déverrouillez la porte (PIN/QR) & basculez Jour / Nuit',
+    badge: 'NEO® SAFECHAGE X1 · BORNE 500V 60KW ANTI-VOL & HUB NA-ION 100 KWH',
+    title: 'NEO® SafeCharge X1 — Borne 500V 60 kW & Stockage Na-ion 100 kWh',
+    subtitle: 'Porte coulissante blindée PIN/QR · Physique câble Verlet · Micro-réseau 24h Solaire/Éolien & Na-ion',
+    dragHint: '↻ Glissez 360° · Code PIN 2026 ou Scan QR · Curseur 24h Jour/Nuit',
     closeBtn: '✕ Fermer le Studio',
-    requestQuote: 'Devis Borne SafeCharge',
-    modeDay: '☀️ Jour (Solaire + Éolien)',
-    modeNightBat: '🔋 Nuit (Na-ion 100 kWh)',
-    modeNightGrid: '⚡ Nuit (Réseau Smart)',
-    unlockBtnLocked: '🔐 Déverrouiller (PIN / QR)',
-    unlockBtnOpen: '🔒 Verrouiller Porte',
-    xrayBtn: '🔍 Vue Na-ion',
+    requestQuote: 'Devis SafeCharge X1',
+    camOverview: 'Vue Façade Héro',
+    camDoor: 'Panneau PIN & QR',
+    camNaion: 'Rayon-X Interne',
+    camRenew: 'Vue Micro-Réseau',
     autoSpin: '↻ Rotation 360°',
-    camOverview: 'Vue 3/4 Globale',
-    camDoor: 'Porte PIN / QR',
-    camNaion: 'Batterie Na-ion',
-    camEv: 'VE & Câble 500V',
-    camRenew: 'Solaire & Éolien',
-    telemetryPower: 'Puissance Charge',
-    telemetryVoltage: 'Bus DC',
-    telemetryBattery: 'Stockage Na-ion',
-    telemetryDoor: 'Sécurité Câble',
-    legendRenew: 'Solaire & Éolien',
-    legendNaion: 'Batterie Na-ion',
+    xrayBtn: '🔍 Rayon-X Interne',
+    qrScanBtn: '📱 Simuler Scan QR',
+    pinPlaceholder: 'PIN 2026',
+    pinUnlockBtn: '🔓 Déverrouiller',
+    lockBtn: '🔒 Verrouiller',
+    connectEvBtn: '🔌 Connecter au VE',
+    disconnectEvBtn: '⏏️ Débrancher VE',
+    tamperBtn: '🚨 Test Effraction',
+    gridBackupBtn: '⚡ Appoint Réseau Nuit',
+    timeLabel: 'Heure du Jour',
+    telemetrySolarWind: 'Solaire + Éolien',
+    telemetryGrid: 'Appoint Réseau',
+    telemetryNaion: 'SoC Na-ion (100 kWh)',
+    telemetryEv: 'Charge VE (500V)',
+    telemetryDoor: 'Verrou Anti-Vol',
+    legendRenew: 'Solaire & Éolien VAWT',
+    legendNaion: 'Na-ion 100 kWh',
     legendEv: 'Charge VE 500V',
-    legendGrid: 'Appoint Réseau',
-    doorLockedTxt: 'VERROUILLÉ (PIN/QR)',
-    doorOpenTxt: 'OUVERT · EN CHARGE',
-    modeStatus: {
-      day: '☀️ JOUR RENOUVELABLE · SOLAIRE + ÉOLIEN CHARGENT LE VE (60 KW) ET LE STOCKAGE NA-ION',
-      'night-bat': '🔋 NUIT AUTONOME NA-ION · LA BATTERIE SODIUM-ION 100 KWH DÉLIVRE 500V 60 KW',
-      'night-grid': '⚡ NUIT RÉSEAU SMART · LE TARIF NUIT ALIMENTE LE VE 500V ET RECHARGE LA NA-ION'
-    }
+    legendGrid: 'Réseau Nuit',
+    doorLockedTxt: 'VERROUILLÉ (BLINDÉ)',
+    doorUnlockedTxt: 'OUVERT (POCHE)',
+    doorChargingTxt: 'EN CHARGE · 60 KW',
+    tamperAlertTxt: '🚨 ALERTE EFFRACTION · PORTE BLINDÉE RÉSISTE · ALARME ACTIVE',
+    modeStatusDay: '☀️ JOUR SOLAIRE + ÉOLIEN VAWT -> MPPT -> VE (60 KW) + SURPLUS NA-ION',
+    modeStatusNightBat: '🌙 NUIT NA-ION · LA BATTERIE 100 KWH DÉLIVRE 500V / 60 KW EN AUTONOMIE',
+    modeStatusNightGrid: '⚡ NUIT RÉSEAU · RÉSEAU HEURES CREUSES -> ONDULEUR SIC 500V -> VE & NA-ION'
   },
   bg: {
-    badge: 'NEO® BORNES · ЗАРЯДНА СТАНЦИЯ 500V СЪС ЗАЩИТА ОТ КРАЖБА И NA-ION 100 KWH',
-    title: 'NEO® SafeCharge — Бърза Зарядна Станция 500V 60 kW & 100 kWh Na-ion',
-    subtitle: 'Бронирана врата с PIN/QR код пази медния кабел · Ден: Солар/Вятър · Нощ: Na-ion батерия/Мрежа',
-    dragHint: '↻ Въртете на 360° · Отключете вратата с PIN/QR и превключвайте Ден / Нощ',
+    badge: 'NEO® SAFECHAGE X1 · 500V 60KW ЗАРЯДНА СТАНЦИЯ СЪС ЗАЩИТА И 100 KWH NA-ION',
+    title: 'NEO® SafeCharge X1 — Бърза Станция 500V 60 kW & 100 kWh Na-ion Хъб',
+    subtitle: 'Моторизирана бронирана врата с PIN/QR · Физика на кабела · 24ч Солар/Вятър & Na-ion',
+    dragHint: '↻ Въртете 360° · Въведете PIN 2026 или QR Скан · Плъзгач 24ч Ден/Нощ',
     closeBtn: '✕ Затвори Студиото',
-    requestQuote: 'Запитване за Оферта',
-    modeDay: '☀️ Ден (Солар + Вятър)',
-    modeNightBat: '🔋 Нощ (Na-ion 100 kWh)',
-    modeNightGrid: '⚡ Нощ (Електромрежа)',
-    unlockBtnLocked: '🔐 Отключи Врата (PIN / QR)',
-    unlockBtnOpen: '🔒 Заключи Вратата',
-    xrayBtn: '🔍 Разрез Na-ion',
+    requestQuote: 'Оферта SafeCharge X1',
+    camOverview: 'Преден Изглед',
+    camDoor: 'PIN & QR Панел',
+    camNaion: 'Вътрешен Разрез',
+    camRenew: 'Микромрежа 3D',
     autoSpin: '↻ 360° Въртене',
-    camOverview: 'Общ Изглед 3/4',
-    camDoor: 'Врата PIN / QR',
-    camNaion: '100 kWh Na-ion',
-    camEv: 'ЕМ и Кабел 500V',
-    camRenew: 'Солар и Вятър',
-    telemetryPower: 'Мощност',
-    telemetryVoltage: 'DC Шина',
-    telemetryBattery: 'Na-ion 100 kWh',
+    xrayBtn: '🔍 X-Ray Разрез',
+    qrScanBtn: '📱 Симулирай QR Скан',
+    pinPlaceholder: 'PIN 2026',
+    pinUnlockBtn: '🔓 Отключи',
+    lockBtn: '🔒 Заключи',
+    connectEvBtn: '🔌 Свържи с ЕМ',
+    disconnectEvBtn: '⏏️ Изключи ЕМ',
+    tamperBtn: '🚨 Тест Кражба',
+    gridBackupBtn: '⚡ Нощна Мрежа',
+    timeLabel: 'Час на Денонощието',
+    telemetrySolarWind: 'Солар + Вятър',
+    telemetryGrid: 'Мрежов Резерв',
+    telemetryNaion: 'Na-ion (100 kWh)',
+    telemetryEv: 'Заряд ЕМ (500V)',
     telemetryDoor: 'Защита Мед',
     legendRenew: 'Солар и Вятър',
-    legendNaion: 'Na-ion Батерия',
-    legendEv: 'Зареждане 500V',
-    legendGrid: 'Мрежово Захранване',
-    doorLockedTxt: 'ЗАКЛЮЧЕНА (PIN/QR)',
-    doorOpenTxt: 'ОТКЛЮЧЕНА · ЗАРЕЖДА',
-    modeStatus: {
-      day: '☀️ ДНЕВЕН РЕЖИМ · СОЛАРНИ ПАНЕЛИ И ВЯТЪР ЗАРЕЖДАТ ЕМ (60 KW) И БАТЕРИЯТА NA-ION',
-      'night-bat': '🔋 НОЩНА БАТЕРИЯ · ВГРАДЕНАТА 100 KWH NA-ION БАТЕРИЯ ЗАХРАНВА ЕМ НА 500V 60 KW',
-      'night-grid': '⚡ НОЩНА МРЕЖА · НОЩНАТА ТАРИФА ЗАРЕЖДА ЕМ (500V) И ДОПЪЛВА NA-ION БАТЕРИЯТА'
-    }
+    legendNaion: 'Na-ion 100 kWh',
+    legendEv: '500V / 120A ЕМ',
+    legendGrid: 'Нощна Мрежа',
+    doorLockedTxt: 'ЗАКЛЮЧЕНА (БРОНЯ)',
+    doorUnlockedTxt: 'ОТВОРЕНА (ДЖОБ)',
+    doorChargingTxt: 'ЗАРЕЖДА · 60 KW',
+    tamperAlertTxt: '🚨 АЛАРМА ЗА КРАЖБА · БРОНИРАНАТА ВРАТА УСТОЯ · СИРЕНА АКТИВНА',
+    modeStatusDay: '☀️ ДНЕВНА МИКРОМРЕЖА · СОЛАР + ВЯТЪР -> MPPT -> ЕМ (60 KW) + NA-ION',
+    modeStatusNightBat: '🌙 НОЩНА NA-ION · ВГРАДЕНАТА 100 KWH БАТЕРИЯ ПОДАВА 500V / 60 KW',
+    modeStatusNightGrid: '⚡ НОЩНА МРЕЖА · НОЩНА ТАРИФА -> 500V SIC ИНВЕРТОР -> ЕМ & NA-ION'
   },
   ro: {
-    badge: 'NEO® BORNES · STAȚIE RAPIDĂ 500V ANTI-FURT CUPRU + NA-ION 100 KWH',
-    title: 'NEO® SafeCharge — Stație EV 500V 60 kW & Stocare Na-ion 100 kWh',
-    subtitle: 'Ușă securizată PIN/QR contra furtului de cablu · Ziua: Solar/Eolian · Noaptea: Na-ion/Rețea',
-    dragHint: '↻ Rotiți 360° · Deblocați ușa (PIN/QR) și comutați modurile Zi / Noapte',
+    badge: 'NEO® SAFECHAGE X1 · STAȚIE 500V 60KW ANTI-FURT & HUB NA-ION 100 KWH',
+    title: 'NEO® SafeCharge X1 — Stație EV 500V 60 kW & Stocare Na-ion 100 kWh',
+    subtitle: 'Ușă glisantă blindată PIN/QR · Fizică cablu Verlet · Microrețea 24h Solar/Eolian & Na-ion',
+    dragHint: '↻ Rotiți 360° · Introduceți PIN 2026 sau Scan QR · Slider 24h Zi/Noapte',
     closeBtn: '✕ Închide Studioul',
-    requestQuote: 'Solicită Ofertă Stație',
-    modeDay: '☀️ Ziua (Solar + Eolian)',
-    modeNightBat: '🔋 Noaptea (Na-ion 100 kWh)',
-    modeNightGrid: '⚡ Noaptea (Rețea)',
-    unlockBtnLocked: '🔐 Deblochează Ușa (PIN / QR)',
-    unlockBtnOpen: '🔒 Blochează Ușa',
-    xrayBtn: '🔍 Secțiune Na-ion',
+    requestQuote: 'Solicită Ofertă X1',
+    camOverview: 'Vedere Frontală',
+    camDoor: 'Panou PIN & QR',
+    camNaion: 'X-Ray Intern',
+    camRenew: 'Microrețea 3D',
     autoSpin: '↻ Rotire 360°',
-    camOverview: 'Vedere 3/4',
-    camDoor: 'Ușă PIN / QR',
-    camNaion: 'Baterie Na-ion',
-    camEv: 'EV & Cablu 500V',
-    camRenew: 'Solar & Eolian',
-    telemetryPower: 'Putere Încărcare',
-    telemetryVoltage: 'Magistrală DC',
-    telemetryBattery: 'Na-ion 100 kWh',
-    telemetryDoor: 'Protecție Cablu',
-    legendRenew: 'Solar & Eolian',
-    legendNaion: 'Stocare Na-ion',
-    legendEv: 'Încărcare 500V',
-    legendGrid: 'Rețea Electrică',
-    doorLockedTxt: 'BLOCATĂ (PIN/QR)',
-    doorOpenTxt: 'DEBLOCATĂ · ÎNCARCĂ',
-    modeStatus: {
-      day: '☀️ ZIUA REGENERABIL · PANOURILE SOLARE ȘI EOLIANA ÎNCARCĂ MAȘINA EV (60 KW) ȘI NA-ION',
-      'night-bat': '🔋 NOAPTEA NA-ION · BATERIA INTERNĂ DE 100 KWH LIVREAZĂ 500V 60 KW CĂTRE EV',
-      'night-grid': '⚡ NOAPTEA REȚEA · TARIFUL DE NOAPTE ÎNCARCĂ MAȘINA EV (500V) ȘI BATERIA NA-ION'
-    }
-  }
-};
-
-export const CHARGER_MODE_TELEMETRY = {
-  day: {
-    power: '60 kW (60 kWh)',
-    voltage: '500 V DC · 120 A',
-    battery: '92% (Charging)'
-  },
-  'night-bat': {
-    power: '60 kW (Na-ion)',
-    voltage: '500 V DC · 120 A',
-    battery: '78% (100 kWh)'
-  },
-  'night-grid': {
-    power: '60 kW (Grid)',
-    voltage: '500 V DC · 120 A',
-    battery: '85% (Top-Up)'
+    xrayBtn: '🔍 X-Ray Intern',
+    qrScanBtn: '📱 Simulează Scan QR',
+    pinPlaceholder: 'PIN 2026',
+    pinUnlockBtn: '🔓 Deblochează',
+    lockBtn: '🔒 Blochează',
+    connectEvBtn: '🔌 Conectează EV',
+    disconnectEvBtn: '⏏️ Deconectează EV',
+    tamperBtn: '🚨 Test Efracție',
+    gridBackupBtn: '⚡ Rețea Noapte',
+    timeLabel: 'Ora Zilei',
+    telemetrySolarWind: 'Solar + Eolian',
+    telemetryGrid: 'Rețea Backup',
+    telemetryNaion: 'SoC Na-ion (100 kWh)',
+    telemetryEv: 'Încărcare EV (500V)',
+    telemetryDoor: 'Blocare Anti-Furt',
+    legendRenew: 'Solar & Eolian VAWT',
+    legendNaion: 'Na-ion 100 kWh',
+    legendEv: 'EV 500V / 120A',
+    legendGrid: 'Rețea Noapte',
+    doorLockedTxt: 'BLOCATĂ (BLINDAT)',
+    doorUnlockedTxt: 'DESCHISĂ (BUZUNAR)',
+    doorChargingTxt: 'ÎNCARCĂ · 60 KW',
+    tamperAlertTxt: '🚨 ALERTĂ EFRACȚIE · UȘA BLINDATĂ A REZISTAT · SIRENĂ ACTIVĂ',
+    modeStatusDay: '☀️ ZIUA MICROREȚEA · SOLAR + EOLIAN VAWT -> MPPT -> EV (60 KW) + NA-ION',
+    modeStatusNightBat: '🌙 NOAPTEA NA-ION · BATERIA 100 KWH LIVREAZĂ 500V / 60 KW AUTONOM',
+    modeStatusNightGrid: '⚡ NOAPTEA REȚEA · TARIF NOAPTE -> INVERTOR SIC 500V -> EV & NA-ION'
   }
 };
 
@@ -170,52 +168,52 @@ export const CHARGER_LEFT_SPECS = [
     id: 'fastCharge',
     icon: '⚡',
     focusCam: 'ev',
-    label: { en: 'FAST CHARGE 500V DC', fr: 'CHARGE RAPIDE 500V DC', bg: 'БЪРЗО ЗАРЕЖДАНЕ 500V', ro: 'ÎNCĂRCARE RAPIDĂ 500V' },
-    value: '60 kW · 60 kWh in ~45m',
+    label: { en: 'ARCHITECTURE 500V DC', fr: 'ARCHITECTURE 500V DC', bg: 'АРХИТЕКТУРА 500V DC', ro: 'ARHITECTURĂ 500V DC' },
+    value: '60 kW · 120 A CCS2',
     detail: {
-      en: '500V DC / 120A CCS2 output charges a 60 kWh EV battery from 15% to 85% rapidly with 96% efficiency',
-      fr: 'Sortie CCS2 500V DC / 120A rechargeant une batterie VE de 60 kWh rapidement avec 96 % de rendement',
-      bg: 'Изход 500V DC / 120A CCS2 зарежда батерия 60 kWh бързо с 96% ефективност',
-      ro: 'Ieșire CCS2 500V DC / 120A ce încarcă rapid o baterie EV de 60 kWh cu randament de 96%'
+      en: 'Bidirectional 500V Silicon Carbide (SiC) power electronics charges a 60 kWh EV rapidly at 96.4% efficiency',
+      fr: 'Électronique SiC 500V bidirectionnelle rechargeant un VE 60 kWh rapidement avec 96,4 % de rendement',
+      bg: 'Двупосочен 500V SiC инвертор зарежда 60 kWh електромобил бързо с 96.4% КПД',
+      ro: 'Electronică SiC 500V bidirecțională ce încarcă rapid un EV de 60 kWh cu randament de 96,4%'
     }
   },
   {
     id: 'antiTheft',
     icon: '🔐',
     focusCam: 'door',
-    label: { en: 'ANTI-THEFT COPPER DOOR', fr: 'PORTE ANTI-VOL CUIVRE', bg: 'ЗАЩИТА ОТ КРАЖБА НА МЕД', ro: 'UȘĂ ANTI-FURT CUPRU' },
-    value: 'PIN Keypad + QR + RFID',
+    label: { en: 'MOTORIZED POCKET DOOR', fr: 'PORTE COULISSANTE BLINDÉE', bg: 'МОТОРИЗИРАНА ВРАТА', ro: 'UȘĂ GLISANTĂ BLINDATĂ' },
+    value: 'PIN 2026 · QR · NFC',
     detail: {
-      en: 'Armored smoked-glass door seals the copper cable inside; unlocks only via QR scan, PIN code or NFC badge',
-      fr: 'Porte vitrée blindée protégeant le câble en cuivre ; déverrouillage exclusif par QR code, PIN ou NFC',
-      bg: 'Бронирана стъклена врата пази медния кабел; отключване само с QR код, PIN клавиатура или RFID',
-      ro: 'Ușă securizată din sticlă ce protejează cablul de cupru; deblocare prin QR, cod PIN sau card NFC'
+      en: 'Curved dark-tinted tempered safety glass retracts into side pocket via QR scan, PIN or NFC with deadbolt lock',
+      fr: 'Vitre blindée teintée rétractable dans sa poche latérale par QR, PIN ou NFC avec verrou électromagnétique',
+      bg: 'Тонирано закалено стъкло се прибира в страничен джоб чрез QR, PIN или NFC с електромагнитен болт',
+      ro: 'Sticlă securizată fumurie ce glisează în buzunar lateral prin QR, PIN sau NFC cu zăvor electromagnetic'
     }
   },
   {
     id: 'naion',
     icon: '🔋',
     focusCam: 'naion',
-    label: { en: 'NA-ION INTERNAL BATTERY', fr: 'BATTERIE NA-ION INTÉGRÉE', bg: 'ВГРАДЕНА NA-ION БАТЕРИЯ', ro: 'BATERIE INTERNĂ NA-ION' },
-    value: '100 kWh · -30°C to +55°C',
+    label: { en: '100 KWH NA-ION STORAGE', fr: 'STOCKAGE NA-ION 100 KWH', bg: '100 KWH NA-ION БАТЕРИЯ', ro: 'STOCARE NA-ION 100 KWH' },
+    value: '-20°C to +55°C · Zero-Li',
     detail: {
-      en: 'Non-flammable 100 kWh Sodium-Ion storage module (4,000+ cycles, zero cobalt) for night & peak-shaving',
-      fr: 'Stockage Sodium-Ion 100 kWh ininflammable (4 000+ cycles, sans cobalt) pour la charge nocturne',
-      bg: 'Негорима натриево-йонна батерия 100 kWh (4000+ цикъла) за нощно зареждане без пиков товар',
-      ro: 'Stocare Sodiu-Ion 100 kWh neinflamabilă (4.000+ cicluri, fără cobalt) pentru încărcare nocturnă'
+      en: 'Fire-safe Sodium-Ion modular rack with copper busbars, active BMS LEDs and dual cooling fans',
+      fr: 'Rack Sodium-Ion ininflammable avec barres omnibus, LEDs BMS actives et double ventilation',
+      bg: 'Пожаробезопасен натриево-йонен модул с шини, BMS индикатори и активни вентилатори',
+      ro: 'Rack Sodiu-Ion ignifug cu bare colectoare, LED-uri BMS active și ventilatoare duble'
     }
   },
   {
-    id: 'armor',
-    icon: '🛡️',
-    focusCam: 'door',
-    label: { en: 'VANDAL-PROOF CHASSIS', fr: 'CHÂSSIS BLINDÉ IP65 / IK10', bg: 'ЗАЩИТЕН КОРПУС IP65/IK10', ro: 'CARCASĂ BLINDATĂ IP65' },
-    value: 'IP65 · IK10 Aluminum',
+    id: 'cable',
+    icon: '🔌',
+    focusCam: 'ev',
+    label: { en: 'VERLET COPPER CABLE', fr: 'CÂBLE CUIVRE REFROIDI', bg: 'МЕДЕН КАБЕЛ С ОХЛАЖДАНЕ', ro: 'CABLU CUPRU RĂCIT' },
+    value: 'Liquid-Cooled CCS2',
     detail: {
-      en: 'Brushed marine-grade aluminum enclosure with active louver cooling and cable-cut tamper alarm',
-      fr: 'Boîtier aluminium brossé IP65/IK10 avec ventilation active et alarme anti-sectionnement du câble',
-      bg: 'Алуминиев корпус IP65/IK10 с активно охлаждане и сензор против срязване на кабела',
-      ro: 'Carcasă din aluminiu periat IP65/IK10 cu ventilație activă și alarmă anti-tăiere a cablului'
+      en: 'Heavy-duty copper cable locked behind impact-resistant glass with tamper sensor & forced-entry strobe alarm',
+      fr: 'Câble cuivre haute section protégé derrière vitre anti-impact avec alarme anti-effraction',
+      bg: 'Високоволтов меден кабел защитен зад бронирано стъкло с датчик за кражба и сирена',
+      ro: 'Cablu de cupru de mare putere protejat în spatele sticlei anti-impact cu alarmă de efracție'
     }
   }
 ];
@@ -225,91 +223,90 @@ export const CHARGER_RIGHT_SPECS = [
     id: 'daySolarWind',
     icon: '☀️',
     focusCam: 'renew',
-    label: { en: 'DAY: SOLAR & WIND DIRECT', fr: 'JOUR : SOLAIRE & ÉOLIEN', bg: 'ДЕН: СОЛАР И ВЯТЪР', ro: 'ZIUA: SOLAR & EOLIAN' },
-    value: '100% Green DC Coupling',
+    label: { en: 'DAY (06:00–19:00) GREEN', fr: 'JOUR (06h–19h) SOLAIRE', bg: 'ДЕН (06:00–19:00) ЗЕЛЕНО', ro: 'ZI (06:00–19:00) VERDE' },
+    value: 'Solar PV + VAWT Wind',
     detail: {
-      en: 'By day, rooftop solar panels & wind turbine power the 500V EV charge directly and store surplus in Na-ion',
-      fr: 'De jour, panneaux solaires et éolienne alimentent directement la charge 500V et stockent le surplus',
-      bg: 'През деня соларите и турбината зареждат автомобила директно на 500V и пълнят Na-ion блока',
-      ro: 'Ziua, panourile solare și turbina eoliană alimentează direct încărcarea 500V și încarcă bateria Na-ion'
+      en: 'Solar array + helical vertical-axis wind turbine feed MPPT -> EV (60 kW) and excess into 100 kWh Na-ion',
+      fr: 'Panneaux solaires + éolienne verticale VAWT alimentent MPPT -> VE (60 kW) et surplus vers Na-ion',
+      bg: 'Соларни панели и вертикална вятърна турбина захранват MPPT -> ЕМ (60 kW) и Na-ion буфера',
+      ro: 'Panourile solare și turbina eoliană verticală alimentează MPPT -> EV (60 kW) și surplusul spre Na-ion'
     }
   },
   {
     id: 'nightMode',
     icon: '🌙',
     focusCam: 'naion',
-    label: { en: 'NIGHT: NA-ION OR GRID', fr: 'NUIT : NA-ION OU RÉSEAU', bg: 'НОЩ: NA-ION ИЛИ МРЕЖА', ro: 'NOAPTEA: NA-ION SAU REȚEA' },
-    value: 'Zero-Switchover EMS',
+    label: { en: 'NIGHT (19:00–06:00) HUB', fr: 'NUIT (19h–06h) NA-ION', bg: 'НОЩ (19:00–06:00) ХЪБ', ro: 'NOAPTE (19:00–06:00) HUB' },
+    value: 'Na-ion or Off-Peak Grid',
     detail: {
-      en: 'At night, discharges the 100 kWh Na-ion bank first or draws off-peak 400V grid power seamlessly',
-      fr: 'La nuit, décharge prioritaire des 100 kWh Na-ion ou bascule automatique sur le tarif heures creuses',
-      bg: 'Нощем разрежда 100 kWh Na-ion батерията или автоматично превключва на нощна мрежова тарифа',
-      ro: 'Noaptea descarcă prioritar cei 100 kWh Na-ion sau comută automat pe tariful de noapte al rețelei'
+      en: 'Streetlights activate; discharges 100 kWh Na-ion at 500V / 60 kW or uses off-peak grid without overload',
+      fr: 'Éclairage public actif ; décharge Na-ion 100 kWh à 500V / 60 kW ou réseau heures creuses sans surcharge',
+      bg: 'Уличното осветление светва; разрежда 100 kWh Na-ion на 500V / 60 kW без претоварване на мрежата',
+      ro: 'Iluminatul stradal pornește; descarcă 100 kWh Na-ion la 500V / 60 kW fără supraîncărcarea rețelei'
     }
   },
   {
-    id: 'ocpp',
-    icon: '📡',
-    focusCam: 'door',
-    label: { en: 'SMART TELEMETRY & OCPP', fr: 'TÉLÉMÉTRIE & OCPP 2.0.1', bg: 'СМАРТ OCPP 2.0.1 КОНТРОЛ', ro: 'TELEMETRIE OCPP 2.0.1' },
-    value: '4G / Wi-Fi / Dynamic QR',
+    id: 'sicInverter',
+    icon: '⚙️',
+    focusCam: 'naion',
+    label: { en: 'SIC INVERTER & MPPT', fr: 'ONDULEUR SIC & MPPT', bg: 'SIC ИНВЕРТОР И MPPT', ro: 'INVERTOR SIC & MPPT' },
+    value: 'Bi-Directional 96.4%',
     detail: {
-      en: 'Generates one-time dynamic QR tokens or fleet PIN codes with live kWh billing & remote lock control',
-      fr: 'Génère des QR codes dynamiques ou codes PIN flotte avec facturation kWh et verrouillage à distance',
-      bg: 'Генерира динамични QR кодове или PIN пароли за автопарк с дистанционно заключване и отчет',
-      ro: 'Generează coduri QR dinamice sau coduri PIN cu facturare kWh și blocare de la distanță'
+      en: 'Internal X-Ray reveals SiC power stage, MPPT solar/wind controllers & electromagnetic door deadbolt',
+      fr: 'La vue Rayon-X révèle l’étage SiC, les contrôleurs MPPT et le pêne électromagnétique motorisé',
+      bg: 'X-Ray разрезът показва SiC инвертора, MPPT контролерите и електромагнитната ключалка',
+      ro: 'Vederea X-Ray dezvăluie invertorul SiC, controlerele MPPT și zăvorul electromagnetic'
     }
   },
   {
-    id: 'safety',
-    icon: '🔌',
-    focusCam: 'ev',
-    label: { en: 'THERMAL & SURGE GUARD', fr: 'PROTECTION THERMIQUE DC', bg: 'ТЕРМИЧНА ЗАЩИТА 500V', ro: 'PROTECȚIE TERMICĂ 500V' },
-    value: 'Type-B RCD + Liquid Sense',
+    id: 'chassis',
+    icon: '🛡️',
+    focusCam: 'overview',
+    label: { en: 'MONOLITH IP65 / IK10', fr: 'MONOLITHE IP65 / IK10', bg: 'КОРПУС IP65 / IK10', ro: 'MONOLIT IP65 / IK10' },
+    value: 'Anodized Brushed Alu',
     detail: {
-      en: 'Real-time temperature sensors on CCS2 pins, surge arresters and automatic post-session door relock',
-      fr: 'Capteurs thermiques sur broches CCS2, parafoudre intégré et reverrouillage automatique en fin de charge',
-      bg: 'Температурни сензори в CCS2 конектора, гръмозащита и автоматично заключване след зареждане',
-      ro: 'Senzori termici pe pinii CCS2, protecție la supratensiune și reblocare automată după sesiune'
+      en: 'Heavily rounded brushed aluminum enclosure with HDRI reflections, side louvers & dynamic top LED beacon',
+      fr: 'Châssis aluminium brossé arrondi à reflets HDRI, grilles latérales et bandeau LED dynamique',
+      bg: 'Заоблен корпус от полиран алуминий с вентилационни жалузи и динамичен LED маяк отгоре',
+      ro: 'Carcasă rotunjită din aluminiu periat cu grile laterale și bandă LED dinamică la coronament'
     }
   }
 ];
 
 export const CHARGER_CAMERA_PRESETS = {
-  overview: { pos: [-7.2, 4.4, 9.8], target: [0.2, 1.55, -0.2] },
-  door: { pos: [0.55, 1.65, 3.65], target: [0.0, 1.55, 0.25] },
-  naion: { pos: [3.2, 2.0, -3.4], target: [0.0, 1.35, -0.35] },
-  ev: { pos: [4.8, 2.5, 6.4], target: [1.8, 1.0, 0.6] },
-  renew: { pos: [-8.2, 5.2, 5.6], target: [-3.2, 2.5, -1.6] }
+  overview: { pos: [-5.8, 3.6, 8.6], target: [0.3, 1.45, -0.2] },
+  door: { pos: [0.35, 1.6, 3.35], target: [0.0, 1.5, 0.25] },
+  naion: { pos: [2.8, 1.85, -3.1], target: [0.0, 1.35, -0.1] },
+  renew: { pos: [-7.6, 5.0, 6.2], target: [-2.2, 2.2, -1.6] }
 };
 
 export const CHARGER_HOTSPOTS = [
   {
     id: 'door',
-    pos: [0.0, 1.72, 0.52],
+    pos: [-0.15, 1.75, 0.54],
     focusCam: 'door',
-    title: { en: 'PIN / QR Anti-Theft Door', fr: 'Porte Blindée PIN / QR', bg: 'Бронирана Врата PIN/QR', ro: 'Ușă Securizată PIN/QR' },
-    sub: { en: 'COPPER CABLE PROTECTION', fr: 'PROTECTION CÂBLE CUIVRE', bg: 'ЗАЩИТА НА МЕДЕН КАБЕЛ', ro: 'PROTECȚIE CABLU CUPRU' }
+    title: { en: 'Motorized PIN/QR Door', fr: 'Porte Motorisée PIN/QR', bg: 'Моторизирана Врата PIN/QR', ro: 'Ușă Motorizată PIN/QR' },
+    sub: { en: 'PIN 2026 · QR · NFC LOCK', fr: 'PIN 2026 · QR · NFC', bg: 'PIN 2026 · QR · ЗАЩИТА', ro: 'PIN 2026 · QR · NFC' }
   },
   {
     id: 'naion',
-    pos: [0.0, 1.1, -0.58],
+    pos: [0.0, 1.15, -0.52],
     focusCam: 'naion',
-    title: { en: '100 kWh Na-ion Battery', fr: 'Batterie Na-ion 100 kWh', bg: 'Na-ion Батерия 100 kWh', ro: 'Baterie Na-ion 100 kWh' },
-    sub: { en: 'SODIUM-ION NIGHT STORAGE', fr: 'STOCKAGE NOCTURNE SÛR', bg: 'НОЩНО СЪХРАНЕНИЕ 100 KWH', ro: 'STOCARE NOCTURNĂ 100 KWH' }
+    title: { en: '100 kWh Na-ion + SiC', fr: 'Na-ion 100 kWh + SiC', bg: '100 kWh Na-ion + SiC', ro: 'Na-ion 100 kWh + SiC' },
+    sub: { en: '500V 60KW INTERNAL X-RAY', fr: 'RAYON-X INTERNE 500V', bg: 'ВЪТРЕШЕН РАЗРЕЗ 500V', ro: 'X-RAY INTERN 500V' }
   },
   {
     id: 'ev',
-    pos: [2.9, 1.25, 0.6],
-    focusCam: 'ev',
-    title: { en: '500V 60kW EV Charge', fr: 'Charge Rapide 500V 60 kW', bg: 'Бърз Заряд 500V 60 kW', ro: 'Încărcare Rapidă 500V 60kW' },
-    sub: { en: '60 KWH PACK · CCS2 DC', fr: 'PACK 60 KWH · CCS2 DC', bg: '60 KWH БАТЕРИЯ · CCS2', ro: 'BATERIE 60 KWH · CCS2' }
+    pos: [2.85, 1.25, 0.55],
+    focusCam: 'overview',
+    title: { en: '500V 60kW EV Charge', fr: 'Charge VE 500V 60 kW', bg: 'Заряд ЕМ 500V 60 kW', ro: 'Încărcare EV 500V 60kW' },
+    sub: { en: 'VERLET COPPER CABLE', fr: 'CÂBLE VERLET CCS2', bg: 'VERLET МЕДЕН КАБЕЛ', ro: 'CABLU VERLET CCS2' }
   },
   {
     id: 'renew',
-    pos: [-4.1, 3.6, -2.1],
+    pos: [-4.4, 3.6, -2.5],
     focusCam: 'renew',
-    title: { en: 'Day Solar & Wind', fr: 'Solaire & Éolien Jour', bg: 'Ден: Солар и Вятър', ro: 'Ziua: Solar & Eolian' },
-    sub: { en: 'DIRECT RENEWABLE INPUT', fr: 'ALIMENTATION VERTE DIRECTE', bg: 'ДИРЕКТНА ЗЕЛЕНА ЕНЕРГИЯ', ro: 'ALIMENTARE VERDE DIRECTĂ' }
+    title: { en: 'Solar + VAWT Wind', fr: 'Solaire + Éolien VAWT', bg: 'Солар + Вятър VAWT', ro: 'Solar + Eolian VAWT' },
+    sub: { en: 'DAY DIRECT MPPT INPUT', fr: 'ALIMENTATION VERTE JOUR', bg: 'ДНЕВНА ЗЕЛЕНА ЕНЕРГИЯ', ro: 'ALIMENTARE VERDE ZIUA' }
   }
 ];
