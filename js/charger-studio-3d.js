@@ -375,7 +375,9 @@ export class ChargerStudio3D {
     this.vawtRotor = null;
     this.starsMat = null;
     this.sunOrb = null;
+    this.sunHalo = null;
     this.moonOrb = null;
+    this.moonHalo = null;
     this.plinthBorderMat = null;
     this.gridBeaconMat = null;
     this.composer = null;
@@ -593,15 +595,25 @@ export class ChargerStudio3D {
     this.scene.add(this.sunLight);
 
     this.sunOrb = new THREE.Mesh(
-      new THREE.SphereGeometry(0.85, 20, 20),
-      new THREE.MeshBasicMaterial({ color: '#fef08a' })
+      new THREE.SphereGeometry(0.85, 24, 24),
+      new THREE.MeshBasicMaterial({ color: '#fef08a', transparent: true, opacity: 1 })
     );
+    this.sunHalo = new THREE.Mesh(
+      new THREE.SphereGeometry(1.45, 24, 24),
+      new THREE.MeshBasicMaterial({ color: '#fb923c', transparent: true, opacity: 0.28, depthWrite: false })
+    );
+    this.sunOrb.add(this.sunHalo);
     this.scene.add(this.sunOrb);
 
     this.moonOrb = new THREE.Mesh(
-      new THREE.SphereGeometry(0.65, 18, 18),
-      new THREE.MeshBasicMaterial({ color: '#e2e8f0' })
+      new THREE.SphereGeometry(0.65, 20, 20),
+      new THREE.MeshBasicMaterial({ color: '#e2e8f0', transparent: true, opacity: 1 })
     );
+    this.moonHalo = new THREE.Mesh(
+      new THREE.SphereGeometry(1.12, 20, 20),
+      new THREE.MeshBasicMaterial({ color: '#7dd3fc', transparent: true, opacity: 0.22, depthWrite: false })
+    );
+    this.moonOrb.add(this.moonHalo);
     this.scene.add(this.moonOrb);
 
     // Night Starfield
@@ -1753,6 +1765,10 @@ export class ChargerStudio3D {
     this.doorLedMat = null;
     this.holsterLight = null;
     this.vawtRotor = null;
+    this.sunOrb = null;
+    this.sunHalo = null;
+    this.moonOrb = null;
+    this.moonHalo = null;
     this.gridBeaconMat = null;
     this.envRT?.dispose();
     this.envRT = null;
@@ -1853,21 +1869,30 @@ export class ChargerStudio3D {
       }
     }
     const isDay = this.isDayTime();
-    const sunProg = isDay ? (this.timeOfDay - 6.0) / 13.0 : 0.5;
-    const sunAngle = sunProg * Math.PI;
-    const sunX = -Math.cos(sunAngle) * 14;
-    const sunY = Math.max(2.5, Math.sin(sunAngle) * 13);
 
-    const nightHours = this.timeOfDay >= 19.0 ? this.timeOfDay - 19.0 : this.timeOfDay + 5.0;
-    const nightProg = Math.min(1, Math.max(0, nightHours / 11.0));
-    const moonAngle = nightProg * Math.PI;
-    const moonX = -Math.cos(moonAngle) * 13;
-    const moonY = Math.max(2.8, Math.sin(moonAngle) * 11.5);
+    // Continuous 14.5h solar orbit (05:15 -> 19:45) sinking smoothly past horizon
+    const sunWindow = this.timeOfDay >= 5.25 && this.timeOfDay <= 19.75;
+    const uSun = sunWindow ? (this.timeOfDay - 5.25) / 14.5 : 0;
+    const sunAngle = uSun * Math.PI;
+    const sunX = -Math.cos(sunAngle) * 16.5;
+    const sunY = sunWindow ? Math.sin(sunAngle) * 14.2 - 1.8 : -4.0;
+    const sunHorizonFade = sunWindow ? Math.min(1, Math.max(0, (sunY + 1.4) / 2.6)) : 0;
+
+    // Continuous 12.5h lunar orbit (18:15 -> 06:45) sinking smoothly past horizon
+    const inMoonWindow = this.timeOfDay >= 18.25 || this.timeOfDay <= 6.75;
+    const moonElapsed = this.timeOfDay >= 18.25 ? this.timeOfDay - 18.25 : this.timeOfDay + 5.75;
+    const uMoon = inMoonWindow ? moonElapsed / 12.5 : 0;
+    const moonAngle = uMoon * Math.PI;
+    const moonX = -Math.cos(moonAngle) * 15.5;
+    const moonY = inMoonWindow ? Math.sin(moonAngle) * 12.8 - 1.6 : -4.0;
+    const moonHorizonFade = inMoonWindow ? Math.min(1, Math.max(0, (moonY + 1.3) / 2.4)) : 0;
 
     const targetSky = !isDay
-      ? this.gridBackup
-        ? '#0f1322'
-        : '#061526'
+      ? sunHorizonFade > 0.12
+        ? '#262447'
+        : this.gridBackup
+          ? '#0f1322'
+          : '#061526'
       : this.timeOfDay < 8.5 || this.timeOfDay > 16.5
         ? '#5b4b75'
         : '#4a8fd4';
@@ -1875,21 +1900,35 @@ export class ChargerStudio3D {
     if (this.scene.fog) this.scene.fog.color.copy(this.scene.background);
 
     if (this.sunLight) {
-      this.sunLight.position.set(isDay ? sunX : moonX, isDay ? sunY : moonY, isDay ? 8 : -6);
-      this.sunLight.intensity = isDay ? 2.4 : 0.48;
+      this.sunLight.position.set(
+        isDay ? sunX : moonX,
+        Math.max(2.0, isDay ? sunY : moonY),
+        isDay ? 8 : -6
+      );
+      this.sunLight.intensity = isDay ? 2.4 * Math.max(0.25, sunHorizonFade) : 0.48;
       this.sunLight.color.set(
         !isDay ? '#93c5fd' : this.timeOfDay < 8.5 || this.timeOfDay > 16.5 ? '#ffae70' : '#fff8eb'
       );
     }
     if (this.sunOrb) {
-      this.sunOrb.visible = isDay;
+      this.sunOrb.visible = sunWindow && sunHorizonFade > 0.01;
       this.sunOrb.position.set(sunX, sunY, -14);
+      const warmMix = 1 - Math.min(1, Math.max(0, (sunY - 0.5) / 5.5));
+      this.sunOrb.material.color.set('#fef08a').lerp(new THREE.Color('#f97316'), warmMix);
+      this.sunOrb.material.opacity = sunHorizonFade;
+      if (this.sunHalo) {
+        this.sunHalo.material.opacity = sunHorizonFade * (0.24 + warmMix * 0.16);
+      }
     }
     if (this.moonOrb) {
-      this.moonOrb.visible = !isDay;
+      this.moonOrb.visible = inMoonWindow && moonHorizonFade > 0.01;
       this.moonOrb.position.set(moonX, moonY, -14);
+      this.moonOrb.material.opacity = moonHorizonFade;
+      if (this.moonHalo) {
+        this.moonHalo.material.opacity = moonHorizonFade * 0.24;
+      }
     }
-    if (this.starsMat) this.starsMat.opacity = isDay ? 0.0 : 0.88;
+    if (this.starsMat) this.starsMat.opacity = (1 - sunHorizonFade) * 0.88;
     this.hemiLight.intensity = isDay ? 0.95 : 0.42;
     this.ambientLight.intensity = isDay ? 0.45 : 0.3;
 
