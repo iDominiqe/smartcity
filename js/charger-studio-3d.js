@@ -266,7 +266,11 @@ export class ChargerStudio3D {
     this.timeOfDay = 13.5; // 00:00 .. 24:00
     this.gridBackup = false;
     this.doorOpen = false;
+    this.doorAnim = 0;
     this.connectedToEv = false;
+    this.partialMode = false;
+    this.gunAlarm = false;
+    this.qrCodeIssued = false;
     this.xray = false;
     this.autoSpin = false;
     this.tamperTimer = 0;
@@ -370,6 +374,7 @@ export class ChargerStudio3D {
             <p id="charger-studio-subtitle"></p>
           </div>
           <div class="ac-studio-header-actions">
+            <button type="button" id="charger-btn-share" class="ac-cam-btn"></button>
             <button type="button" id="charger-btn-quote" class="ac-btn-primary"></button>
             <button type="button" id="charger-btn-close" class="ac-btn-close"></button>
           </div>
@@ -441,6 +446,7 @@ export class ChargerStudio3D {
             <button type="button" class="ac-cam-btn" id="charger-btn-unlock"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-qr"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-connect"></button>
+            <button type="button" class="ac-cam-btn" id="charger-btn-partial"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-xray"></button>
             <button type="button" class="ac-cam-btn charger-tamper-btn" id="charger-btn-tamper"></button>
           </div>
@@ -817,25 +823,7 @@ export class ChargerStudio3D {
     }
     towerGroup.add(this.coiledCableGroup);
 
-    // 2C. Anti-Theft Motorized Sliding Pocket Glass Door + Flush Smart Access Panel
-    this.doorGroup = new THREE.Group();
-    this.doorGroup.position.set(0, 1.38, 0.44);
-
-    // Brushed Dark Metal Door Frame & Vertical Handle
-    const dFrameTop = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.05, 0.05), darkMetalMat);
-    dFrameTop.position.set(0, 1.14, 0);
-    this.doorGroup.add(dFrameTop);
-    const dFrameBot = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.05, 0.05), darkMetalMat);
-    dFrameBot.position.set(0, -1.14, 0);
-    this.doorGroup.add(dFrameBot);
-    const dFrameRight = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.32, 0.05), darkMetalMat);
-    dFrameRight.position.set(0.45, 0, 0);
-    this.doorGroup.add(dFrameRight);
-    const grabHandle = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.38, 0.07), darkMetalMat);
-    grabHandle.position.set(0.42, -0.05, 0.04);
-    this.doorGroup.add(grabHandle);
-
-    // Left Integrated Smart Access Panel (QR + PIN 0-9 + NFC)
+    // 2C. Fixed Left Smart Access Panel (QR + PIN 0-9 + NFC) + Front Linear Tracks + Motorized Right Glass Hatch
     const ctrlTex = createControlPanelTexture();
     const ctrlPanel = new THREE.Mesh(
       new THREE.BoxGeometry(0.38, 2.22, 0.03),
@@ -847,17 +835,44 @@ export class ChargerStudio3D {
         roughness: 0.16
       })
     );
-    ctrlPanel.position.set(-0.25, 0, 0.01);
-    this.doorGroup.add(ctrlPanel);
+    ctrlPanel.position.set(-0.25, 1.38, 0.442);
+    towerGroup.add(ctrlPanel);
 
     this.doorLedMat = new THREE.MeshBasicMaterial({ color: '#10b981' });
     const doorLed = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.035, 0.04), this.doorLedMat);
-    doorLed.position.set(-0.25, 0.94, 0.018);
-    this.doorGroup.add(doorLed);
+    doorLed.position.set(-0.25, 2.32, 0.45);
+    towerGroup.add(doorLed);
 
-    // Right Armored Smoked-Glass Window
-    const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(0.52, 2.22, 0.03), smokedGlassMat);
-    doorGlass.position.set(0.2, 0, 0.01);
+    // Top & Bottom Precision Brushed-Metal Linear Slide Tracks (keeps hatch outside cabinet)
+    const trackTop = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.032, 0.055), darkMetalMat);
+    trackTop.position.set(0.0, 2.525, 0.458);
+    towerGroup.add(trackTop);
+    const trackBot = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.032, 0.055), darkMetalMat);
+    trackBot.position.set(0.0, 0.235, 0.458);
+    towerGroup.add(trackBot);
+
+    // Motorized Right Armored Smoked-Glass Hatch (steps forward +Z, then glides left -X in front of ctrlPanel)
+    this.doorGroup = new THREE.Group();
+    this.doorGroup.position.set(0.20, 1.38, 0.455);
+
+    const dFrameTop = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.05, 0.045), darkMetalMat);
+    dFrameTop.position.set(0, 1.13, 0);
+    this.doorGroup.add(dFrameTop);
+    const dFrameBot = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.05, 0.045), darkMetalMat);
+    dFrameBot.position.set(0, -1.13, 0);
+    this.doorGroup.add(dFrameBot);
+    const dFrameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.30, 0.045), darkMetalMat);
+    dFrameLeft.position.set(-0.25, 0, 0);
+    this.doorGroup.add(dFrameLeft);
+    const dFrameRight = new THREE.Mesh(new THREE.BoxGeometry(0.045, 2.30, 0.045), darkMetalMat);
+    dFrameRight.position.set(0.25, 0, 0);
+    this.doorGroup.add(dFrameRight);
+    const grabHandle = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.38, 0.065), darkMetalMat);
+    grabHandle.position.set(0.22, -0.05, 0.035);
+    this.doorGroup.add(grabHandle);
+
+    const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(0.46, 2.20, 0.028), smokedGlassMat);
+    doorGlass.position.set(0, 0, 0.005);
     doorGlass.renderOrder = 2;
     this.doorGroup.add(doorGlass);
 
@@ -1098,6 +1113,17 @@ export class ChargerStudio3D {
   bindEvents() {
     this.modal.querySelector('#charger-studio-backdrop')?.addEventListener('click', () => this.close());
     this.modal.querySelector('#charger-btn-close')?.addEventListener('click', () => this.close());
+    this.modal.querySelector('#charger-btn-share')?.addEventListener('click', (e) => {
+      const btn = e.currentTarget;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#charger-studio`;
+      navigator.clipboard?.writeText(shareUrl).catch(() => {});
+      btn.textContent = this.t('shareCopied');
+      btn.classList.add('active');
+      setTimeout(() => {
+        btn.textContent = this.t('shareBtn');
+        btn.classList.remove('active');
+      }, 2000);
+    });
     this.modal.querySelector('#charger-btn-quote')?.addEventListener('click', () => {
       this.close();
       if (this.onRequestQuote) this.onRequestQuote();
@@ -1120,10 +1146,24 @@ export class ChargerStudio3D {
       this.syncTelemetryAndUI();
     });
 
+    this.modal.querySelector('#charger-btn-partial')?.addEventListener('click', () => {
+      this.partialMode = !this.partialMode;
+      this.naionSoc = this.partialMode ? 48.0 : 84.0;
+      this.syncTelemetryAndUI();
+    });
+
     this.modal.querySelector('#charger-btn-unlock')?.addEventListener('click', () => {
       const pinVal = this.modal.querySelector('#charger-pin-input')?.value?.trim();
       if (this.doorOpen) {
-        this.lockDoor();
+        if (this.connectedToEv) {
+          // Alarm if user tries to close protective hatch without returning charging gun!
+          this.gunAlarm = true;
+          this.tamperTimer = 3.2;
+          this.playAlarmChirp();
+          this.syncTelemetryAndUI();
+        } else {
+          this.lockDoor();
+        }
       } else if (pinVal === '2026') {
         this.unlockDoor(false);
       } else {
@@ -1132,15 +1172,22 @@ export class ChargerStudio3D {
     });
 
     this.modal.querySelector('#charger-btn-qr')?.addEventListener('click', () => {
-      this.qrScanFlash = 0.85;
+      this.qrScanFlash = 1.4;
+      const pinInput = this.modal.querySelector('#charger-pin-input');
+      if (pinInput) pinInput.value = '2026';
       this.unlockDoor(true);
     });
 
     this.modal.querySelector('#charger-btn-connect')?.addEventListener('click', () => {
-      if (!this.doorOpen) {
-        this.unlockDoor(false);
+      if (this.connectedToEv) {
+        // Return gun to holster & auto-close protective door
+        this.returnGunAndClose();
+      } else {
+        if (!this.doorOpen) {
+          this.unlockDoor(false);
+        }
+        this.setEvConnected(true);
       }
-      this.setEvConnected(!this.connectedToEv);
     });
 
     this.modal.querySelector('#charger-btn-tamper')?.addEventListener('click', () => {
@@ -1168,18 +1215,32 @@ export class ChargerStudio3D {
   unlockDoor(fromQr = false) {
     this.doorOpen = true;
     this.tamperTimer = 0;
-    if (fromQr) this.qrScanFlash = 0.85;
+    this.gunAlarm = false;
+    this.qrCodeIssued = fromQr;
+    if (fromQr) this.qrScanFlash = 1.4;
     this.syncTelemetryAndUI();
   }
 
   lockDoor() {
     this.setEvConnected(false);
     this.doorOpen = false;
+    this.gunAlarm = false;
+    this.qrCodeIssued = false;
+    this.syncTelemetryAndUI();
+  }
+
+  returnGunAndClose() {
+    this.setEvConnected(false);
+    this.doorOpen = false;
+    this.gunAlarm = false;
+    this.tamperTimer = 0;
+    this.qrCodeIssued = false;
     this.syncTelemetryAndUI();
   }
 
   setEvConnected(state) {
     this.connectedToEv = state;
+    if (!state) this.gunAlarm = false;
     if (this.coiledCableGroup) this.coiledCableGroup.visible = !state;
     if (this.dockedGunGroup) this.dockedGunGroup.visible = !state;
     if (this.connectedGun) this.connectedGun.visible = state;
@@ -1190,7 +1251,8 @@ export class ChargerStudio3D {
   }
 
   triggerTamper() {
-    if (this.doorOpen) this.lockDoor();
+    if (this.doorOpen && !this.connectedToEv) this.lockDoor();
+    this.gunAlarm = false;
     this.tamperTimer = 3.2;
     this.playAlarmChirp();
     this.syncTelemetryAndUI();
@@ -1237,10 +1299,20 @@ export class ChargerStudio3D {
     setText('charger-val-solar', `${totalRenew.toFixed(1)} kW`);
     const socFlow = isDay ? `+${Math.max(0, totalRenew - evKw).toFixed(1)}` : this.gridBackup ? '+12.0' : `-${evKw.toFixed(0)}`;
     setText('charger-val-naion', `${Math.round(this.naionSoc)}% · ${socFlow} kW`);
-    setText('charger-val-ev', isCharging ? '60 kW · 120A' : '0 kW (Standby)');
+    setText('charger-val-ev', isCharging ? '60 kW · 500 Vdc' : '0 kW (Standby)');
     setText(
       'charger-val-door',
-      this.t(isCharging ? 'doorChargingTxt' : this.doorOpen ? 'doorUnlockedTxt' : 'doorLockedTxt')
+      this.t(
+        isAlert
+          ? 'doorAlarmTxt'
+          : isCharging
+            ? 'doorChargingTxt'
+            : this.doorOpen
+              ? 'doorUnlockedTxt'
+              : this.partialMode
+                ? 'doorPartialTxt'
+                : 'doorLockedTxt'
+      )
     );
 
     const unlockBtn = this.modal.querySelector('#charger-btn-unlock');
@@ -1254,15 +1326,22 @@ export class ChargerStudio3D {
       connectBtn.classList.toggle('active', this.connectedToEv);
     }
     this.modal.querySelector('#charger-btn-grid')?.classList.toggle('active', this.gridBackup);
+    this.modal.querySelector('#charger-btn-partial')?.classList.toggle('active', this.partialMode);
     this.modal.querySelector('#charger-btn-xray')?.classList.toggle('active', this.xray);
 
     const statusKey = isAlert
-      ? 'tamperAlertTxt'
-      : isDay
-        ? 'modeStatusDay'
-        : this.gridBackup
-          ? 'modeStatusNightGrid'
-          : 'modeStatusNightBat';
+      ? this.gunAlarm
+        ? 'gunNotReturnedTxt'
+        : 'tamperAlertTxt'
+      : this.qrCodeIssued && this.doorOpen && !isCharging
+        ? 'qrCodeIssuedTxt'
+        : this.partialMode
+          ? 'partialModeTxt'
+          : isDay
+            ? 'modeStatusDay'
+            : this.gridBackup
+              ? 'modeStatusNightGrid'
+              : 'modeStatusNightBat';
     setText('charger-live-status', this.t(statusKey));
 
     const banner = this.modal.querySelector('#charger-live-banner');
@@ -1288,6 +1367,7 @@ export class ChargerStudio3D {
     setText('charger-studio-badge', 'badge');
     setText('charger-studio-title', 'title');
     setText('charger-studio-subtitle', 'subtitle');
+    setText('charger-btn-share', 'shareBtn');
     setText('charger-btn-quote', 'requestQuote');
     setText('charger-btn-close', 'closeBtn');
     setText('charger-lbl-solar', 'telemetrySolarWind');
@@ -1306,6 +1386,7 @@ export class ChargerStudio3D {
     setText('charger-btn-spin', 'autoSpin');
     setText('charger-btn-xray', 'xrayBtn');
     setText('charger-btn-qr', 'qrScanBtn');
+    setText('charger-btn-partial', 'partialBtn');
     setText('charger-btn-tamper', 'tamperBtn');
     setText('charger-btn-grid', 'gridBackupBtn');
 
@@ -1554,43 +1635,57 @@ export class ChargerStudio3D {
     this.carHeadMats.forEach((m) => (m.emissiveIntensity = 0.15 + nightGlow * 2.2));
     this.carTailMats.forEach((m) => (m.emissiveIntensity = 0.2 + nightGlow * 1.9));
 
-    // 2. Tamper Alert Countdown, Motorized Pocket Door Slide & Electromagnetic Deadbolt
+    // 2. Tamper / Gun-Return Alarm Countdown, 2-Stage Front-Rail Hatch & Deadbolt
     if (this.tamperTimer > 0) {
       this.tamperTimer = Math.max(0, this.tamperTimer - dt);
-      if (this.tamperTimer === 0) this.syncTelemetryAndUI();
+      if (this.tamperTimer === 0) {
+        this.gunAlarm = false;
+        this.syncTelemetryAndUI();
+      }
     }
     if (this.qrScanFlash > 0) {
       this.qrScanFlash = Math.max(0, this.qrScanFlash - dt);
     }
 
+    const targetDoorAnim = this.doorOpen ? 1.0 : 0.0;
+    this.doorAnim += (targetDoorAnim - this.doorAnim) * Math.min(1, dt * 6.5);
     if (this.doorGroup) {
-      const targetX = this.doorOpen ? -0.78 : 0.0;
-      const shake = this.tamperTimer > 2.4 ? Math.sin(elapsed * 55) * 0.025 : 0;
-      this.doorGroup.position.x += (targetX - this.doorGroup.position.x) * Math.min(1, dt * 8.0) + shake;
+      const camOut = Math.min(1, this.doorAnim / 0.28);
+      const slideRaw = Math.max(0, (this.doorAnim - 0.28) / 0.72);
+      const slide = slideRaw * slideRaw * (3 - 2 * slideRaw);
+      const shake = this.tamperTimer > 2.4 ? Math.sin(elapsed * 55) * 0.022 : 0;
+      this.doorGroup.position.x = 0.20 - slide * 0.45 + shake;
+      this.doorGroup.position.z = 0.455 + camOut * 0.06;
     }
     if (this.deadboltPin) {
       const targetPinX = this.doorOpen ? 0.34 : 0.45;
       this.deadboltPin.position.x += (targetPinX - this.deadboltPin.position.x) * Math.min(1, dt * 10.0);
     }
 
-    // 3. Top Status Beacon Dynamic Color & Pulse
+    // 3. Top Status Lamp (Green = Available, Orange = Partial >=40 kWh, Red = Unavailable/Alarm)
     if (this.topLedMat) {
-      if (this.tamperTimer > 0) {
-        this.topLedMat.color.setHex(Math.sin(elapsed * 18) > 0 ? 0xff2a4b : 0x2a0810);
+      if (this.tamperTimer > 0 || this.gunAlarm) {
+        this.topLedMat.color.setHex(Math.sin(elapsed * 18) > 0 ? 0xff2a4b : 0x450a0a);
+      } else if (this.partialMode) {
+        this.topLedMat.color.set('#f59e0b');
       } else if (this.qrScanFlash > 0) {
         this.topLedMat.color.set('#38bdf8');
       } else if (this.connectedToEv) {
-        const pulse = 0.5 + 0.5 * Math.sin(elapsed * 5.0);
-        this.topLedMat.color.setRGB(0.05 + pulse * 0.1, 0.55 + pulse * 0.4, 1.0);
-      } else if (!isDay) {
-        this.topLedMat.color.set('#38bdf8');
+        const pulse = 0.55 + 0.45 * Math.sin(elapsed * 5.0);
+        this.topLedMat.color.setRGB(0.06 + pulse * 0.08, 0.72 + pulse * 0.28, 0.55 + pulse * 0.35);
       } else {
         this.topLedMat.color.set('#10b981');
       }
     }
     if (this.doorLedMat) {
       this.doorLedMat.color.set(
-        this.tamperTimer > 0 ? '#ef4444' : this.doorOpen ? '#38bdf8' : '#10b981'
+        this.tamperTimer > 0 || this.gunAlarm
+          ? '#ef4444'
+          : this.partialMode
+            ? '#f59e0b'
+            : this.doorOpen
+              ? '#38bdf8'
+              : '#10b981'
       );
     }
 

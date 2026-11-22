@@ -8,6 +8,7 @@ export const PAGE_UI_LABELS = {
     backToHome3d: '← Back to 3D Smart City',
     menuToggle: 'Menu',
     newBadge: 'NEW!',
+    protoBadge: 'R&D',
     specsTitle: 'Key Technical Specifications',
     highlightsTitle: 'Highlights & Architecture',
     modelsTitle: 'Models, Configurations & Pricing',
@@ -61,6 +62,7 @@ export const PAGE_UI_LABELS = {
     backToHome3d: '← Retour à la Ville 3D',
     menuToggle: 'Menu',
     newBadge: 'Nouveau!',
+    protoBadge: 'R&D',
     specsTitle: 'Caractéristiques Techniques Clés',
     highlightsTitle: 'Points Forts & Architecture',
     modelsTitle: 'Modèles, Configurations & Tarifs',
@@ -114,6 +116,7 @@ export const PAGE_UI_LABELS = {
     backToHome3d: '← Обратно към 3D Града',
     menuToggle: 'Меню',
     newBadge: 'Ново!',
+    protoBadge: 'ПРОТО',
     specsTitle: 'Ключови Технически Характеристики',
     highlightsTitle: 'Предимства и Архитектура',
     modelsTitle: 'Модели, Конфигурации и Цени',
@@ -167,6 +170,7 @@ export const PAGE_UI_LABELS = {
     backToHome3d: '← Înapoi la Orașul 3D',
     menuToggle: 'Meniu',
     newBadge: 'Nou!',
+    protoBadge: 'DEV',
     specsTitle: 'Specificații Tehnice Cheie',
     highlightsTitle: 'Avantaje & Arhitectură',
     modelsTitle: 'Modele, Configurații & Prețuri',
@@ -246,7 +250,7 @@ export const MENU_CATEGORIES = [
   {
     id: 'solar',
     kind: 'category',
-    label: { en: 'NEO Solar Solutions', fr: 'Neo solutions solaires', bg: 'Neo Соларни Решения', ro: 'Soluții Solare NEO' },
+    label: { en: 'Solar Solutions', fr: 'Solutions Solaires', bg: 'Соларни Решения', ro: 'Soluții Solare' },
     items: [
       {
         type: 'parking-studio',
@@ -274,7 +278,7 @@ export const MENU_CATEGORIES = [
     id: 'climatisation',
     kind: 'category',
     badgeKey: 'newBadge',
-    label: { en: 'NEO Air Conditioning', fr: 'Neo Climatisation', bg: 'Neo Климатизация', ro: 'Climatizare NEO' },
+    label: { en: 'NEO Clim®', fr: 'Neo Climatisation', bg: 'Neo Климатизация', ro: 'Climatizare NEO' },
     items: [
       {
         type: 'ac-studio',
@@ -308,7 +312,7 @@ export const MENU_CATEGORIES = [
   {
     id: 'ev',
     kind: 'category',
-    label: { en: 'NEO EV Charging', fr: 'Neo Bornes de recharge', bg: 'Neo Зарядни Станции', ro: 'Stații Încărcare NEO' },
+    label: { en: 'EV Charging', fr: 'Bornes VE', bg: 'Зарядни Станции', ro: 'Stații EV' },
     items: [
       {
         type: 'charger-studio',
@@ -323,6 +327,28 @@ export const MENU_CATEGORIES = [
       },
       { type: 'page', slug: 'ombriere-aper-recharge-dc', label: { en: 'APER Solar Canopy 80 kW DC', fr: 'Ombrière APER Recharge DC', bg: 'Соларен Навес APER 80 kW DC', ro: 'Copertină APER Încărcare DC' } },
       { type: 'page', slug: 'recharge-intelligente', label: { en: 'Smart Charging & RSO Retrofit Kit', fr: 'Recharge Intelligente & Kit RSO', bg: 'Умно Зареждане & Ретрофит Комплект', ro: 'Încărcare Inteligentă & Kit RSO' } }
+    ]
+  },
+  {
+    id: 'prototypes',
+    kind: 'category',
+    badgeKey: 'protoBadge',
+    badgeVariant: 'proto',
+    label: { en: 'Prototypes', fr: 'Prototypes', bg: 'Прототипи', ro: 'Prototipuri' },
+    items: [
+      {
+        type: 'charger-studio',
+        target: 'charger-studio',
+        highlight: true,
+        label: {
+          en: '🔌 NEO® SafeCharge X1 — 60 kW + 100 kWh Na-ion (3D)',
+          fr: '🔌 NEO® SafeCharge X1 — 60 kW + Na-ion 100 kWh (3D)',
+          bg: '🔌 NEO® SafeCharge X1 — 60 kW + 100 kWh Na-ion (3D)',
+          ro: '🔌 NEO® SafeCharge X1 — 60 kW + Na-ion 100 kWh (3D)'
+        }
+      },
+      { type: 'page', slug: 'recharge-intelligente', label: { en: '🧪 Na-ion 100 kWh & RSO Retrofit Kit', fr: '🧪 Stockage Na-ion 100 kWh & Kit RSO', bg: '🧪 100 kWh Na-ion и RSO Ретрофит', ro: '🧪 Stocare Na-ion 100 kWh & Kit RSO' } },
+      { type: 'page', slug: 'ombriere-aper-recharge-dc', label: { en: '☀️ APER Solar Canopy 80 kW DC', fr: '☀️ Ombrière APER Recharge DC 80 kW', bg: '☀️ Соларен Навес APER 80 kW DC', ro: '☀️ Copertină APER Încărcare DC 80 kW' } }
     ]
   },
   {

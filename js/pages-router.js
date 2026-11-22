@@ -102,8 +102,9 @@ export class PagesRouter {
   renderMenus() {
     if (this.navContainer) {
       this.navContainer.innerHTML = MENU_CATEGORIES.map((cat) => {
+        const badgeClass = cat.badgeVariant ? `nav-badge ${cat.badgeVariant}` : 'nav-badge';
         const badgeHtml = cat.badgeKey
-          ? `<span class="nav-badge">${escapeHtml(this.ui(cat.badgeKey))}</span>`
+          ? `<span class="${badgeClass}">${escapeHtml(this.ui(cat.badgeKey))}</span>`
           : '';
         const activeCat = getMenuCategoryForSlug(this.activeSlug);
         const isCategoryActive =
@@ -158,8 +159,9 @@ export class PagesRouter {
 
     if (this.mobileDrawer) {
       this.mobileDrawer.innerHTML = MENU_CATEGORIES.map((cat) => {
+        const badgeClass = cat.badgeVariant ? `nav-badge ${cat.badgeVariant}` : 'nav-badge';
         const badgeHtml = cat.badgeKey
-          ? `<span class="nav-badge">${escapeHtml(this.ui(cat.badgeKey))}</span>`
+          ? `<span class="${badgeClass}">${escapeHtml(this.ui(cat.badgeKey))}</span>`
           : '';
         const itemsHtml = cat.items
           .map((item) => {

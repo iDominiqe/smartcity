@@ -376,12 +376,20 @@ function initApp() {
     homeStudio?.close();
     parkingStudio?.close();
     hibernateCityRenderer();
+    if (window.location.hash !== '#charger-studio') {
+      window.history.replaceState(null, '', '#charger-studio');
+    }
     if (!chargerStudio) {
       const { ChargerStudio3D } = await import('./charger-studio-3d.js');
       chargerStudio = new ChargerStudio3D({
         i18n,
         onRequestQuote: () => pagesRouter.openPage('ombriere-aper-recharge-dc'),
-        onClose: () => resumeCityRenderer()
+        onClose: () => {
+          if (window.location.hash === '#charger-studio' || window.location.hash === '#safecharge-x1') {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+          resumeCityRenderer();
+        }
       });
     }
     chargerStudio.open();
@@ -427,13 +435,21 @@ function initApp() {
     openHomeStudio();
   });
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const studioParam = urlParams.get('studio');
   if (window.location.hash === '#ac-studio') {
     openAcStudio();
   } else if (window.location.hash === '#home-studio') {
     openHomeStudio();
   } else if (window.location.hash === '#parking-studio') {
     openParkingStudio();
-  } else if (window.location.hash === '#charger-studio') {
+  } else if (
+    window.location.hash === '#charger-studio' ||
+    window.location.hash === '#safecharge-x1' ||
+    studioParam === 'charger' ||
+    studioParam === 'safecharge-x1' ||
+    urlParams.has('charger')
+  ) {
     openChargerStudio();
   }
   window.addEventListener('hashchange', () => {
@@ -443,7 +459,7 @@ function initApp() {
       openHomeStudio();
     } else if (window.location.hash === '#parking-studio') {
       openParkingStudio();
-    } else if (window.location.hash === '#charger-studio') {
+    } else if (window.location.hash === '#charger-studio' || window.location.hash === '#safecharge-x1') {
       openChargerStudio();
     }
   });
