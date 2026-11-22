@@ -28,17 +28,19 @@ export const CHARGER_STUDIO_TEXT = {
     disconnectEvBtn: '↩️ Return Gun & Close',
     partialBtn: '🟠 ≥40 kWh Mode',
     tamperBtn: '🚨 Alarm / Theft Test',
-    gridBackupBtn: '⚡ Night Grid Backup',
+    gridBackupBtn: '⚡ EDF Night Boost 60kW',
+    autoTimePlayBtn: '▶ Auto 0–23h',
+    autoTimePauseBtn: '⏸ Pause 0–23h',
     timeLabel: 'Time of Day',
-    telemetrySolarWind: 'Solar 800V + Wind',
-    telemetryGrid: 'AC Grid (230/380V)',
+    telemetrySolarWind: 'Energy Input (Day/Night)',
+    telemetryGrid: 'EDF Energy (230/380V)',
     telemetryNaion: 'Na-ion SoC (100 kWh)',
     telemetryEv: 'EV Charge (500 Vdc)',
     telemetryDoor: 'Hatch & Lamp Status',
     legendRenew: 'Solar 800Vdc & Wind',
     legendNaion: '100 kWh Na-ion',
     legendEv: '500 Vdc / 60 kW EV',
-    legendGrid: 'AC 230/380V Grid',
+    legendGrid: 'EDF Energy -> Station',
     doorLockedTxt: 'CLOSED · GREEN LAMP',
     doorPartialTxt: 'PARTIAL ≥40 KWH · ORANGE',
     doorUnlockedTxt: 'HATCH OPEN · CODE 2026',
@@ -48,9 +50,9 @@ export const CHARGER_STUDIO_TEXT = {
     gunNotReturnedTxt: '🚨 ALARM: GUN NOT RETURNED TO HOLSTER! RETURN CONNECTOR TO CLOSE HATCH',
     qrCodeIssuedTxt: '📱 QR SCANNED · UNLOCK CODE 2026 ISSUED -> HATCH SLIDING OPEN ON FRONT RAIL',
     partialModeTxt: '🟠 PARTIAL AVAILABILITY · NA-ION AT 48 KWH (≥40 KWH CHARGEABLE) · ORANGE TOP LAMP',
-    modeStatusDay: '☀️ DAY MICROGRID · SOLAR 800VDC + VAWT WIND -> MPPT -> EV (60 KW) + 100 KWH NA-ION',
-    modeStatusNightBat: '🌙 NIGHT HYBRID · CITY AC GRID (230/380V) + 100 KWH NA-ION POWER EV AT 500 VDC / 60 KW',
-    modeStatusNightGrid: '⚡ NIGHT CITY GRID BOOST · URBAN 230/380 VAC ±20% -> 500 VDC INVERTER -> EV & NA-ION'
+    modeStatusDay: '☀️ DAY (06:00–19:00) · SOLAR PANELS + WIND TURBINE CHARGE STATION & EV (EDF ENERGY GRID OFF)',
+    modeStatusNightBat: '🌙 NIGHT (19:00–06:00) · EDF ENERGY POLE -> EDF BOX -> CHARGES STATION (100 KWH NA-ION) -> EV',
+    modeStatusNightGrid: '⚡ NIGHT EDF BOOST · EDF ENERGY 230/380V (60 KW) -> CHARGES STATION & NA-ION -> FAST CHARGES EV'
   },
   fr: {
     badge: 'NEO® SAFECHARGE X1 · PROTOTYPE · BORNE 60 KW 500VDC & NA-ION 100 KWH',
@@ -75,17 +77,19 @@ export const CHARGER_STUDIO_TEXT = {
     disconnectEvBtn: '↩️ Reposer & Fermer',
     partialBtn: '🟠 Dispo ≥40 kWh',
     tamperBtn: '🚨 Test Alarme / Vol',
-    gridBackupBtn: '⚡ Réseau 230/380V',
+    gridBackupBtn: '⚡ Boost EDF Nuit 60kW',
+    autoTimePlayBtn: '▶ Auto 0–23h',
+    autoTimePauseBtn: '⏸ Pause 0–23h',
     timeLabel: 'Heure du Jour',
-    telemetrySolarWind: 'Solaire 800V + Éolien',
-    telemetryGrid: 'Entrée AC 230/380V',
+    telemetrySolarWind: 'Source (Jour/Nuit)',
+    telemetryGrid: 'EDF Energy (230/380V)',
     telemetryNaion: 'Na-ion SoC (100 kWh)',
     telemetryEv: 'Sortie VE (500 Vdc)',
     telemetryDoor: 'Trappe & Lampe Haut',
     legendRenew: 'Solaire 800Vdc & Éolien',
     legendNaion: 'Na-ion 100 kWh',
     legendEv: 'Sortie 500 Vdc / 60 kW',
-    legendGrid: 'Réseau 230/380 Vac',
+    legendGrid: 'EDF Energy -> Borne',
     doorLockedTxt: 'FERMÉE · LAMPE VERTE',
     doorPartialTxt: 'PARTIEL ≥40 KWH · ORANGE',
     doorUnlockedTxt: 'TRAPPE OUVERTE · CODE 2026',
@@ -95,9 +99,9 @@ export const CHARGER_STUDIO_TEXT = {
     gunNotReturnedTxt: '🚨 ALARME NON-REPOSE PISTOLET · REMETTEZ LA PRISE POUR REFERMER LA TRAPPE',
     qrCodeIssuedTxt: '📱 QR SCANNÉ · CODE D’OUVERTURE 2026 REÇU -> GLISSEMENT DE LA TRAPPE MOTORISÉE',
     partialModeTxt: '🟠 DISPONIBILITÉ PARTIELLE · 48 KWH DISPONIBLES (≥40 KWH) · LAMPE ORANGE EN HAUT',
-    modeStatusDay: '☀️ JOUR · SOLAIRE 800 VDC + ÉOLIEN -> MPPT -> VE (60 KW) + BATTERIE NA-ION 100 KWH',
-    modeStatusNightBat: '🌙 NUIT HYBRIDE · RÉSEAU VILLE 230/380 VAC + NA-ION 100 KWH DÉLIVRENT 500 VDC / 60 KW',
-    modeStatusNightGrid: '⚡ NUIT RÉSEAU URBAIN · ENTRÉE 230/380 VAC ±20% -> ONDULEUR 500 VDC -> VE & NA-ION'
+    modeStatusDay: '☀️ JOUR (06h–19h) · SOLAIRE 800V + ÉOLIEN RECHARGENT LA BORNE & VE (EDF OFF)',
+    modeStatusNightBat: '🌙 NUIT (19h–06h) · POTEAU EDF ENERGY -> POSTE -> RECHARGE LA BORNE (NA-ION 100 KWH) -> VE',
+    modeStatusNightGrid: '⚡ NUIT BOOST EDF · EDF ENERGY 230/380V (60 KW) -> CHARGE BORNE & NA-ION -> VE'
   },
   bg: {
     badge: 'NEO® SAFECHARGE X1 · ПРОТОТИП · 60 KW 500V DC & 100 KWH NA-ION ХЪБ',
@@ -122,17 +126,19 @@ export const CHARGER_STUDIO_TEXT = {
     disconnectEvBtn: '↩️ Върни Пистолета',
     partialBtn: '🟠 Режим ≥40 kWh',
     tamperBtn: '🚨 Аларма / Кражба',
-    gridBackupBtn: '⚡ Мрежа 230/380V',
+    gridBackupBtn: '⚡ EDF Нощен Буст 60kW',
+    autoTimePlayBtn: '▶ Авто 0–23ч',
+    autoTimePauseBtn: '⏸ Пауза 0–23ч',
     timeLabel: 'Час на Денонощието',
-    telemetrySolarWind: 'Солар 800V + Вятър',
-    telemetryGrid: 'Мрежа 230/380V',
+    telemetrySolarWind: 'Вход (Ден/Нощ)',
+    telemetryGrid: 'EDF Energy (230/380V)',
     telemetryNaion: 'Na-ion (100 kWh)',
     telemetryEv: 'Заряд ЕМ (500 Vdc)',
     telemetryDoor: 'Люк & Горна Лампа',
     legendRenew: 'Солар 800Vdc и Вятър',
     legendNaion: 'Na-ion 100 kWh',
     legendEv: '500 Vdc / 60 kW ЕМ',
-    legendGrid: 'Мрежа 230/380V',
+    legendGrid: 'EDF Energy -> Станция',
     doorLockedTxt: 'ЗАТВОРЕНА · ЗЕЛЕНА ЛАМПА',
     doorPartialTxt: 'ЧАСТИЧНА ≥40 KWH · ОРАНЖЕВА',
     doorUnlockedTxt: 'ОТВОРЕНА · КОД 2026',
@@ -142,9 +148,9 @@ export const CHARGER_STUDIO_TEXT = {
     gunNotReturnedTxt: '🚨 АЛАРМА: ПИСТОЛЕТЪТ НЕ Е ВЪРНАТ НА МЯСТО! ВЪРНЕТЕ ГО, ЗА ДА СЕ ЗАТВОРИ',
     qrCodeIssuedTxt: '📱 QR СКАНИРАН · КОД 2026 -> МОТОРИЗИРАНИЯТ ЛЮК СЕ ПЛЪЗГА ОТПРЕД',
     partialModeTxt: '🟠 ЧАСТИЧНА НАЛИЧНОСТ · 48 KWH (≥40 KWH ГОТОВНОСТ) · ОРАНЖЕВА ЛАМПА',
-    modeStatusDay: '☀️ ДЕН · СОЛАР 800 VDC + ВЯТЪР -> MPPT -> ЕМ (60 KW) + 100 KWH NA-ION',
-    modeStatusNightBat: '🌙 НОЩ ХИБРИД · ГРАДСКА МРЕЖА 230/380V + 100 KWH NA-ION ПОДАВАТ 500 VDC / 60 KW',
-    modeStatusNightGrid: '⚡ НОЩ ГРАДСКА МРЕЖА · 230/380 VAC ±20% -> 500 VDC ИНВЕРТОР -> ЕМ & NA-ION'
+    modeStatusDay: '☀️ ДЕН (06–19ч) · СОЛАР + ВЯТЪР ЗАРЕЖДАТ СТАНЦИЯТА И ЕМ (EDF МРЕЖА ИЗКЛ.)',
+    modeStatusNightBat: '🌙 НОЩ (19–06ч) · СТЪЛБ EDF ENERGY -> ТРАФОПОСТ -> ЗАРЕЖДА СТАНЦИЯТА (NA-ION) -> ЕМ',
+    modeStatusNightGrid: '⚡ НОЩ EDF БУСТ · EDF ENERGY 230/380V (60 KW) -> ЗАРЕЖДА СТАНЦИЯТА И NA-ION -> ЕМ'
   },
   ro: {
     badge: 'NEO® SAFECHARGE X1 · PROTOTIP · STAȚIE 60 KW 500VDC & NA-ION 100 KWH',
@@ -169,17 +175,19 @@ export const CHARGER_STUDIO_TEXT = {
     disconnectEvBtn: '↩️ Pune Pistolul & Închide',
     partialBtn: '🟠 Mod ≥40 kWh',
     tamperBtn: '🚨 Test Alarmă / Furt',
-    gridBackupBtn: '⚡ Rețea 230/380V',
+    gridBackupBtn: '⚡ Boost EDF Noapte 60kW',
+    autoTimePlayBtn: '▶ Auto 0–23h',
+    autoTimePauseBtn: '⏸ Pauză 0–23h',
     timeLabel: 'Ora Zilei',
-    telemetrySolarWind: 'Solar 800V + Eolian',
-    telemetryGrid: 'Rețea 230/380V',
+    telemetrySolarWind: 'Sursă (Zi/Noapte)',
+    telemetryGrid: 'EDF Energy (230/380V)',
     telemetryNaion: 'SoC Na-ion (100 kWh)',
     telemetryEv: 'Ieșire EV (500 Vdc)',
     telemetryDoor: 'Trapă & Lampă Sus',
     legendRenew: 'Solar 800Vdc & Eolian',
     legendNaion: 'Na-ion 100 kWh',
     legendEv: '500 Vdc / 60 kW EV',
-    legendGrid: 'Rețea 230/380V',
+    legendGrid: 'EDF Energy -> Stație',
     doorLockedTxt: 'ÎNCHISĂ · LAMPĂ VERDE',
     doorPartialTxt: 'PARȚIAL ≥40 KWH · PORTOCALIU',
     doorUnlockedTxt: 'DESCHISĂ · COD 2026',
@@ -189,9 +197,9 @@ export const CHARGER_STUDIO_TEXT = {
     gunNotReturnedTxt: '🚨 ALARMĂ: PISTOL NERETURNAT! PUNEȚI CONECTORUL LA LOC PENTRU A ÎNCHIDE TRAPA',
     qrCodeIssuedTxt: '📱 QR SCANAT · COD 2026 EMIS -> TRAPA GLISEAZĂ PE ȘINA FRONTALĂ',
     partialModeTxt: '🟠 DISPONIBILITATE PARȚIALĂ · 48 KWH (≥40 KWH) · LAMPĂ PORTOCALIE',
-    modeStatusDay: '☀️ ZIUA · SOLAR 800 VDC + EOLIAN -> MPPT -> EV (60 KW) + NA-ION 100 KWH',
-    modeStatusNightBat: '🌙 NOAPTE HIBRID · REȚEA ORAȘ 230/380V + NA-ION 100 KWH LIVREAZĂ 500 VDC / 60 KW',
-    modeStatusNightGrid: '⚡ NOAPTEA REȚEA ORAȘ · 230/380 VAC ±20% -> INVERTOR 500 VDC -> EV & NA-ION'
+    modeStatusDay: '☀️ ZIUA (06–19h) · SOLAR + EOLIAN ÎNCARCĂ STAȚIA ȘI EV (REȚEA EDF OPRITĂ)',
+    modeStatusNightBat: '🌙 NOAPTEA (19–06h) · STÂLP EDF ENERGY -> POST -> ÎNCARCĂ STAȚIA (NA-ION 100 KWH) -> EV',
+    modeStatusNightGrid: '⚡ NOAPTEA BOOST EDF · EDF ENERGY 230/380V (60 KW) -> ÎNCARCĂ STAȚIA & NA-ION -> EV'
   }
 };
 
@@ -294,13 +302,13 @@ export const CHARGER_RIGHT_SPECS = [
     id: 'nightMode',
     icon: '🌙',
     focusCam: 'grid',
-    label: { en: 'NIGHT (19:00–06:00) GRID + HUB', fr: 'NUIT (19h–06h) RÉSEAU + HUB', bg: 'НОЩ (19:00–06:00) МРЕЖА + ХЪБ', ro: 'NOAPTE (19:00–06:00) REȚEA + HUB' },
-    value: 'City AC 230/380V + Na-ion',
+    label: { en: 'NIGHT: EDF ENERGY -> STATION', fr: 'NUIT : EDF ENERGY -> BORNE', bg: 'НОЩ: EDF ENERGY -> СТАНЦИЯ', ro: 'NOAPTE: EDF ENERGY -> STAȚIE' },
+    value: 'Pole -> EDF Box -> Station',
     detail: {
-      en: 'At night, draws power from the urban 230/380 Vac city grid alongside the 100 kWh Na-ion storage at 500 Vdc / 60 kW',
-      fr: 'La nuit, la borne charge depuis le réseau électrique urbain 230/380 Vac et sa batterie Na-ion 100 kWh (500 Vdc / 60 kW)',
-      bg: 'Нощем станцията черпи енергия от градската 230/380 Vac електромрежа заедно със 100 kWh Na-ion батерия',
-      ro: 'Noaptea alimentează din rețeaua electrică urbană 230/380 Vac împreună cu bateria Na-ion de 100 kWh (500 Vdc / 60 kW)'
+      en: 'At night, EDF Energy transmission pole feeds the EDF box, which charges the SafeCharge X1 station (100 kWh Na-ion) -> station charges EV',
+      fr: 'La nuit, le poteau EDF Energy alimente le poste EDF qui recharge la borne SafeCharge X1 (Na-ion 100 kWh) -> la borne charge le VE',
+      bg: 'Нощем стълбът на EDF Energy захранва таблото EDF, което зарежда станцията (100 kWh Na-ion), а тя зарежда автомобила',
+      ro: 'Noaptea stâlpul EDF Energy alimentează postul EDF care încarcă stația SafeCharge X1 (100 kWh Na-ion) -> stația încarcă EV'
     }
   }
 ];
@@ -310,7 +318,7 @@ export const CHARGER_CAMERA_PRESETS = {
   door: { pos: [0.35, 1.6, 3.35], target: [0.0, 1.5, 0.25] },
   naion: { pos: [2.8, 1.85, -3.1], target: [0.0, 1.35, -0.1] },
   renew: { pos: [-7.6, 5.0, 6.2], target: [-2.2, 2.2, -1.6] },
-  grid: { pos: [6.4, 3.1, 3.4], target: [2.1, 1.2, -1.6] }
+  grid: { pos: [4.8, 3.2, 4.2], target: [1.5, 1.2, -2.2] }
 };
 
 export const CHARGER_HOTSPOTS = [
@@ -344,19 +352,19 @@ export const CHARGER_HOTSPOTS = [
   },
   {
     id: 'grid',
-    pos: [4.6, 2.08, -3.2],
+    pos: [2.1, 2.05, -3.6],
     focusCam: 'grid',
     title: {
-      en: 'NIGHT GRID CHARGE / CITY AC LINK',
-      fr: 'CHARGE RÉSEAU NUIT / LIEN AC VILLE',
-      bg: 'НОЩЕН ЗАРЯД ОТ ГРАДСКАТА МРЕЖА / AC',
-      ro: 'ÎNCĂRCARE REȚEA NOAPTE / LINK AC ORAȘ'
+      en: 'EDF Energy — Grid Box & Pole',
+      fr: 'EDF Energy — Poste & Poteau',
+      bg: 'EDF Energy — Трафопост и Стълб',
+      ro: 'EDF Energy — Post & Stâlp'
     },
     sub: {
-      en: 'NIGHT URBAN GRID 230/380V + 100 KWH NA-ION',
-      fr: 'RÉSEAU URBAIN NUIT 230/380V + NA-ION 100 KWH',
-      bg: 'ГРАДСКА МРЕЖА НОЩЕМ 230/380V + 100 KWH NA-ION',
-      ro: 'REȚEA URBANĂ NOAPTE 230/380V + NA-ION 100 KWH'
+      en: 'POLE -> EDF BOX -> CHARGES STATION (NIGHT)',
+      fr: 'POTEAU -> POSTE EDF -> CHARGE BORNE (NUIT)',
+      bg: 'СТЪЛБ -> ТАБЛО EDF -> ЗАРЕЖДА СТАНЦИЯТА (НОЩ)',
+      ro: 'STÂLP -> POST EDF -> ÎNCARCĂ STAȚIA (NOAPTE)'
     }
   }
 ];

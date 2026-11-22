@@ -146,24 +146,24 @@ function createGridSubstationTexture() {
   canvas.height = 220;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#0b1324';
+  ctx.fillStyle = '#071a3e';
   ctx.fillRect(0, 0, 512, 220);
-  ctx.strokeStyle = '#f59e0b';
+  ctx.strokeStyle = '#ff5800';
   ctx.lineWidth = 8;
   ctx.strokeRect(6, 6, 500, 208);
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#fbbf24';
-  ctx.font = '900 36px Inter, Arial, sans-serif';
-  ctx.fillText('NIGHT GRID CHARGE', 256, 74);
+  ctx.fillStyle = '#ff6d1a';
+  ctx.font = '900 38px Inter, Arial, sans-serif';
+  ctx.fillText('EDF ENERGY · RÉSEAU', 256, 72);
 
-  ctx.fillStyle = '#7dd3fc';
+  ctx.fillStyle = '#93c5fd';
   ctx.font = '800 25px Inter, Arial, sans-serif';
-  ctx.fillText('CITY AC LINK · 230/380 VAC', 256, 128);
+  ctx.fillText('POSTE 230/380V -> STATION', 256, 128);
 
   ctx.fillStyle = '#34d399';
   ctx.font = '700 20px Inter, Arial, sans-serif';
-  ctx.fillText('HYBRID NIGHT FEED <-> 100 KWH NA-ION', 256, 178);
+  ctx.fillText('CHARGE BORNE NA-ION 100 KWH', 256, 178);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -339,6 +339,8 @@ export class ChargerStudio3D {
     this.qrCodeIssued = false;
     this.xray = false;
     this.autoSpin = false;
+    this.autoTime = false;
+    this._lastUiStep = -1;
     this.tamperTimer = 0;
     this.qrScanFlash = 0;
     this.naionSoc = 84.0;
@@ -505,7 +507,8 @@ export class ChargerStudio3D {
               <span id="charger-lbl-time"></span>:
               <strong id="charger-val-time">13:30</strong>
             </label>
-            <input type="range" id="charger-time-slider" min="0" max="24" step="0.25" value="13.5" />
+            <input type="range" id="charger-time-slider" min="0" max="23.95" step="0.05" value="13.5" />
+            <button type="button" class="ac-cam-btn" id="charger-btn-autotime"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-grid"></button>
           </div>
           <div class="ac-dock-group charger-security-group">
@@ -1103,9 +1106,42 @@ export class ChargerStudio3D {
     vawtGroup.add(this.vawtRotor);
     this.rootGroup.add(vawtGroup);
 
-    // Night City AC Grid Substation + Streetlight
+    // Roadside EDF Energy Power Pole / Mini Transmission Pylon + EDF Box + Streetlight
+    const edfPoleGroup = new THREE.Group();
+    edfPoleGroup.position.set(4.6, 0.12, -4.9);
+    const edfPoleBase = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.16, 0.46), padConcreteMat);
+    edfPoleBase.position.y = 0.08;
+    edfPoleGroup.add(edfPoleBase);
+    const edfPoleShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.13, 4.3, 12), trussSteelMat);
+    edfPoleShaft.position.y = 2.15;
+    edfPoleShaft.castShadow = true;
+    edfPoleGroup.add(edfPoleShaft);
+
+    // Cross-arms & Cyan Ceramic Insulators
+    [3.75, 4.18].forEach((cy) => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.07, 0.07), brushedAluMat);
+      arm.position.y = cy;
+      edfPoleGroup.add(arm);
+      [-0.44, 0.0, 0.44].forEach((ix) => {
+        const ins = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.035, 0.045, 0.14, 8),
+          new THREE.MeshStandardMaterial({ color: '#0284c7', roughness: 0.25 })
+        );
+        ins.position.set(ix, cy + 0.09, 0);
+        edfPoleGroup.add(ins);
+      });
+    });
+    const edfPoleBadge = new THREE.Mesh(
+      new THREE.BoxGeometry(0.24, 0.28, 0.06),
+      new THREE.MeshBasicMaterial({ color: '#ff5800' })
+    );
+    edfPoleBadge.position.set(0, 2.3, 0.12);
+    edfPoleGroup.add(edfPoleBadge);
+    this.rootGroup.add(edfPoleGroup);
+
+    // EDF Energy Transformer Box (Repositioned behind charger, separate from EV bay)
     const gridCab = new THREE.Group();
-    gridCab.position.set(4.6, 0.12, -3.2);
+    gridCab.position.set(2.1, 0.12, -3.6);
     const gPlinth = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.14, 1.04), padConcreteMat);
     gPlinth.position.y = 0.07;
     gPlinth.receiveShadow = true;
@@ -1125,7 +1161,7 @@ export class ChargerStudio3D {
       }
     });
 
-    // Glowing "NIGHT GRID CHARGE / CITY AC LINK" Front Signage Header
+    // Glowing "EDF ENERGY · RÉSEAU / POSTE 230/380V -> STATION" Front Signage Header
     const gridTex = createGridSubstationTexture();
     const gridSign = new THREE.Mesh(
       new THREE.PlaneGeometry(1.06, 0.46),
@@ -1142,17 +1178,29 @@ export class ChargerStudio3D {
 
     const gStripe = new THREE.Mesh(
       new THREE.BoxGeometry(0.92, 0.08, 0.04),
-      new THREE.MeshBasicMaterial({ color: '#f59e0b' })
+      new THREE.MeshBasicMaterial({ color: '#ff5800' })
     );
     gStripe.position.set(0, 0.88, 0.44);
     gridCab.add(gStripe);
 
-    this.gridBeaconMat = new THREE.MeshBasicMaterial({ color: '#f59e0b' });
+    this.gridBeaconMat = new THREE.MeshBasicMaterial({ color: '#ff5800' });
     const gBeacon = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.07, 0.82), this.gridBeaconMat);
     gBeacon.position.y = 1.66;
     gridCab.add(gBeacon);
 
     this.rootGroup.add(gridCab);
+
+    // Physical Armored Trench + Rear AC Input Receiver Port on Back of SafeCharge X1 Station
+    const trenchMat = new THREE.MeshStandardMaterial({ color: '#1e293b', roughness: 0.55, metalness: 0.6 });
+    const trenchAcross = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.08, 0.18), trenchMat);
+    trenchAcross.position.set(1.05, 0.14, -3.6);
+    this.rootGroup.add(trenchAcross);
+    const trenchToCharger = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 3.2), trenchMat);
+    trenchToCharger.position.set(0.0, 0.14, -2.02);
+    this.rootGroup.add(trenchToCharger);
+    const rearAcPort = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.38, 0.12), darkMetalMat);
+    rearAcPort.position.set(0.0, 0.55, -0.44);
+    this.rootGroup.add(rearAcPort);
 
     const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3.6, 8), darkMetalMat);
     lampPole.position.set(-1.55, 1.9, -1.65);
@@ -1227,16 +1275,28 @@ export class ChargerStudio3D {
     );
     this.rootGroup.add(this.circuits.naionToSic.group);
 
+    this.circuits.poleToEdfBox = createEnergyStream(
+      [
+        new THREE.Vector3(4.6, 3.9, -4.9),
+        new THREE.Vector3(4.6, 1.4, -4.9),
+        new THREE.Vector3(2.65, 1.15, -3.6)
+      ],
+      '#fb923c',
+      6,
+      0.044
+    );
+    this.rootGroup.add(this.circuits.poleToEdfBox.group);
+
     this.circuits.gridToSic = createEnergyStream(
       [
-        new THREE.Vector3(4.6, 0.9, -2.8),
-        new THREE.Vector3(4.6, 0.14, -2.4),
-        new THREE.Vector3(0.28, 0.14, -0.36),
-        new THREE.Vector3(0.2, 1.65, -0.25)
+        new THREE.Vector3(1.55, 0.65, -3.6),
+        new THREE.Vector3(0.0, 0.22, -3.6),
+        new THREE.Vector3(0.0, 0.22, -0.46),
+        new THREE.Vector3(0.0, 1.45, -0.25)
       ],
       '#f59e0b',
-      6,
-      0.048
+      8,
+      0.052
     );
     this.rootGroup.add(this.circuits.gridToSic.group);
 
@@ -1304,6 +1364,11 @@ export class ChargerStudio3D {
     const slider = this.modal.querySelector('#charger-time-slider');
     slider?.addEventListener('input', (e) => {
       this.timeOfDay = parseFloat(e.target.value);
+      this.syncTelemetryAndUI();
+    });
+
+    this.modal.querySelector('#charger-btn-autotime')?.addEventListener('click', () => {
+      this.autoTime = !this.autoTime;
       this.syncTelemetryAndUI();
     });
 
@@ -1445,8 +1510,9 @@ export class ChargerStudio3D {
     const isAlert = this.tamperTimer > 0;
     const isCharging = this.connectedToEv;
 
-    const hrs = Math.floor(this.timeOfDay) % 24;
-    const mins = Math.round((this.timeOfDay - Math.floor(this.timeOfDay)) * 60);
+    const totalMins = Math.floor(this.timeOfDay * 60) % 1440;
+    const hrs = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
     const timeStr = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 
     const setText = (id, val) => {
@@ -1456,15 +1522,22 @@ export class ChargerStudio3D {
     setText('charger-val-time', timeStr);
 
     const solarCurve = isDay ? Math.sin(((this.timeOfDay - 6.0) / 13.0) * Math.PI) : 0;
-    const solarKw = Math.max(0, solarCurve * 54.0);
-    const windKw = isDay ? 14.5 : 8.2;
+    const solarKw = isDay ? Math.max(0, solarCurve * 54.0) : 0.0;
+    const windKw = isDay ? 14.5 : 0.0;
     const totalRenew = solarKw + windKw;
     const evKw = isCharging ? 60.0 : 0.0;
-    const gridKw = !isDay ? (this.gridBackup ? (isCharging ? 60.0 : 22.0) : isCharging ? 18.0 : 6.5) : 0.0;
+    const edfKw = !isDay ? (this.gridBackup ? 60.0 : isCharging ? 45.0 : 24.0) : 0.0;
 
-    setText('charger-val-solar', isDay ? `${totalRenew.toFixed(1)} kW` : `${windKw.toFixed(1)} kW + ${gridKw.toFixed(0)} kW AC`);
-    const socFlow = isDay ? `+${Math.max(0, totalRenew - evKw).toFixed(1)}` : this.gridBackup ? '+18.0' : `-${Math.max(0, evKw - gridKw).toFixed(0)}`;
-    setText('charger-val-naion', `${Math.round(this.naionSoc)}% · ${socFlow} kW`);
+    setText(
+      'charger-val-solar',
+      isDay ? `☀️ ${totalRenew.toFixed(1)} kW (Solar+Wind)` : `🌙 EDF: ${edfKw.toFixed(0)} kW -> Station`
+    );
+    const socFlow = isDay
+      ? `+${Math.max(4.5, totalRenew - evKw).toFixed(1)} kW (Solar)`
+      : isCharging && !this.gridBackup
+        ? '-15 kW -> EV'
+        : '+24 kW (EDF)';
+    setText('charger-val-naion', `${Math.round(this.naionSoc)}% · ${socFlow}`);
     setText('charger-val-ev', isCharging ? '60 kW · 500 Vdc' : '0 kW (Standby)');
     setText(
       'charger-val-door',
@@ -1480,6 +1553,12 @@ export class ChargerStudio3D {
                 : 'doorLockedTxt'
       )
     );
+
+    const autoBtn = this.modal.querySelector('#charger-btn-autotime');
+    if (autoBtn) {
+      autoBtn.textContent = this.t(this.autoTime ? 'autoTimePauseBtn' : 'autoTimePlayBtn');
+      autoBtn.classList.toggle('active', this.autoTime);
+    }
 
     const unlockBtn = this.modal.querySelector('#charger-btn-unlock');
     if (unlockBtn) {
@@ -1760,7 +1839,17 @@ export class ChargerStudio3D {
     this.controls.autoRotateSpeed = 0.85;
     this.controls.update();
 
-    // 1. 24-Hour Time-of-Day Sky, Sun Arc & Streetlight Physics
+    // 1. 24-Hour Time-of-Day Auto/Manual Cycle, Sky, Sun Arc & Streetlight Physics
+    if (this.autoTime) {
+      this.timeOfDay = (this.timeOfDay + dt * 1.6) % 24;
+      const sliderEl = this.modal?.querySelector('#charger-time-slider');
+      if (sliderEl) sliderEl.value = this.timeOfDay.toFixed(2);
+      const step5m = Math.floor(this.timeOfDay * 12);
+      if (step5m !== this._lastUiStep) {
+        this._lastUiStep = step5m;
+        this.syncTelemetryAndUI();
+      }
+    }
     const isDay = this.isDayTime();
     const sunProg = isDay ? (this.timeOfDay - 6.0) / 13.0 : 0.5;
     const sunAngle = sunProg * Math.PI;
@@ -1888,8 +1977,9 @@ export class ChargerStudio3D {
 
     animStream(this.circuits.solarToMppt, isDay, 0.45);
     animStream(this.circuits.windToMppt, isDay, 0.42);
-    animStream(this.circuits.naionToSic, isDay || !isDay, isDay ? 0.28 : 0.52);
-    animStream(this.circuits.gridToSic, !isDay, this.gridBackup ? 0.58 : 0.34);
+    animStream(this.circuits.naionToSic, true, isDay ? 0.32 : 0.48);
+    animStream(this.circuits.poleToEdfBox, !isDay, this.gridBackup ? 0.58 : 0.42);
+    animStream(this.circuits.gridToSic, !isDay, this.gridBackup ? 0.58 : 0.42);
     animStream(this.circuits.chargerToEv, this.connectedToEv, 0.58);
 
     if (this.gridBeaconMat) {
