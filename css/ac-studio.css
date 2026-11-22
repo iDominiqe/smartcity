@@ -1105,6 +1105,51 @@ body.ac-studio-open {
   color: #ffffff !important;
 }
 
+/* Translucent plaques by default -> sharp contrast + luminous hover glow */
+#charger-studio-modal .ac-hotspot-pin {
+  background: rgba(8, 15, 30, 0.28);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(125, 211, 252, 0.26);
+  opacity: 0.58;
+  box-shadow: 0 4px 14px rgba(2, 8, 23, 0.22);
+  transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+}
+
+#charger-studio-modal .ac-hotspot-pin:hover,
+#charger-studio-modal .ac-hotspot-pin:focus-visible {
+  opacity: 1;
+  background: rgba(10, 22, 44, 0.94);
+  border-color: rgba(56, 189, 248, 0.95);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.6), 0 0 34px rgba(16, 185, 129, 0.3), inset 0 0 12px rgba(56, 189, 248, 0.22);
+  z-index: 15;
+}
+
+#charger-studio-modal .ac-hotspot-pin:hover .ac-hotspot-title,
+#charger-studio-modal .ac-hotspot-pin:focus-visible .ac-hotspot-title {
+  color: #ffffff;
+}
+
+#charger-studio-modal .ac-hotspot-pin:hover .ac-hotspot-sub,
+#charger-studio-modal .ac-hotspot-pin:focus-visible .ac-hotspot-sub {
+  color: #7dd3fc;
+}
+
+#charger-studio-modal .ac-spec-card {
+  background: rgba(10, 18, 34, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.24s ease, background-color 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, transform 0.2s ease;
+}
+
+#charger-studio-modal .ac-spec-card:hover,
+#charger-studio-modal .ac-spec-card.active {
+  background: rgba(14, 27, 50, 0.92);
+  border-color: rgba(56, 189, 248, 0.85);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.32), inset 0 0 10px rgba(56, 189, 248, 0.14);
+}
+
 @media (max-width: 680px) {
   .ac-live-banner {
     padding: 4px 9px;

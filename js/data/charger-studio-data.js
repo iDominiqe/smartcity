@@ -49,8 +49,8 @@ export const CHARGER_STUDIO_TEXT = {
     qrCodeIssuedTxt: '📱 QR SCANNED · UNLOCK CODE 2026 ISSUED -> HATCH SLIDING OPEN ON FRONT RAIL',
     partialModeTxt: '🟠 PARTIAL AVAILABILITY · NA-ION AT 48 KWH (≥40 KWH CHARGEABLE) · ORANGE TOP LAMP',
     modeStatusDay: '☀️ DAY MICROGRID · SOLAR 800VDC + VAWT WIND -> MPPT -> EV (60 KW) + 100 KWH NA-ION',
-    modeStatusNightBat: '🌙 NIGHT NA-ION · 100 KWH SODIUM-ION BATTERY DELIVERS 500 VDC / 60 KW AUTONOMOUSLY',
-    modeStatusNightGrid: '⚡ NIGHT AC GRID · 230/380 VAC ±20% -> 500 VDC INVERTER -> EV & NA-ION'
+    modeStatusNightBat: '🌙 NIGHT HYBRID · CITY AC GRID (230/380V) + 100 KWH NA-ION POWER EV AT 500 VDC / 60 KW',
+    modeStatusNightGrid: '⚡ NIGHT CITY GRID BOOST · URBAN 230/380 VAC ±20% -> 500 VDC INVERTER -> EV & NA-ION'
   },
   fr: {
     badge: 'NEO® SAFECHARGE X1 · PROTOTYPE · BORNE 60 KW 500VDC & NA-ION 100 KWH',
@@ -96,8 +96,8 @@ export const CHARGER_STUDIO_TEXT = {
     qrCodeIssuedTxt: '📱 QR SCANNÉ · CODE D’OUVERTURE 2026 REÇU -> GLISSEMENT DE LA TRAPPE MOTORISÉE',
     partialModeTxt: '🟠 DISPONIBILITÉ PARTIELLE · 48 KWH DISPONIBLES (≥40 KWH) · LAMPE ORANGE EN HAUT',
     modeStatusDay: '☀️ JOUR · SOLAIRE 800 VDC + ÉOLIEN -> MPPT -> VE (60 KW) + BATTERIE NA-ION 100 KWH',
-    modeStatusNightBat: '🌙 NUIT NA-ION · LA BATTERIE SODIUM-ION 100 KWH DÉLIVRE 500 VDC / 60 KW',
-    modeStatusNightGrid: '⚡ NUIT RÉSEAU · ENTRÉE 230/380 VAC ±20% -> ONDULEUR 500 VDC -> VE & NA-ION'
+    modeStatusNightBat: '🌙 NUIT HYBRIDE · RÉSEAU VILLE 230/380 VAC + NA-ION 100 KWH DÉLIVRENT 500 VDC / 60 KW',
+    modeStatusNightGrid: '⚡ NUIT RÉSEAU URBAIN · ENTRÉE 230/380 VAC ±20% -> ONDULEUR 500 VDC -> VE & NA-ION'
   },
   bg: {
     badge: 'NEO® SAFECHARGE X1 · ПРОТОТИП · 60 KW 500V DC & 100 KWH NA-ION ХЪБ',
@@ -143,8 +143,8 @@ export const CHARGER_STUDIO_TEXT = {
     qrCodeIssuedTxt: '📱 QR СКАНИРАН · КОД 2026 -> МОТОРИЗИРАНИЯТ ЛЮК СЕ ПЛЪЗГА ОТПРЕД',
     partialModeTxt: '🟠 ЧАСТИЧНА НАЛИЧНОСТ · 48 KWH (≥40 KWH ГОТОВНОСТ) · ОРАНЖЕВА ЛАМПА',
     modeStatusDay: '☀️ ДЕН · СОЛАР 800 VDC + ВЯТЪР -> MPPT -> ЕМ (60 KW) + 100 KWH NA-ION',
-    modeStatusNightBat: '🌙 НОЩ NA-ION · 100 KWH БАТЕРИЯТА ПОДАВА 500 VDC / 60 KW АВТОНОМНО',
-    modeStatusNightGrid: '⚡ НОЩ МРЕЖА · 230/380 VAC ±20% -> 500 VDC ИНВЕРТОР -> ЕМ & NA-ION'
+    modeStatusNightBat: '🌙 НОЩ ХИБРИД · ГРАДСКА МРЕЖА 230/380V + 100 KWH NA-ION ПОДАВАТ 500 VDC / 60 KW',
+    modeStatusNightGrid: '⚡ НОЩ ГРАДСКА МРЕЖА · 230/380 VAC ±20% -> 500 VDC ИНВЕРТОР -> ЕМ & NA-ION'
   },
   ro: {
     badge: 'NEO® SAFECHARGE X1 · PROTOTIP · STAȚIE 60 KW 500VDC & NA-ION 100 KWH',
@@ -190,8 +190,8 @@ export const CHARGER_STUDIO_TEXT = {
     qrCodeIssuedTxt: '📱 QR SCANAT · COD 2026 EMIS -> TRAPA GLISEAZĂ PE ȘINA FRONTALĂ',
     partialModeTxt: '🟠 DISPONIBILITATE PARȚIALĂ · 48 KWH (≥40 KWH) · LAMPĂ PORTOCALIE',
     modeStatusDay: '☀️ ZIUA · SOLAR 800 VDC + EOLIAN -> MPPT -> EV (60 KW) + NA-ION 100 KWH',
-    modeStatusNightBat: '🌙 NOAPTEA NA-ION · BATERIA 100 KWH LIVREAZĂ 500 VDC / 60 KW AUTONOM',
-    modeStatusNightGrid: '⚡ NOAPTEA REȚEA · 230/380 VAC ±20% -> INVERTOR 500 VDC -> EV & NA-ION'
+    modeStatusNightBat: '🌙 NOAPTE HIBRID · REȚEA ORAȘ 230/380V + NA-ION 100 KWH LIVREAZĂ 500 VDC / 60 KW',
+    modeStatusNightGrid: '⚡ NOAPTEA REȚEA ORAȘ · 230/380 VAC ±20% -> INVERTOR 500 VDC -> EV & NA-ION'
   }
 };
 
@@ -293,14 +293,14 @@ export const CHARGER_RIGHT_SPECS = [
   {
     id: 'nightMode',
     icon: '🌙',
-    focusCam: 'naion',
-    label: { en: 'NIGHT (19:00–06:00) HUB', fr: 'NUIT (19h–06h) NA-ION', bg: 'НОЩ (19:00–06:00) ХЪБ', ro: 'NOAPTE (19:00–06:00) HUB' },
-    value: 'Na-ion 100 kWh / 230-380V',
+    focusCam: 'grid',
+    label: { en: 'NIGHT (19:00–06:00) GRID + HUB', fr: 'NUIT (19h–06h) RÉSEAU + HUB', bg: 'НОЩ (19:00–06:00) МРЕЖА + ХЪБ', ro: 'NOAPTE (19:00–06:00) REȚEA + HUB' },
+    value: 'City AC 230/380V + Na-ion',
     detail: {
-      en: 'Discharges 100 kWh Na-ion at 500 Vdc / 60 kW autonomously or switches to 230/380 Vac ±20% off-peak grid',
-      fr: 'Décharge Na-ion 100 kWh à 500 Vdc / 60 kW en autonomie ou bascule sur réseau 230/380 Vac ±20%',
-      bg: 'Разрежда 100 kWh Na-ion на 500 Vdc / 60 kW автономно или ползва нощна мрежа 230/380 Vac ±20%',
-      ro: 'Descarcă 100 kWh Na-ion la 500 Vdc / 60 kW autonom sau comută pe rețea 230/380 Vac ±20%'
+      en: 'At night, draws power from the urban 230/380 Vac city grid alongside the 100 kWh Na-ion storage at 500 Vdc / 60 kW',
+      fr: 'La nuit, la borne charge depuis le réseau électrique urbain 230/380 Vac et sa batterie Na-ion 100 kWh (500 Vdc / 60 kW)',
+      bg: 'Нощем станцията черпи енергия от градската 230/380 Vac електромрежа заедно със 100 kWh Na-ion батерия',
+      ro: 'Noaptea alimentează din rețeaua electrică urbană 230/380 Vac împreună cu bateria Na-ion de 100 kWh (500 Vdc / 60 kW)'
     }
   }
 ];
@@ -309,7 +309,8 @@ export const CHARGER_CAMERA_PRESETS = {
   overview: { pos: [-5.8, 3.6, 8.6], target: [0.3, 1.45, -0.2] },
   door: { pos: [0.35, 1.6, 3.35], target: [0.0, 1.5, 0.25] },
   naion: { pos: [2.8, 1.85, -3.1], target: [0.0, 1.35, -0.1] },
-  renew: { pos: [-7.6, 5.0, 6.2], target: [-2.2, 2.2, -1.6] }
+  renew: { pos: [-7.6, 5.0, 6.2], target: [-2.2, 2.2, -1.6] },
+  grid: { pos: [6.4, 3.1, 3.4], target: [2.1, 1.2, -1.6] }
 };
 
 export const CHARGER_HOTSPOTS = [
@@ -336,9 +337,26 @@ export const CHARGER_HOTSPOTS = [
   },
   {
     id: 'renew',
-    pos: [-4.4, 3.6, -2.5],
+    pos: [-3.12, 1.85, -2.85],
     focusCam: 'renew',
     title: { en: 'Solar 800Vdc + Wind', fr: 'Solaire 800Vdc + Éolien', bg: 'Солар 800Vdc + Вятър', ro: 'Solar 800Vdc + Eolian' },
     sub: { en: 'DAY DIRECT MPPT INPUT', fr: 'ENTRÉE MPPT 800 VDC JOUR', bg: 'ДНЕВЕН MPPT 800 VDC', ro: 'INTRARE MPPT 800 VDC' }
+  },
+  {
+    id: 'grid',
+    pos: [4.6, 2.08, -3.2],
+    focusCam: 'grid',
+    title: {
+      en: 'NIGHT GRID CHARGE / CITY AC LINK',
+      fr: 'CHARGE RÉSEAU NUIT / LIEN AC VILLE',
+      bg: 'НОЩЕН ЗАРЯД ОТ ГРАДСКАТА МРЕЖА / AC',
+      ro: 'ÎNCĂRCARE REȚEA NOAPTE / LINK AC ORAȘ'
+    },
+    sub: {
+      en: 'NIGHT URBAN GRID 230/380V + 100 KWH NA-ION',
+      fr: 'RÉSEAU URBAIN NUIT 230/380V + NA-ION 100 KWH',
+      bg: 'ГРАДСКА МРЕЖА НОЩЕМ 230/380V + 100 KWH NA-ION',
+      ro: 'REȚEA URBANĂ NOAPTE 230/380V + NA-ION 100 KWH'
+    }
   }
 ];

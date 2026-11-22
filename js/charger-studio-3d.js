@@ -8,7 +8,6 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { getDevicePerfTier, destroyStudioRenderer } from './utils/webgl-memory.js';
 import {
   createSolarTexture,
-  createSolarPanelMesh,
   createEnergyStream
 } from './scene/textures-helpers.js';
 import {
@@ -19,25 +18,42 @@ import {
   CHARGER_HOTSPOTS
 } from './data/charger-studio-data.js';
 
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
 function createControlPanelTexture() {
   const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 768;
+  // Match 0.38 x 2.22 (1 : 5.842) panel aspect ratio so square buttons stay 1:1 on the 3D mesh
+  canvas.width = 260;
+  canvas.height = 1520;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#0a0f1a';
-  ctx.fillRect(0, 0, 256, 768);
-  ctx.strokeStyle = '#334155';
+  ctx.fillStyle = '#070c16';
+  ctx.fillRect(0, 0, 260, 1520);
+  ctx.strokeStyle = '#1e293b';
   ctx.lineWidth = 4;
-  ctx.strokeRect(4, 4, 248, 760);
+  ctx.strokeRect(4, 4, 252, 1512);
 
   // Top Status Bar
   ctx.fillStyle = '#38bdf8';
-  ctx.fillRect(72, 46, 112, 10);
+  roundRect(ctx, 74, 86, 112, 12, 6);
+  ctx.fill();
 
-  // Glowing White QR Code Block
+  // Glowing White Square QR Code Block
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(68, 92, 120, 120);
+  roundRect(ctx, 58, 150, 144, 144, 12);
+  ctx.fill();
   ctx.fillStyle = '#0f172a';
   const qr = [
     '1110110111',
@@ -51,26 +67,27 @@ function createControlPanelTexture() {
     '1110101101',
     '0011010011'
   ];
-  const cell = 10;
+  const cell = 11;
   for (let r = 0; r < 10; r++) {
     for (let c = 0; c < 10; c++) {
       if (qr[r][c] === '1') {
-        ctx.fillRect(78 + c * cell, 102 + r * cell, cell - 1, cell - 1);
+        ctx.fillRect(75 + c * cell, 167 + r * cell, cell - 1, cell - 1);
       }
     }
   }
 
   ctx.fillStyle = '#7dd3fc';
-  ctx.font = '800 16px Inter, Arial, sans-serif';
+  ctx.font = '800 17px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('SCAN QR · PIN 2026', 128, 240);
+  ctx.fillText('SCAN QR · PIN 2026', 130, 330);
 
-  // Backlit Capacitive Numeric PIN Keypad (0-9)
-  ctx.fillStyle = '#111a2d';
-  ctx.fillRect(38, 276, 180, 275);
-  ctx.strokeStyle = '#38bdf8';
+  // Compact Backlit Capacitive Numeric PIN Keypad (3x4 Grid of 46x46 px Square Buttons)
+  ctx.fillStyle = '#0d1728';
+  roundRect(ctx, 34, 370, 192, 256, 14);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(38, 276, 180, 275);
+  ctx.stroke();
 
   const keys = [
     ['1', '2', '3'],
@@ -78,26 +95,75 @@ function createControlPanelTexture() {
     ['7', '8', '9'],
     ['*', '0', '✓']
   ];
-  ctx.font = '700 28px Inter, Arial, sans-serif';
+  const btnSize = 46;
+  const gapX = 12;
+  const gapY = 12;
+  const startX = 49;
+  const startY = 390;
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '700 22px Inter, Arial, sans-serif';
   keys.forEach((row, rIdx) => {
     row.forEach((k, cIdx) => {
-      const kx = 72 + cIdx * 56;
-      const ky = 324 + rIdx * 58;
-      ctx.fillStyle = k === '✓' ? '#10b981' : '#f8fafc';
-      ctx.fillText(k, kx, ky);
+      const bx = startX + cIdx * (btnSize + gapX);
+      const by = startY + rIdx * (btnSize + gapY);
+      ctx.fillStyle = k === '✓' ? '#064e3b' : k === '*' ? '#1e293b' : '#16243a';
+      roundRect(ctx, bx, by, btnSize, btnSize, 10);
+      ctx.fill();
+      ctx.strokeStyle = k === '✓' ? '#10b981' : '#38bdf8';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = k === '✓' ? '#34d399' : '#f8fafc';
+      ctx.fillText(k, bx + btnSize * 0.5, by + btnSize * 0.52);
     });
   });
 
-  // NFC Contactless Reader Icon
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(92, 594, 72, 48);
+  // Compact Square-Proportioned NFC Contactless Reader Card
+  ctx.fillStyle = '#0f1b2d';
+  roundRect(ctx, 76, 668, 108, 76, 12);
+  ctx.fill();
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
   ctx.fillStyle = '#e2e8f0';
-  ctx.font = '700 18px Inter, Arial, sans-serif';
-  ctx.fillText('((•))', 128, 624);
-  ctx.fillStyle = '#64748b';
-  ctx.font = '700 13px Inter, Arial, sans-serif';
-  ctx.fillText('NFC · PIN · QR', 128, 676);
+  ctx.font = '700 24px Inter, Arial, sans-serif';
+  ctx.fillText('((•))', 130, 706);
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '700 14px Inter, Arial, sans-serif';
+  ctx.fillText('NFC · RFID · OCPP', 130, 774);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+function createGridSubstationTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 220;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#0b1324';
+  ctx.fillRect(0, 0, 512, 220);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(6, 6, 500, 208);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = '900 36px Inter, Arial, sans-serif';
+  ctx.fillText('NIGHT GRID CHARGE', 256, 74);
+
+  ctx.fillStyle = '#7dd3fc';
+  ctx.font = '800 25px Inter, Arial, sans-serif';
+  ctx.fillText('CITY AC LINK · 230/380 VAC', 256, 128);
+
+  ctx.fillStyle = '#34d399';
+  ctx.font = '700 20px Inter, Arial, sans-serif';
+  ctx.fillText('HYBRID NIGHT FEED <-> 100 KWH NA-ION', 256, 178);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -309,6 +375,7 @@ export class ChargerStudio3D {
     this.sunOrb = null;
     this.moonOrb = null;
     this.plinthBorderMat = null;
+    this.gridBeaconMat = null;
     this.composer = null;
     this.bloomPass = null;
     this.envRT = null;
@@ -928,17 +995,78 @@ export class ChargerStudio3D {
       emissiveIntensity: 0.24
     });
     const frameMat = new THREE.MeshStandardMaterial({ color: '#cbd5e1', roughness: 0.35, metalness: 0.6 });
+    const trussSteelMat = new THREE.MeshStandardMaterial({ color: '#334155', roughness: 0.38, metalness: 0.78 });
+    const padConcreteMat = new THREE.MeshStandardMaterial({ color: '#475569', roughness: 0.85, metalness: 0.12 });
 
-    for (let c = 0; c < 3; c++) {
-      const sx = -4.6 + c * 1.48;
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.72, 8), darkMetalMat);
-      post.position.set(sx, 0.45, -2.85);
-      this.rootGroup.add(post);
+    // Rigid Engineered Steel Solar Truss & Anchored Base Pads (Zero Sagging/Floating)
+    const solarRackGroup = new THREE.Group();
+    const trussXs = [-5.25, -3.86, -2.38, -0.98];
+    trussXs.forEach((tx) => {
+      // Front & rear base anchor pads seated solidly on ground platform (y = 0.08)
+      [-2.46, -3.24].forEach((pz) => {
+        const anchorPad = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.28), padConcreteMat);
+        anchorPad.position.set(tx, 0.14, pz);
+        anchorPad.castShadow = true;
+        anchorPad.receiveShadow = true;
+        solarRackGroup.add(anchorPad);
+      });
 
-      const pv = createSolarPanelMesh(1.3, 1.0, 0.45, solarMat, frameMat);
-      pv.group.position.set(sx, 0.78, -2.85);
-      this.rootGroup.add(pv.group);
-    }
+      // Straight vertical front steel I-column (y: 0.14 .. 0.80)
+      const frontCol = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.66, 0.08), trussSteelMat);
+      frontCol.position.set(tx, 0.47, -2.46);
+      frontCol.castShadow = true;
+      solarRackGroup.add(frontCol);
+
+      // Straight vertical rear steel I-column (y: 0.14 .. 1.20)
+      const rearCol = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.06, 0.08), trussSteelMat);
+      rearCol.position.set(tx, 0.67, -3.24);
+      rearCol.castShadow = true;
+      solarRackGroup.add(rearCol);
+
+      // Straight inclined steel rafter beam spanning front column top to rear column top
+      const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.075, 1.02), brushedAluMat);
+      rafter.position.set(tx, 0.99, -2.85);
+      rafter.rotation.x = 0.45;
+      rafter.castShadow = true;
+      solarRackGroup.add(rafter);
+
+      // Rigid diagonal cross-brace strut
+      const diagBrace = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.88), trussSteelMat);
+      diagBrace.position.set(tx, 0.64, -2.85);
+      diagBrace.rotation.x = 0.58;
+      diagBrace.castShadow = true;
+      solarRackGroup.add(diagBrace);
+    });
+
+    // Continuous Straight Horizontal Front & Rear Longitudinal Steel Purlin Beams
+    const frontPurlin = new THREE.Mesh(new THREE.BoxGeometry(4.46, 0.075, 0.075), trussSteelMat);
+    frontPurlin.position.set(-3.12, 0.78, -2.48);
+    frontPurlin.castShadow = true;
+    solarRackGroup.add(frontPurlin);
+
+    const rearPurlin = new THREE.Mesh(new THREE.BoxGeometry(4.46, 0.075, 0.075), trussSteelMat);
+    rearPurlin.position.set(-3.12, 1.15, -3.22);
+    rearPurlin.castShadow = true;
+    solarRackGroup.add(rearPurlin);
+
+    // 3 Photovoltaic Panels seated flush directly onto the rigid tilted rafters
+    [-4.6, -3.12, -1.64].forEach((sx) => {
+      const panelHolder = new THREE.Group();
+      panelHolder.position.set(sx, 1.03, -2.85);
+      panelHolder.rotation.x = 0.45;
+
+      const pvFrame = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.06, 1.06), frameMat);
+      pvFrame.castShadow = true;
+      pvFrame.receiveShadow = true;
+      panelHolder.add(pvFrame);
+
+      const pvSurface = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.07, 0.98), solarMat);
+      pvSurface.position.y = 0.012;
+      panelHolder.add(pvSurface);
+
+      solarRackGroup.add(panelHolder);
+    });
+    this.rootGroup.add(solarRackGroup);
 
     // Sleek Vertical-Axis Wind Turbine (VAWT Helical Darrieus Rotor)
     const vawtGroup = new THREE.Group();
@@ -975,19 +1103,55 @@ export class ChargerStudio3D {
     vawtGroup.add(this.vawtRotor);
     this.rootGroup.add(vawtGroup);
 
-    // Night Grid Cabinet + Streetlight
+    // Night City AC Grid Substation + Streetlight
     const gridCab = new THREE.Group();
-    gridCab.position.set(4.6, 0.14, -3.5);
-    const gBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.45, 0.8), darkMetalMat);
-    gBody.position.y = 0.72;
+    gridCab.position.set(4.6, 0.12, -3.2);
+    const gPlinth = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.14, 1.04), padConcreteMat);
+    gPlinth.position.y = 0.07;
+    gPlinth.receiveShadow = true;
+    gridCab.add(gPlinth);
+
+    const gBody = new THREE.Mesh(new THREE.BoxGeometry(1.18, 1.48, 0.86), darkMetalMat);
+    gBody.position.y = 0.88;
     gBody.castShadow = true;
     gridCab.add(gBody);
+
+    // Side Transformer Cooling Fins
+    [-0.61, 0.61].forEach((fx) => {
+      for (let f = 0; f < 5; f++) {
+        const fin = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.85, 0.06), brushedAluMat);
+        fin.position.set(fx, 0.78, -0.24 + f * 0.12);
+        gridCab.add(fin);
+      }
+    });
+
+    // Glowing "NIGHT GRID CHARGE / CITY AC LINK" Front Signage Header
+    const gridTex = createGridSubstationTexture();
+    const gridSign = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.06, 0.46),
+      new THREE.MeshStandardMaterial({
+        map: gridTex,
+        emissiveMap: gridTex,
+        emissive: new THREE.Color('#ffffff'),
+        emissiveIntensity: 0.72,
+        roughness: 0.2
+      })
+    );
+    gridSign.position.set(0, 1.24, 0.44);
+    gridCab.add(gridSign);
+
     const gStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.75, 0.12, 0.04),
+      new THREE.BoxGeometry(0.92, 0.08, 0.04),
       new THREE.MeshBasicMaterial({ color: '#f59e0b' })
     );
-    gStripe.position.set(0, 1.15, 0.41);
+    gStripe.position.set(0, 0.88, 0.44);
     gridCab.add(gStripe);
+
+    this.gridBeaconMat = new THREE.MeshBasicMaterial({ color: '#f59e0b' });
+    const gBeacon = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.07, 0.82), this.gridBeaconMat);
+    gBeacon.position.y = 1.66;
+    gridCab.add(gBeacon);
+
     this.rootGroup.add(gridCab);
 
     const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3.6, 8), darkMetalMat);
@@ -1023,12 +1187,13 @@ export class ChargerStudio3D {
     });
 
     // -------------------------------------------------------------------------
-    // 5. ANIMATED 3D ENERGY CONDUITS
+    // 5. ANIMATED 3D ENERGY CONDUITS (Rigid Ground Trench Paths + Charger Rise)
     // -------------------------------------------------------------------------
     this.circuits.solarToMppt = createEnergyStream(
       [
-        new THREE.Vector3(-3.1, 1.05, -2.85),
-        new THREE.Vector3(-1.5, 0.9, -1.4),
+        new THREE.Vector3(-1.64, 0.78, -2.48),
+        new THREE.Vector3(-1.64, 0.14, -2.48),
+        new THREE.Vector3(-0.2, 0.14, -0.36),
         new THREE.Vector3(-0.2, 2.1, -0.2)
       ],
       '#facc15',
@@ -1040,8 +1205,8 @@ export class ChargerStudio3D {
     this.circuits.windToMppt = createEnergyStream(
       [
         new THREE.Vector3(-5.4, 3.2, -4.0),
-        new THREE.Vector3(-5.4, 1.1, -4.0),
-        new THREE.Vector3(-2.6, 0.85, -2.0),
+        new THREE.Vector3(-5.4, 0.14, -4.0),
+        new THREE.Vector3(-0.35, 0.14, -0.38),
         new THREE.Vector3(-0.2, 2.1, -0.2)
       ],
       '#10b981',
@@ -1064,8 +1229,9 @@ export class ChargerStudio3D {
 
     this.circuits.gridToSic = createEnergyStream(
       [
-        new THREE.Vector3(4.6, 1.05, -3.5),
-        new THREE.Vector3(2.2, 0.65, -2.0),
+        new THREE.Vector3(4.6, 0.9, -2.8),
+        new THREE.Vector3(4.6, 0.14, -2.4),
+        new THREE.Vector3(0.28, 0.14, -0.36),
         new THREE.Vector3(0.2, 1.65, -0.25)
       ],
       '#f59e0b',
@@ -1294,10 +1460,10 @@ export class ChargerStudio3D {
     const windKw = isDay ? 14.5 : 8.2;
     const totalRenew = solarKw + windKw;
     const evKw = isCharging ? 60.0 : 0.0;
-    const gridKw = !isDay && this.gridBackup ? (isCharging ? 60.0 : 12.0) : 0.0;
+    const gridKw = !isDay ? (this.gridBackup ? (isCharging ? 60.0 : 22.0) : isCharging ? 18.0 : 6.5) : 0.0;
 
-    setText('charger-val-solar', `${totalRenew.toFixed(1)} kW`);
-    const socFlow = isDay ? `+${Math.max(0, totalRenew - evKw).toFixed(1)}` : this.gridBackup ? '+12.0' : `-${evKw.toFixed(0)}`;
+    setText('charger-val-solar', isDay ? `${totalRenew.toFixed(1)} kW` : `${windKw.toFixed(1)} kW + ${gridKw.toFixed(0)} kW AC`);
+    const socFlow = isDay ? `+${Math.max(0, totalRenew - evKw).toFixed(1)}` : this.gridBackup ? '+18.0' : `-${Math.max(0, evKw - gridKw).toFixed(0)}`;
     setText('charger-val-naion', `${Math.round(this.naionSoc)}% · ${socFlow} kW`);
     setText('charger-val-ev', isCharging ? '60 kW · 500 Vdc' : '0 kW (Standby)');
     setText(
@@ -1507,6 +1673,7 @@ export class ChargerStudio3D {
     this.doorLedMat = null;
     this.holsterLight = null;
     this.vawtRotor = null;
+    this.gridBeaconMat = null;
     this.envRT?.dispose();
     this.envRT = null;
     this.composer?.dispose();
@@ -1721,11 +1888,20 @@ export class ChargerStudio3D {
 
     animStream(this.circuits.solarToMppt, isDay, 0.45);
     animStream(this.circuits.windToMppt, isDay, 0.42);
-    animStream(this.circuits.naionToSic, isDay || (!isDay && !this.gridBackup), isDay ? 0.28 : 0.52);
-    animStream(this.circuits.gridToSic, !isDay && this.gridBackup, 0.48);
+    animStream(this.circuits.naionToSic, isDay || !isDay, isDay ? 0.28 : 0.52);
+    animStream(this.circuits.gridToSic, !isDay, this.gridBackup ? 0.58 : 0.34);
     animStream(this.circuits.chargerToEv, this.connectedToEv, 0.58);
 
-    // 6. Floating 3D Callouts
+    if (this.gridBeaconMat) {
+      if (!isDay) {
+        const pulse = 0.65 + 0.35 * Math.sin(elapsed * 4.5);
+        this.gridBeaconMat.color.setRGB(0.95 * pulse, 0.62 * pulse, 0.08 * pulse);
+      } else {
+        this.gridBeaconMat.color.set('#334155');
+      }
+    }
+
+    // 6. Floating 3D Callouts (Translucent by default via CSS, glow on :hover)
     if (this.hotspotPins && this.canvas) {
       const cw = this.canvas.clientWidth;
       const ch = this.canvas.clientHeight;
@@ -1742,7 +1918,7 @@ export class ChargerStudio3D {
         const x = padX > 0 ? Math.max(padX, Math.min(cw - padX, rawX)) : rawX;
         const y = (-proj.y * 0.5 + 0.5) * ch;
         hp.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -100%)`;
-        hp.el.style.opacity = '1';
+        hp.el.style.opacity = '';
         hp.el.style.pointerEvents = 'auto';
       });
     }
