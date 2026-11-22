@@ -52,7 +52,10 @@ export const PAGE_UI_LABELS = {
     openHomeStudioBannerBtn: '🏠 Launch 3D Home Studio',
     openParkingStudioBannerTitle: '360° 3D Eco-Supermarket & NEO® HUWART Solar + Vegetated Parking',
     openParkingStudioBannerDesc: 'Explore the supermarket exterior, EV solar charging canopy, vegetated bio-parking with trees & flower beds, and side field with solar array & wind turbine.',
-    openParkingStudioBannerBtn: '🛒 Launch 3D Parking Studio'
+    openParkingStudioBannerBtn: '🛒 Launch 3D Parking Studio',
+    openChargerStudioBannerTitle: '360° 3D Anti-Theft 500V EV Charger + 100 kWh Na-ion Battery',
+    openChargerStudioBannerDesc: 'Unlock the PIN/QR armored glass copper-protection door, inspect the internal 100 kWh Na-ion storage, and switch Day Solar/Wind vs. Night Na-ion/Grid charging.',
+    openChargerStudioBannerBtn: '🔌 Launch 3D EV Charger'
   },
   fr: {
     backToHome3d: '← Retour à la Ville 3D',
@@ -102,7 +105,10 @@ export const PAGE_UI_LABELS = {
     openHomeStudioBannerBtn: '🏠 Ouvrir le Studio Maison 3D',
     openParkingStudioBannerTitle: 'Supermarché & Parking Solaire / Végétalisé NEO® HUWART 3D 360°',
     openParkingStudioBannerDesc: 'Explorez l’extérieur du supermarché, l’ombrière solaire VE, le parking arboré et fleuri (65 % bio) et le champ annexe avec panneaux et éolienne.',
-    openParkingStudioBannerBtn: '🛒 Ouvrir le Studio Parking 3D'
+    openParkingStudioBannerBtn: '🛒 Ouvrir le Studio Parking 3D',
+    openChargerStudioBannerTitle: 'Borne Rapide 500V Anti-Vol Cuivre + Batterie Na-ion 100 kWh 3D 360°',
+    openChargerStudioBannerDesc: 'Déverrouillez la porte vitrée PIN/QR protégeant le câble cuivre, explorez le stockage Sodium-Ion 100 kWh et basculez Jour (Solaire/Éolien) / Nuit (Na-ion/Réseau).',
+    openChargerStudioBannerBtn: '🔌 Ouvrir le Studio Borne 3D'
   },
   bg: {
     backToHome3d: '← Обратно към 3D Града',
@@ -152,7 +158,10 @@ export const PAGE_UI_LABELS = {
     openHomeStudioBannerBtn: '🏠 Отвори 3D Дом',
     openParkingStudioBannerTitle: '360° 3D Еко-Супермаркет, Соларен / Зелен Паркинг и Ветрогенератор',
     openParkingStudioBannerDesc: 'Разгледайте супермаркета, соларния навес за зареждане на ЕМ, озеленения паркинг с дървета и цветя и полето със солари и вятърна турбина.',
-    openParkingStudioBannerBtn: '🛒 Отвори 3D Паркинг Студио'
+    openParkingStudioBannerBtn: '🛒 Отвори 3D Паркинг Студио',
+    openChargerStudioBannerTitle: '360° 3D Зарядна Станция 500V с PIN/QR Врата и 100 kWh Na-ion Батерия',
+    openChargerStudioBannerDesc: 'Отключете защитната врата против кражба на мед, разгледайте вътрешната 100 kWh Na-ion батерия и превключвайте Ден (Солар/Вятър) и Нощ (Na-ion/Мрежа).',
+    openChargerStudioBannerBtn: '🔌 Отвори 3D Зарядна Станция'
   },
   ro: {
     backToHome3d: '← Înapoi la Orașul 3D',
@@ -202,7 +211,10 @@ export const PAGE_UI_LABELS = {
     openHomeStudioBannerBtn: '🏠 Deschide Studioul Casă 3D',
     openParkingStudioBannerTitle: 'Supermarket Eco & Parcare Solară / Vegetală NEO® HUWART 3D 360°',
     openParkingStudioBannerDesc: 'Explorați exteriorul supermarketului, copertina solară EV, parcarea verde cu arbori și flori și câmpul adiacent cu panouri și turbină eoliană.',
-    openParkingStudioBannerBtn: '🛒 Deschide Studioul Parcare 3D'
+    openParkingStudioBannerBtn: '🛒 Deschide Studioul Parcare 3D',
+    openChargerStudioBannerTitle: 'Stație Rapidă EV 500V Anti-Furt Cupru + Baterie Na-ion 100 kWh 3D 360°',
+    openChargerStudioBannerDesc: 'Deblocați ușa din sticlă PIN/QR ce protejează cablul, inspectați bateria Na-ion de 100 kWh și comutați Zi (Solar/Eolian) / Noapte (Na-ion/Rețea).',
+    openChargerStudioBannerBtn: '🔌 Deschide Studioul Stație 3D'
   }
 };
 
@@ -298,6 +310,17 @@ export const MENU_CATEGORIES = [
     kind: 'category',
     label: { en: 'NEO EV Charging', fr: 'Neo Bornes de recharge', bg: 'Neo Зарядни Станции', ro: 'Stații Încărcare NEO' },
     items: [
+      {
+        type: 'charger-studio',
+        target: 'charger-studio',
+        highlight: true,
+        label: {
+          en: '🔌 3D Anti-Theft EV Charger (500V / 100 kWh Na-ion)',
+          fr: '🔌 Studio 3D Borne Anti-Vol (500V / 100 kWh Na-ion)',
+          bg: '🔌 3D Зарядна Станция PIN/QR (500V / 100 kWh Na-ion)',
+          ro: '🔌 Studio 3D Stație Anti-Furt (500V / 100 kWh Na-ion)'
+        }
+      },
       { type: 'page', slug: 'ombriere-aper-recharge-dc', label: { en: 'APER Solar Canopy 80 kW DC', fr: 'Ombrière APER Recharge DC', bg: 'Соларен Навес APER 80 kW DC', ro: 'Copertină APER Încărcare DC' } },
       { type: 'page', slug: 'recharge-intelligente', label: { en: 'Smart Charging & RSO Retrofit Kit', fr: 'Recharge Intelligente & Kit RSO', bg: 'Умно Зареждане & Ретрофит Комплект', ro: 'Încărcare Inteligentă & Kit RSO' } }
     ]

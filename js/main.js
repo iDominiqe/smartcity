@@ -288,6 +288,7 @@ function initApp() {
   let acStudio = null;
   let homeStudio = null;
   let parkingStudio = null;
+  let chargerStudio = null;
   let cityRafId = null;
   let isCityHibernated = false;
 
@@ -309,6 +310,7 @@ function initApp() {
       acStudio?.isOpen ||
       homeStudio?.isOpen ||
       parkingStudio?.isOpen ||
+      chargerStudio?.isOpen ||
       pagesRouter?.activeSlug ||
       document.hidden
     ) {
@@ -324,6 +326,7 @@ function initApp() {
   async function openAcStudio() {
     homeStudio?.close();
     parkingStudio?.close();
+    chargerStudio?.close();
     hibernateCityRenderer();
     if (!acStudio) {
       const { AcStudio3D } = await import('./ac-studio-3d.js');
@@ -339,6 +342,7 @@ function initApp() {
   async function openHomeStudio() {
     acStudio?.close();
     parkingStudio?.close();
+    chargerStudio?.close();
     hibernateCityRenderer();
     if (!homeStudio) {
       const { HomeStudio3D } = await import('./home-studio-3d.js');
@@ -354,6 +358,7 @@ function initApp() {
   async function openParkingStudio() {
     acStudio?.close();
     homeStudio?.close();
+    chargerStudio?.close();
     hibernateCityRenderer();
     if (!parkingStudio) {
       const { ParkingStudio3D } = await import('./parking-studio-3d.js');
@@ -364,6 +369,22 @@ function initApp() {
       });
     }
     parkingStudio.open();
+  }
+
+  async function openChargerStudio() {
+    acStudio?.close();
+    homeStudio?.close();
+    parkingStudio?.close();
+    hibernateCityRenderer();
+    if (!chargerStudio) {
+      const { ChargerStudio3D } = await import('./charger-studio-3d.js');
+      chargerStudio = new ChargerStudio3D({
+        i18n,
+        onRequestQuote: () => pagesRouter.openPage('ombriere-aper-recharge-dc'),
+        onClose: () => resumeCityRenderer()
+      });
+    }
+    chargerStudio.open();
   }
 
   const pagesRouter = new PagesRouter({
@@ -387,6 +408,7 @@ function initApp() {
     onOpenAcStudio: () => openAcStudio(),
     onOpenHomeStudio: () => openHomeStudio(),
     onOpenParkingStudio: () => openParkingStudio(),
+    onOpenChargerStudio: () => openChargerStudio(),
     onSubpageToggle: (isOpen) => {
       if (isOpen) {
         renderer.render(scene, camera);
@@ -411,6 +433,8 @@ function initApp() {
     openHomeStudio();
   } else if (window.location.hash === '#parking-studio') {
     openParkingStudio();
+  } else if (window.location.hash === '#charger-studio') {
+    openChargerStudio();
   }
   window.addEventListener('hashchange', () => {
     if (window.location.hash === '#ac-studio') {
@@ -419,6 +443,8 @@ function initApp() {
       openHomeStudio();
     } else if (window.location.hash === '#parking-studio') {
       openParkingStudio();
+    } else if (window.location.hash === '#charger-studio') {
+      openChargerStudio();
     }
   });
 
@@ -445,6 +471,7 @@ function initApp() {
     acStudio?.syncLanguage();
     homeStudio?.syncLanguage();
     parkingStudio?.syncLanguage();
+    chargerStudio?.syncLanguage();
   });
 
   // ---------------------------------------------------------------------------

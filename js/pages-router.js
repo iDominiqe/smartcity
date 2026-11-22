@@ -10,13 +10,14 @@ function escapeHtml(str) {
 }
 
 export class PagesRouter {
-  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio, onOpenParkingStudio, onSubpageToggle }) {
+  constructor({ i18n, onNavigateHome, onCategoryTrigger, onOpenAcStudio, onOpenHomeStudio, onOpenParkingStudio, onOpenChargerStudio, onSubpageToggle }) {
     this.i18n = i18n;
     this.onNavigateHome = onNavigateHome;
     this.onCategoryTrigger = onCategoryTrigger;
     this.onOpenAcStudio = onOpenAcStudio;
     this.onOpenHomeStudio = onOpenHomeStudio;
     this.onOpenParkingStudio = onOpenParkingStudio;
+    this.onOpenChargerStudio = onOpenChargerStudio;
     this.onSubpageToggle = onSubpageToggle;
     this.activeSlug = null;
     this.activeBlogSlug = null;
@@ -205,6 +206,13 @@ export class PagesRouter {
     if (type === 'parking-studio') {
       if (this.onOpenParkingStudio) {
         this.onOpenParkingStudio();
+      }
+      return;
+    }
+
+    if (type === 'charger-studio') {
+      if (this.onOpenChargerStudio) {
+        this.onOpenChargerStudio();
       }
       return;
     }
@@ -404,7 +412,8 @@ export class PagesRouter {
     const formHtml = page.formType ? this.buildFormHtml(page) : '';
     const isAcShowcasePage = ['neo-clim-location', 'neo-clim-solaire', 'landing-camp-2027'].includes(slug);
     const isHomeShowcasePage = ['neo-home', 'neo-all-in-one'].includes(slug);
-    const isParkingShowcasePage = ['neo-ombrieres-huwart', 'ombriere-pro', 'ombriere-aper-recharge-dc'].includes(slug);
+    const isParkingShowcasePage = ['neo-ombrieres-huwart', 'ombriere-pro'].includes(slug);
+    const isChargerShowcasePage = ['ombriere-aper-recharge-dc', 'recharge-intelligente'].includes(slug);
     const studioBannerHtml = isAcShowcasePage
       ? `
         <section class="sub-ac-studio-banner">
@@ -433,6 +442,16 @@ export class PagesRouter {
             <span>${escapeHtml(this.ui('openParkingStudioBannerDesc'))}</span>
           </div>
           <button type="button" id="btn-sub-open-parking-studio" class="btn-primary">${escapeHtml(this.ui('openParkingStudioBannerBtn'))}</button>
+        </section>
+      `
+      : isChargerShowcasePage
+      ? `
+        <section class="sub-ac-studio-banner">
+          <div>
+            <strong>${escapeHtml(this.ui('openChargerStudioBannerTitle'))}</strong>
+            <span>${escapeHtml(this.ui('openChargerStudioBannerDesc'))}</span>
+          </div>
+          <button type="button" id="btn-sub-open-charger-studio" class="btn-primary">${escapeHtml(this.ui('openChargerStudioBannerBtn'))}</button>
         </section>
       `
       : '';
@@ -706,6 +725,12 @@ export class PagesRouter {
     document.getElementById('btn-sub-open-parking-studio')?.addEventListener('click', () => {
       if (this.onOpenParkingStudio) {
         this.onOpenParkingStudio();
+      }
+    });
+
+    document.getElementById('btn-sub-open-charger-studio')?.addEventListener('click', () => {
+      if (this.onOpenChargerStudio) {
+        this.onOpenChargerStudio();
       }
     });
 
