@@ -348,6 +348,7 @@ body.ac-studio-open {
   min-width: 0;
   flex: 1;
   min-height: 220px;
+  overflow: hidden;
 }
 
 #ac-studio-canvas,
@@ -774,6 +775,12 @@ body.ac-studio-open {
     padding: 4px 8px;
   }
 
+  .home-tele-lbl {
+    font-size: 0.56rem;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
   .ac-mode-btn,
   .ac-fan-btn,
   .ac-cam-btn {
@@ -1176,5 +1183,250 @@ body.ac-studio-open {
   #parking-studio-modal .ac-hotspot-sub,
   #charger-studio-modal .ac-hotspot-sub {
     display: none;
+  }
+}
+
+/* ========================================================================== */
+/* SafeCharge X1 Interactive 3D Theft Simulation Controls & Phone Alert       */
+/* ========================================================================== */
+
+.charger-sim-btn {
+  border-color: rgba(249, 115, 22, 0.65) !important;
+  background: rgba(220, 38, 38, 0.22) !important;
+  color: #fed7aa !important;
+  font-weight: 700 !important;
+}
+
+.charger-sim-btn:hover {
+  background: rgba(234, 88, 12, 0.42) !important;
+  border-color: #fb923c !important;
+  color: #ffffff !important;
+}
+
+.charger-sim-btn.active {
+  background: linear-gradient(135deg, #dc2626, #f97316) !important;
+  border-color: #fecaca !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.55);
+}
+
+.charger-phone-alert {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 204px;
+  padding: 10px 9px;
+  border-radius: 22px;
+  border: 2px solid #64748b;
+  background: linear-gradient(180deg, rgba(127, 29, 29, 0.94), #090d1a 48%, #050811);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.78), 0 0 28px rgba(239, 68, 68, 0.4);
+  z-index: 20;
+  pointer-events: none;
+  color: #f8fafc;
+  opacity: 0;
+  transform: translateY(115%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+.charger-phone-alert.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.charger-phone-alert.buzz {
+  animation: chargerPhoneBuzz 0.14s linear infinite;
+}
+
+@keyframes chargerPhoneBuzz {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2.5px, 1px); }
+  75% { transform: translate(2.5px, -1px); }
+}
+
+.phone-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.56rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  padding: 0 4px 6px;
+}
+
+.phone-notch {
+  width: 48px;
+  height: 9px;
+  border-radius: 999px;
+  background: #020617;
+}
+
+.phone-alert-card {
+  padding: 8px 6px;
+  border-radius: 12px;
+  background: rgba(220, 38, 38, 0.9);
+  border: 1.5px solid #fecaca;
+  text-align: center;
+  animation: chargerAlertPulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes chargerAlertPulse {
+  from { box-shadow: 0 0 8px rgba(239, 68, 68, 0.45); }
+  to { box-shadow: 0 0 20px rgba(254, 202, 202, 0.75); }
+}
+
+.phone-alert-title {
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+}
+
+.phone-alert-sub {
+  margin-top: 2px;
+  font-size: 0.56rem;
+  font-weight: 800;
+  color: #fee2e2;
+}
+
+.phone-alert-station {
+  margin-top: 2px;
+  font-size: 0.54rem;
+  font-weight: 700;
+  color: #fde047;
+}
+
+.phone-tele-box {
+  margin-top: 7px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(248, 113, 113, 0.55);
+}
+
+.phone-tele-lbl {
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.04em;
+}
+
+.phone-tele-val {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+.phone-tele-val.impact {
+  color: #f87171;
+  margin-bottom: 2px;
+}
+
+.phone-wave-bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  height: 18px;
+  margin-top: 5px;
+}
+
+.phone-wave-bars span {
+  flex: 1;
+  height: 45%;
+  border-radius: 3px;
+  background: #ef4444;
+  animation: phoneWaveBar 0.45s ease-in-out infinite alternate;
+}
+
+.phone-wave-bars span:nth-child(even) {
+  background: #fbbf24;
+  animation-delay: 0.18s;
+}
+
+.phone-wave-bars span:nth-child(3n) {
+  animation-delay: 0.31s;
+}
+
+@keyframes phoneWaveBar {
+  from { height: 24%; }
+  to { height: 100%; }
+}
+
+.phone-status-pill {
+  margin-top: 7px;
+  padding: 5px 6px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.56rem;
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(248, 113, 113, 0.75);
+  color: #fecaca;
+}
+
+.phone-status-pill.safe {
+  background: #10b981;
+  border-color: #ecfdf5;
+  color: #04111f;
+}
+
+@media (max-width: 680px) {
+  .charger-phone-alert {
+    width: 146px;
+    right: 8px;
+    bottom: 8px;
+    padding: 6px;
+    border-radius: 14px;
+  }
+
+  .phone-top-bar {
+    font-size: 0.46rem;
+    padding-bottom: 4px;
+  }
+
+  .phone-notch {
+    width: 34px;
+    height: 6px;
+  }
+
+  .phone-alert-card {
+    padding: 5px 4px;
+    border-radius: 9px;
+  }
+
+  .phone-alert-title {
+    font-size: 0.66rem;
+  }
+
+  .phone-alert-sub,
+  .phone-alert-station {
+    font-size: 0.45rem;
+  }
+
+  .phone-tele-box {
+    padding: 4px 5px;
+    margin-top: 4px;
+    border-radius: 8px;
+  }
+
+  .phone-tele-lbl {
+    font-size: 0.42rem;
+  }
+
+  .phone-tele-val {
+    font-size: 0.5rem;
+    margin-bottom: 2px;
+  }
+
+  .phone-wave-bars {
+    height: 11px;
+    margin-top: 3px;
+  }
+
+  .phone-status-pill {
+    margin-top: 4px;
+    font-size: 0.46rem;
+    padding: 3px 4px;
   }
 }

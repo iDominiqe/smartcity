@@ -10,6 +10,7 @@ import {
   createSolarTexture,
   createEnergyStream
 } from './scene/textures-helpers.js';
+import { createTheftSimController } from './scene/charger-theft-sim.js';
 import {
   CHARGER_STUDIO_TEXT,
   CHARGER_LEFT_SPECS,
@@ -383,6 +384,13 @@ export class ChargerStudio3D {
     this.composer = null;
     this.bloomPass = null;
     this.envRT = null;
+    this.theftSim = null;
+    this.theftSimActive = false;
+    this.theftSimTime = 0;
+    this.theftSimPhase = null;
+    this.simCamTrack = false;
+    this._simCamPos = new THREE.Vector3();
+    this._simCamTgt = new THREE.Vector3();
 
     this.buildModalDOM();
     this.bindEvents();
@@ -482,6 +490,29 @@ export class ChargerStudio3D {
             <div class="ac-canvas-wrap">
               <canvas id="charger-studio-canvas"></canvas>
               <div class="ac-hotspot-layer" id="charger-hotspot-layer"></div>
+              <div class="charger-phone-alert" id="charger-phone-alert" aria-live="polite">
+                <div class="phone-top-bar">
+                  <span>21:48</span>
+                  <span class="phone-notch"></span>
+                  <span>5G ●</span>
+                </div>
+                <div class="phone-alert-card">
+                  <div class="phone-alert-title" id="charger-phone-title"></div>
+                  <div class="phone-alert-sub" id="charger-phone-sub"></div>
+                  <div class="phone-alert-station" id="charger-phone-station"></div>
+                </div>
+                <div class="phone-tele-box">
+                  <div class="phone-tele-lbl" id="charger-phone-ac-lbl"></div>
+                  <div class="phone-tele-val" id="charger-phone-ac-val"></div>
+                  <div class="phone-tele-lbl" id="charger-phone-vib-lbl"></div>
+                  <div class="phone-tele-val impact" id="charger-phone-vib-val"></div>
+                  <div class="phone-wave-bars">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+                <div class="phone-status-pill" id="charger-phone-status"></div>
+              </div>
             </div>
 
             <div class="home-conduit-legend">
@@ -521,6 +552,7 @@ export class ChargerStudio3D {
             <button type="button" class="ac-cam-btn" id="charger-btn-partial"></button>
             <button type="button" class="ac-cam-btn" id="charger-btn-xray"></button>
             <button type="button" class="ac-cam-btn charger-tamper-btn" id="charger-btn-tamper"></button>
+            <button type="button" class="ac-cam-btn charger-sim-btn" id="charger-btn-theft-sim"></button>
           </div>
         </footer>
       </div>
@@ -572,6 +604,7 @@ export class ChargerStudio3D {
     this.controls.target.set(...CHARGER_CAMERA_PRESETS.overview.target);
     this.controls.addEventListener('start', () => {
       this.isLerpingCam = false;
+      this.simCamTrack = false;
     });
 
     this.ambientLight = new THREE.AmbientLight('#dbeafe', 0.45);
@@ -640,6 +673,7 @@ export class ChargerStudio3D {
 
     this.buildChargerDiorama();
     this.buildHotspotPins();
+    this.theftSim = createTheftSimController(this.scene);
 
     // Bloom Post-Processing Composer
     const w = this.canvas.clientWidth || 640;
@@ -1437,6 +1471,11 @@ export class ChargerStudio3D {
       this.triggerTamper();
     });
 
+    this.modal.querySelector('#charger-btn-theft-sim')?.addEventListener('click', () => {
+      if (this.theftSimActive) this.stopTheftSim();
+      else this.startTheftSim();
+    });
+
     this.modal.querySelector('#charger-btn-xray')?.addEventListener('click', () => {
       this.xray = !this.xray;
       this.syncTelemetryAndUI();
@@ -1499,6 +1538,42 @@ export class ChargerStudio3D {
     this.tamperTimer = 3.2;
     this.playAlarmChirp();
     this.syncTelemetryAndUI();
+  }
+
+  startTheftSim() {
+    if (!this.theftSim) return;
+    this.autoSpin = false;
+    this.autoTime = false;
+    this.xray = false;
+    this.timeOfDay = 21.8;
+    const sliderEl = this.modal.querySelector('#charger-time-slider');
+    if (sliderEl) sliderEl.value = '21.80';
+
+    this.unlockDoor(false);
+    this.setEvConnected(true);
+    for (let i = 0; i < 14; i++) this.updateCableVerlet(0.016, 0);
+
+    this.theftSimActive = true;
+    this.theftSimTime = 0;
+    this.theftSimPhase = 'approach';
+    this.simCamTrack = true;
+    this.isLerpingCam = false;
+    this.theftSim.start();
+    this.syncTelemetryAndUI();
+  }
+
+  stopTheftSim(silent = false) {
+    this.theftSimActive = false;
+    this.theftSimTime = 0;
+    this.theftSimPhase = null;
+    this.simCamTrack = false;
+    this.tamperTimer = 0;
+    this.theftSim?.reset();
+
+    const phoneEl = this.modal?.querySelector('#charger-phone-alert');
+    if (phoneEl) phoneEl.classList.remove('visible', 'buzz');
+
+    if (!silent) this.syncTelemetryAndUI();
   }
 
   focusCamera(presetKey) {
@@ -1586,8 +1661,15 @@ export class ChargerStudio3D {
     this.modal.querySelector('#charger-btn-grid')?.classList.toggle('active', this.gridBackup);
     this.modal.querySelector('#charger-btn-partial')?.classList.toggle('active', this.partialMode);
     this.modal.querySelector('#charger-btn-xray')?.classList.toggle('active', this.xray);
+    this.modal.querySelector('#charger-btn-spin')?.classList.toggle('active', this.autoSpin);
 
-    const statusKey = isAlert
+    const simBtn = this.modal.querySelector('#charger-btn-theft-sim');
+    if (simBtn) {
+      simBtn.textContent = this.t(this.theftSimActive ? 'theftSimStopBtn' : 'theftSimBtn');
+      simBtn.classList.toggle('active', this.theftSimActive);
+    }
+
+    let statusKey = isAlert
       ? this.gunAlarm
         ? 'gunNotReturnedTxt'
         : 'tamperAlertTxt'
@@ -1600,12 +1682,29 @@ export class ChargerStudio3D {
             : this.gridBackup
               ? 'modeStatusNightGrid'
               : 'modeStatusNightBat';
+
+    if (this.theftSimActive) {
+      statusKey =
+        this.theftSimPhase === 'grind'
+          ? 'simPhaseGrind'
+          : this.theftSimPhase === 'alarm'
+            ? 'simPhaseAlarm'
+            : this.theftSimPhase === 'flee'
+              ? 'simPhaseFlee'
+              : 'simPhaseApproach';
+    }
     setText('charger-live-status', this.t(statusKey));
 
     const banner = this.modal.querySelector('#charger-live-banner');
     if (banner) {
       banner.classList.remove('heat', 'battery', 'grid');
-      if (isAlert) banner.classList.add('heat');
+      if (this.theftSimActive) {
+        if (this.theftSimPhase === 'grind' || this.theftSimPhase === 'alarm') {
+          banner.classList.add('heat');
+        } else if (this.theftSimPhase === 'flee') {
+          banner.classList.add('battery');
+        }
+      } else if (isAlert) banner.classList.add('heat');
       else if (!isDay && !this.gridBackup) banner.classList.add('battery');
       else if (!isDay && this.gridBackup) banner.classList.add('grid');
     }
@@ -1646,7 +1745,16 @@ export class ChargerStudio3D {
     setText('charger-btn-qr', 'qrScanBtn');
     setText('charger-btn-partial', 'partialBtn');
     setText('charger-btn-tamper', 'tamperBtn');
+    setText('charger-btn-theft-sim', this.theftSimActive ? 'theftSimStopBtn' : 'theftSimBtn');
     setText('charger-btn-grid', 'gridBackupBtn');
+    setText('charger-phone-title', 'phoneAlertTitle');
+    setText('charger-phone-sub', 'phoneAlertSub');
+    setText('charger-phone-station', 'phoneStation');
+    setText('charger-phone-ac-lbl', 'phoneAcousticLbl');
+    setText('charger-phone-ac-val', 'phoneAcousticVal');
+    setText('charger-phone-vib-lbl', 'phoneVibLbl');
+    setText('charger-phone-vib-val', 'phoneVibVal');
+    setText('charger-phone-status', 'phoneStatusArmed');
 
     const pinInput = this.modal.querySelector('#charger-pin-input');
     if (pinInput) pinInput.placeholder = this.t('pinPlaceholder');
@@ -1746,6 +1854,9 @@ export class ChargerStudio3D {
       this.rafId = null;
     }
 
+    this.stopTheftSim(true);
+    this.theftSim = null;
+
     if (this.hotspotLayer) this.hotspotLayer.innerHTML = '';
     this.outerShellMats = [];
     this.naionBarMats = [];
@@ -1839,6 +1950,38 @@ export class ChargerStudio3D {
 
   update3D(dt, elapsed) {
     if (!this.controls || !this.camera) return;
+
+    if (this.theftSimActive && this.theftSim) {
+      this.theftSimTime += dt;
+      const st = this.theftSim.update(dt, this.theftSimTime);
+      this.tamperTimer = st.isAlarm ? 1.5 : 0;
+
+      if (this.simCamTrack) {
+        this.theftSim.sampleCamera(this.theftSimTime, this._simCamPos, this._simCamTgt);
+        const camLerp = 1 - Math.exp(-3.8 * dt);
+        this.camera.position.lerp(this._simCamPos, camLerp);
+        this.controls.target.lerp(this._simCamTgt, camLerp);
+      }
+
+      const phoneEl = this.modal?.querySelector('#charger-phone-alert');
+      if (phoneEl) {
+        phoneEl.classList.toggle('visible', st.showPhone);
+        phoneEl.classList.toggle('buzz', st.phoneBuzz);
+        const statusEl = this.modal.querySelector('#charger-phone-status');
+        if (statusEl) {
+          statusEl.textContent = this.t(st.thiefRetreating ? 'phoneStatusSafe' : 'phoneStatusArmed');
+          statusEl.classList.toggle('safe', st.thiefRetreating);
+        }
+      }
+
+      if (st.phase !== this.theftSimPhase) {
+        this.theftSimPhase = st.phase;
+        this.syncTelemetryAndUI();
+      }
+      if (st.finished) {
+        this.stopTheftSim();
+      }
+    }
 
     if (this.isLerpingCam) {
       const k = 1 - Math.exp(-5.0 * dt);
